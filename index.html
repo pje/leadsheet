@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="tufte.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="atoms.css" />
+    <script charset="utf-8" src="index.js"></script>
+    <script>
+      window.onload = bootstrap;
+    </script>
+  </head>
+
+  <body>
+    <div class="title-container">
+      <h1 class="title"></h1>
+      <div class="key-selector">
+        <h2 class="key"></h2>
+        <div class="transpose-buttons">
+          <button id="transpose-up" class="transpose">↑</button>
+          <button id="transpose-down" class="transpose">↓</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="song">
+      <div class="bar">
+        <div class="chords"><div class="chord"></div></div>
+        <div class="staff flex-row">
+          <div class="clef">𝄞</div>
+          <div class="time-signature">
+            <div class="numerator">4</div>
+            <div class="slash" hidden>/</div>
+            <div class="denominator">4</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
