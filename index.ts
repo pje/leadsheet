@@ -1,48 +1,118 @@
-const justFriends = `
-Just Friends
-C
-| CM7 | CM7 | Cm7 | F7 | GM7 | GM7 | Bbm7 | Eb7 || Abm7 | D7 | Bm7 | Em7 | A7 | A7 | Am7 | D7 Db7 ||
-`;
-type BarType = "|" | "||";
+import grammar, { SongActionDict } from "./grammar.ohm-bundle";
+import "./global.d.ts";
+import defaultSong from "./songs/chelsea_bridge.txt";
+import { Grammar } from "./node_modules/ohm-js/index";
+import {
+  Bar,
+  BarType,
+  DegreesToKeys,
+  KeysToDegrees,
+  Letter,
+  Song,
+} from "./types";
+import { replaceDupesWithRepeats } from "./utils";
 
-type Bar = {
-  chords: Array<string>;
-  barType: BarType;
-};
+const semantics = grammar.createSemantics();
 
-type Song = {
-  title: string;
-  key: string;
-  bars: Array<Bar>;
-};
-
-function parse(fileBuffer: string): Song {
-  let lines = fileBuffer.trim().split(/\n+/);
-  const title = lines[0];
-  const key = lines[1];
-
-  const bars = lines[2]
-    .split(/\|+/)
-    .map((str) => str.trim())
-    .filter((str) => !!str)
-    .map((str: string): Bar => ({ chords: str.split(/\s+/), barType: "|" }));
-
-  const song = {
-    title,
-    key,
-    bars,
+export function Actions(s: Song): SongActionDict<Song> {
+  const defaultMetaFunc = (_1, _2, value, _3) => {
+    return value.eval();
   };
+  const _Actions: SongActionDict<Song> = {
+    Song(metadata, bars) {
+      metadata.children.map((e) => e.eval());
+      bars.eval();
+      return s;
+    },
+    Bars(barline, bars, _2) {
+      bars.children.forEach((barNode) => {
+        const chords = barNode.children.map((chordNode) => {
+          return chordNode.sourceString;
+        });
+        const bar: Bar = {
+          openBar: barline.sourceString as BarType,
+          closeBar: barline.sourceString as BarType,
+          chords,
+        };
+        s.bars.push(bar);
+      });
+
+      return s;
+    },
+    Chord(chordExpOrRepeat) {
+      return s;
+    },
+    ChordExp(root, flavor) {
+      return s;
+    },
+    metaTitle: defaultMetaFunc,
+    metaArtist: defaultMetaFunc,
+    metaYear: defaultMetaFunc,
+    metaSig: defaultMetaFunc,
+    metaKey: defaultMetaFunc,
+    metaTitleValue(_) {
+      s.title = this.sourceString;
+      return s;
+    },
+    metaArtistValue(_) {
+      s.artist = this.sourceString;
+      return s;
+    },
+    metaYearValue(_) {
+      s.year = this.sourceString;
+      return s;
+    },
+    metaSigValue(_) {
+      s.sig = this.sourceString;
+      return s;
+    },
+    metaKeyValue(_) {
+      s.key = this.sourceString;
+      return s;
+    },
+  };
+
+  return _Actions;
+}
+
+function parse(fileBuffer: string, grammar: Grammar): Song {
+  const song = {
+    bars: [],
+  };
+
+  const matchResult = grammar.match(fileBuffer);
+  semantics.addOperation("eval", Actions(song));
+  semantics(matchResult).eval();
+
   return song;
 }
 
 function bootstrap(): void {
-  const song = parse(justFriends);
+  const song = parse(defaultSong, grammar);
+  const match = grammar.match(defaultSong);
+
+  if (match.failed()) {
+    console.log(match.message);
+    return;
+  }
+
+  const [numerator, denominator] = !!song.sig
+    ? song.sig.split("/")
+    : ["4", "4"];
 
   document.querySelector(".title-container .title").textContent = song.title;
   document.querySelector(".title-container .key").textContent = song.key;
+  document.querySelector(".song .numerator").textContent = numerator;
+  document.querySelector(".song .denominator").textContent = denominator;
+
+  let previousChord: string | undefined = undefined;
 
   song.bars.map((bar) => {
-    const chords = bar.chords.map((c) => `<div class="chord">${c}</div>`);
+    const chords = bar.chords.map((c) => {
+      const result = c == previousChord ? "/" : c;
+      previousChord = c;
+      return `<div class="chord">${result}</div>`;
+    });
 
     const html = `<div class="bar">
       <div class="chords">
@@ -63,97 +133,45 @@ function bootstrap(): void {
     .addEventListener("click", transposeSong.bind(null, -1));
 }
 
-type Letter =
-  | "A"
-  | "A#"
-  | "Bb"
-  | "B"
-  | "B#"
-  | "Cb"
-  | "C"
-  | "C#"
-  | "Db"
-  | "D"
-  | "D#"
-  | "Eb"
-  | "E"
-  | "E#"
-  | "F"
-  | "F#"
-  | "Gb"
-  | "G"
-  | "G#"
-  | "Ab";
-
-const keysToDegrees = new Map<Letter, number>([
-  ["A", 0],
-  ["A#", 1],
-  ["Bb", 1],
-  ["B", 2],
-  ["B#", 3],
-  ["Cb", 2],
-  ["C", 3],
-  ["C#", 4],
-  ["Db", 4],
-  ["D", 5],
-  ["D#", 6],
-  ["Eb", 6],
-  ["E", 7],
-  ["E#", 8],
-  ["F", 8],
-  ["F#", 9],
-  ["Gb", 9],
-  ["G", 10],
-  ["G#", 11],
-  ["Ab", 11],
-]);
-
-const degreesToKeys: Array<Letter> = [
-  "A", // 0
-  "Bb", // 1
-  "B", // 2
-  "C", // 3
-  "C#", // 4
-  "D", // 5
-  "Eb", // 6
-  "E", // 7
-  "F", // 8
-  "Gb", // 9
-  "G", // 10
-  "Ab", // 11
-];
-
 function transpose(key: Letter, halfSteps: number): Letter {
-  const currentDegree = keysToDegrees.get(key);
-  let newDegree = (currentDegree + halfSteps) % degreesToKeys.length;
+  const currentDegree = KeysToDegrees.get(key);
+  let newDegree = (currentDegree + halfSteps) % DegreesToKeys.length;
   if (newDegree < 0) {
-    newDegree = degreesToKeys.length + newDegree;
+    newDegree = DegreesToKeys.length + newDegree;
   }
-  return degreesToKeys[newDegree];
+  return DegreesToKeys[newDegree];
 }
+
+const noteRegex = /^([A-G]{1}(?:[b#♯♭])?)(.*)$/;
 
 function transposeSong(halfSteps: number): void {
   const songKey = document.querySelector(".title-container .key");
-  songKey.textContent = transpose(
-    songKey.textContent.trim() as Letter,
-    halfSteps
-  );
+  const [songKeyLetter, whatever] = songKey.textContent // support "CM" or "C major" or "C Dorian"
+    .trim()
+    .split(noteRegex)
+    .filter(Boolean);
 
-  Array(...document.querySelectorAll(".bar")).forEach((e) => {
-    Array(...e.querySelectorAll(".chord")).forEach((e2) => {
-      const current = e2.textContent.trim();
+  const transposedSongKeyLetter = transpose(songKeyLetter as Letter, halfSteps);
 
-      if (!!current) {
-        const matches = current.match(/([A-G](?:b|#)?)(.*)/);
+  songKey.textContent = `${transposedSongKeyLetter}${whatever}`;
 
-        if (matches && matches[1]) {
-          const root = matches[1] as Letter;
-          const kind: string | undefined = matches[2];
+  Array(...document.querySelectorAll(".bar .chord")).forEach((e) => {
+    const current = e.textContent.trim();
 
-          const newRoot = transpose(root, halfSteps);
-          e2.textContent = `${newRoot}${kind}`;
-        }
+    if (!!current) {
+      const matches = current.match(noteRegex);
+
+      if (matches && matches[1]) {
+        const root = matches[1] as Letter;
+        const kind: string | undefined = matches[2];
+
+        const newRoot = transpose(root, halfSteps);
+        e.textContent = `${newRoot}${kind}`;
       }
-    });
+    }
   });
 }
+
+window.onload = bootstrap;
+
+export default bootstrap; // just here to satisfy esbuild

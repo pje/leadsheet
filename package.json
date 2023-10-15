@@ -1,0 +1,17 @@
+{
+  "name": "leadsheet.js",
+  "description": "reads songs from a text file. shows you their chords. can transpose them in the UI.",
+  "version": "0.0.1",
+  "main": "index.js",
+  "dependencies": {
+    "ohm-js": "^17.1.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.19.4",
+    "esbuild-plugin-tsc": "^0.4.0",
+    "@ohm-js/cli": "^2.0.0",
+    "prettier": "^3.0.3",
+    "strip-comments": "^2.0.1",
+    "typescript": "^5.2.2"
+  }
+}

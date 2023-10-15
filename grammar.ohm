@@ -1,0 +1,179 @@
+// A grammar for parsing the simple leadsheet format
+// - PEG
+// - written for OhmJS https://github.com/ohmjs/ohm
+// - test it out with the visual editor: https://ohmjs.org/editor
+//
+// 👉 uppercase names implicitly skip whitespace ("syntactic rule")
+// 👉 lowercase names don't ("lexical rule")
+//  see: https://ohmjs.org/docs/syntax-reference#syntactic-lexical
+
+Song {
+  Song = metadata* Bars
+
+  Bars = Barline (Chord+ Barline+)+
+
+  metadata =
+    | metaTitle
+    | metaArtist
+    | metaYear
+    | metaKey
+    | metaSig
+
+  metaTitle  = caseInsensitive<"title:">  spaceNoNL* metaTitleValue  newline
+  metaArtist = caseInsensitive<"artist:"> spaceNoNL* metaArtistValue newline
+  metaYear   = caseInsensitive<"year:">   spaceNoNL* metaYearValue   newline
+  metaSig    = caseInsensitive<"sig:">    spaceNoNL* metaSigValue    newline
+  metaKey    = caseInsensitive<"key:">    spaceNoNL* metaKeyValue    newline
+
+  metaTitleValue  = (~newline any)+
+  metaArtistValue = (~newline any)+
+  metaYearValue   = (~newline any)+
+  metaSigValue    = (~newline any)+
+  metaKeyValue    = (~newline any)+
+
+  Barline =
+    | ":||:"
+    | ":1||"
+    | ":2||"
+    | ":||"
+    | "||:"
+    | "||"
+    | "|"
+
+  Chord = ChordExp | RepeatPreviousChord
+
+  ChordExp = root flavor
+
+  RepeatPreviousChord =
+  	| "-"
+  	| "%"
+    | "/"
+    | "𝄎"
+
+  root = noteLetter accidental?
+
+  flavor = quality? extent? alteration*
+
+  noteLetter =
+    | caseInsensitive<"A">
+    | "B"
+    | caseInsensitive<"C">
+    | caseInsensitive<"D">
+    | caseInsensitive<"E">
+    | caseInsensitive<"F">
+    | caseInsensitive<"G">
+    | caseInsensitive<"H">
+
+  accidental =
+    | "##" | "𝄪" | "♯♯"
+    | "bb" | "𝄫" | "♭♭"
+    | "#"  | "♯"
+    | "b"  | "♭"
+    | "♮"
+
+  alteration_symbol =
+    | "Δ"
+    | "+"
+    | "⁺"
+    | "o"
+    | "°"
+    | "-"
+    | "⁻"
+    | caseInsensitive<"ø">
+
+  extent =
+    | thirteen
+    | eleven
+    | nine
+    | seven
+    | six
+    | five
+    | four
+    | two
+
+  thirteen = | "13" | "¹³"
+  eleven = | "11" | "¹¹"
+  nine = | "9" | "⁹"
+  seven = | "7" | "⁷"
+  six = | "6" | "⁶"
+  five = | "5" | "⁵"
+  four = | "4" | "⁴"
+  two = | "2" | "²"
+
+  quality =
+    | sus
+    | minor_major
+    | augmented
+    | diminished
+    | dominant
+    | half_diminished
+    | major
+    | minor
+
+  sus =
+    | caseInsensitive<"sus">
+
+  minor_major =
+  	| minor_major_with_parens
+    | caseInsensitive<"minmaj">
+    | "mM"
+    | "mΔ"
+    | "-Δ"
+    | "m/M"
+
+  minor_major_with_parens =
+    | minor "(" major extent ")"
+
+  augmented =
+    | caseInsensitive<"augmented">
+    | caseInsensitive<"aug">
+    | "+"
+    | "⁺"
+
+  diminished =
+    | caseInsensitive<"diminished">
+    | caseInsensitive<"dim">
+    | "o"
+    | "°"
+
+  dominant =
+    | caseInsensitive<"dominant">
+    | caseInsensitive<"dom">
+
+  half_diminished =
+    | caseInsensitive<"ø">
+
+  major =
+    | caseInsensitive<"major">
+    | caseInsensitive<"maj">
+    | "M"
+    | "Δ"
+
+  minor =
+    | caseInsensitive<"minor">
+    | caseInsensitive<"min">
+    | "-"
+    | "⁻"
+    | "m"
+
+  alteration =
+    | alteration_in_parens
+    | alteration_no_parens
+
+  alteration_no_parens =
+    | accidental extent                          // e.g. #11, b13
+    | alteration_symbol extent                   // e.g. Δ9,  ⁺7
+    | alteration_add_no_omit extent              // e.g. "no 5", no5, "add 5", "omit 5"
+    | "/" (extent | root)                        // e.g. C/G
+    | caseInsensitive<"alt"> extent?             // e.g. alt, alt7
+    | caseInsensitive<"sus"> ("2"|"4")?          // e.g. sus, sus2, sus4
+    | spaceNoNL? extent                          // e.g. `C7`, `C 9`
+
+  alteration_in_parens = "(" spaceNoNL? alteration_no_parens spaceNoNL? ")"
+
+  alteration_add_no_omit =
+  	spaceNoNL* (caseInsensitive<"add"> | caseInsensitive<"no"> | caseInsensitive<"omit">) spaceNoNL*
+
+  newline = "\r"? "\n"
+  spaceNoNL = ~newline "\x00".."\x20"
+}

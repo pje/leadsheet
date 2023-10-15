@@ -47,6 +47,9 @@ h1 {
 .key-selector {
     display: flex;
     flex-direction: row;
+    min-width: 100px;
+    justify-content: flex-end;
+    justify-self: right;
 }
 
 .key-selector .transpose-buttons {
@@ -71,11 +74,11 @@ button.transpose {
     position: relative;
     top: 10px;
     line-height: 64px;
-    font-size: 129px;
+    font-size: 172px;
 }
 
 .time-signature {
-    margin-left: 14px;
+    margin-left: 4px;
     display: flex;
     flex-direction: column;
     font-size: 50px;
@@ -86,7 +89,6 @@ button.transpose {
 .bar {
     display: flex;
     flex-direction: column;
-    width: 128px;
 }
 
 .bar:first-child {
@@ -95,9 +97,8 @@ button.transpose {
 }
 
 .staff {
-    width: 128px;
+    min-width: 128px;
     height: 68.5px;
-
     background: repeating-linear-gradient(
         0deg,
         #151515,
@@ -105,15 +106,13 @@ button.transpose {
         transparent 1px,
         transparent 17.5px
     );
-
     border-color: #111;
-
     border-left-style: solid;
     border-left-width: 1.5px;
-
     border-top-style: solid;
     border-top-width: 1.5px;
 }
+
 @media (prefers-color-scheme: dark) {
     .staff {
         border-left-color: #FFFDF3;
@@ -132,11 +131,15 @@ button.transpose {
 .bar .chords {
     display: flex;
     flex-direction: row;
-    padding-left: 8px;
+    justify-content: space-evenly;
+    gap: 10px;
+    padding: 0 10px 0 10px;
 }
 
 .bar .chords .chord {
     min-height: 26px;
     font-size: 16pt;
-    flex: 0 0 calc(50% - 10px);
+    text-align: center;
+    flex-basis: 0;
+    /* flex-grow: 1; */
 }

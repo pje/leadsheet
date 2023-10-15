@@ -1,5 +1,13 @@
 {
-  "compilerOptions": { "target": "ES2015" },
-  "include": ["index.ts"],
-  "exclude": ["index.js"]
+  "compilerOptions": {
+    "target": "ES2015",
+    "paths": {
+      "ohm-js": [
+        "./node_modules/ohm-js/index.d.ts"
+      ]
+    }
+  },
+  "exclude": [
+    "index.js"
+  ],
 }
