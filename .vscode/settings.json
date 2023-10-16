@@ -3,6 +3,7 @@
   "deno.lint": true,
   "deno.unstable": false,
   "deno.enablePaths": [
-    "./test.ts"
+    "./test.ts",
+    "./browser_test.ts"
   ]
 }
