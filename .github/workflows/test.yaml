@@ -1,0 +1,29 @@
+name: Deno
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: denoland/setup-deno@v1.1.2
+        with:
+          deno-version: v1.x
+      - name: build
+        run: make build
+      - name: fmt
+        run: deno fmt --check test.ts
+      - name: lint
+        run: deno lint test.ts
+      - name: unit_test
+        run: make unit_test
+      # - name: browser_test
+      #   run: make browser_test
