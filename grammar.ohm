@@ -45,8 +45,8 @@ Song {
   ChordExp = root flavor
 
   RepeatPreviousChord =
-  	| "-"
-  	| "%"
+    | "-"
+    | "%"
     | "/"
     | "𝄎"
 
@@ -114,7 +114,7 @@ Song {
     | caseInsensitive<"sus">
 
   minor_major =
-  	| minor_major_with_parens
+    | minor_major_with_parens
     | caseInsensitive<"minmaj">
     | "mM"
     | "mΔ"
@@ -172,7 +172,7 @@ Song {
   alteration_in_parens = "(" spaceNoNL? alteration_no_parens spaceNoNL? ")"
 
   alteration_add_no_omit =
-  	spaceNoNL* (caseInsensitive<"add"> | caseInsensitive<"no"> | caseInsensitive<"omit">) spaceNoNL*
+    spaceNoNL* (caseInsensitive<"add"> | caseInsensitive<"no"> | caseInsensitive<"omit">) spaceNoNL*
 
   newline = "\r"? "\n"
   spaceNoNL = ~newline "\x00".."\x20"
