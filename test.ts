@@ -5,9 +5,9 @@ import * as ohm from "./node_modules/ohm-js/src/main.js"; // works, depends on .
 import { Grammar } from "./node_modules/ohm-js/index.d.ts";
 import { replaceDupesWithRepeats } from "./utils.ts";
 import {
-  assertFalse,
-  assertEquals,
   assert,
+  assertEquals,
+  assertFalse,
   fail,
 } from "https://deno.land/std@0.202.0/assert/mod.ts";
 
@@ -84,20 +84,17 @@ Deno.test("replaceDupesWithRepeats", () => {
 
 chords.forEach((str) =>
   Deno.test(`parser: chord: ${str}: should parse`, () =>
-    assertGrammarMatch(chordToSong(str))
-  )
+    assertGrammarMatch(chordToSong(str)))
 );
 
 songs.forEach(({ title, contents }) =>
   Deno.test(`parser: song: ${title}: should parse`, () =>
-    assertGrammarMatch(contents)
-  )
+    assertGrammarMatch(contents))
 );
 
 rawSongs.forEach(({ name, contents }) => {
   Deno.test(`parser: songs dir: ${name} : should parse`, () =>
-    assertGrammarMatch(contents)
-  );
+    assertGrammarMatch(contents));
 });
 
 function assertGrammarMatch(str: string) {
