@@ -1,18 +1,17 @@
-import grammar, { SongActionDict } from "./grammar.ohm-bundle";
+import grammar, { SongActionDict, SongGrammar } from "./grammar.ohm-bundle";
 import "./global.d.ts";
 import defaultSong from "./songs/chelsea_bridge.txt";
 import { Grammar } from "./node_modules/ohm-js/index";
 import {
   Bar,
   BarType,
+  parseSig,
   DegreesToKeys,
   KeysToDegrees,
   Letter,
   Song,
 } from "./types";
 import { replaceDupesWithRepeats } from "./utils";
-
-const semantics = grammar.createSemantics();
 
 export function Actions(s: Song): SongActionDict<Song> {
   const defaultMetaFunc = (_1, _2, value, _3) => {
@@ -75,37 +74,54 @@ export function Actions(s: Song): SongActionDict<Song> {
   return _Actions;
 }
 
-function parse(fileBuffer: string, grammar: Grammar): Song {
+function parse(fileBuffer: string, grammar: SongGrammar): Song {
   const song = {
     bars: [],
   };
 
   const matchResult = grammar.match(fileBuffer);
+  const semantics = grammar.createSemantics();
+
   semantics.addOperation("eval", Actions(song));
   semantics(matchResult).eval();
 
   return song;
 }
 
-function bootstrap(): void {
-  const song = parse(defaultSong, grammar);
-  const match = grammar.match(defaultSong);
+function loadSong(rawSong: string): Song {
+  const match = grammar.match(rawSong);
 
   if (match.failed()) {
     console.log(match.message);
     return;
   }
 
-  const [numerator, denominator] = !!song.sig
-    ? song.sig.split("/")
-    : ["4", "4"];
+  const song = parse(rawSong, grammar);
+  const { numerator, denominator } = parseSig(song);
+
+  const staffBar = `
+  <div class="bar">
+    <div class="chords"><div class="chord"></div></div>
+    <div class="staff flex-row">
+      <div class="clef">𝄞</div>
+      <div class="time-signature">
+        <div class="numerator">${numerator}</div>
+        <div class="slash" hidden>/</div>
+        <div class="denominator">${denominator}</div>
+      </div>
+    </div>
+  </div>`;
 
   document.querySelector(".title-container .title").textContent = song.title;
   document.querySelector(".title-container .key").textContent = song.key;
-  document.querySelector(".song .numerator").textContent = numerator;
-  document.querySelector(".song .denominator").textContent = denominator;
+  // document.querySelector(".song .numerator").textContent = numerator;
+  // document.querySelector(".song .denominator").textContent = denominator;
 
   let previousChord: string | undefined = undefined;
+
+  document.querySelector(".song").innerHTML = "";
+
+  document.querySelector(".song").insertAdjacentHTML("beforeend", staffBar);
 
   song.bars.map((bar) => {
     const chords = bar.chords.map((c) => {
@@ -124,6 +140,10 @@ function bootstrap(): void {
     document.querySelector(".song").insertAdjacentHTML("beforeend", html);
   });
 
+  return song;
+}
+
+function bootstrap(): void {
   document
     .querySelector("#transpose-up")
     .addEventListener("click", transposeSong.bind(null, 1));
@@ -131,6 +151,28 @@ function bootstrap(): void {
   document
     .querySelector("#transpose-down")
     .addEventListener("click", transposeSong.bind(null, -1));
+
+  document
+    .querySelector("#song")
+    .addEventListener("change", async (e: InputEvent) => {
+      const f = (e.currentTarget as HTMLInputElement).files[0];
+      const reader = new FileReader();
+
+      reader.onload = function (evt) {
+        if (evt.target.readyState != 2) {
+          return;
+        } else if (evt.target.error) {
+          console.error(`Error while reading file: ${evt.target.error}`);
+          return;
+        }
+
+        const rawSong = evt.target.result as string;
+        loadSong(rawSong);
+      };
+
+      reader.readAsText(f);
+    });
+  loadSong(defaultSong);
 }
 
 function transpose(key: Letter, halfSteps: number): Letter {

@@ -16,6 +16,17 @@ export const Bars = {
   ":2||": true,
 };
 
+export function parseSig(song: Song): {
+  numerator: string;
+  denominator: string;
+} {
+  const [numerator, denominator] = !!song.sig
+    ? song.sig.split("/")
+    : ["4", "4"];
+
+  return { numerator, denominator };
+}
+
 export type BarType = keyof typeof Bars;
 
 export type Bar = {
