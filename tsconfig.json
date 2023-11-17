@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    "target": "ES2015",
     "paths": {
       "ohm-js": [
         "./node_modules/ohm-js/index.d.ts"
       ]
-    }
+    },
+    "strictNullChecks": true,
+    "target": "ES2015"
   },
   "exclude": [
     "index.js"

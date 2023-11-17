@@ -34,13 +34,13 @@ async function teardown(browser: Browser) {
 }
 
 async function getTitle(page: Page) {
-  const titleSelector = await page.waitForSelector(".title-container .title");
+  const titleSelector = await page.waitForSelector("#title-container .title");
   const title: string = await titleSelector!.evaluate((el) => el!.textContent);
   return title;
 }
 
 async function getKey(page: Page) {
-  const keySelector = await page.waitForSelector(".title-container .key");
+  const keySelector = await page.waitForSelector("#title-container .key");
   const key: string = await keySelector!.evaluate((el) => el!.textContent);
   return key;
 }

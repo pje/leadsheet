@@ -1,3 +1,16 @@
+export type Result<T> =
+  | { error: undefined; value: T }
+  | { error: Error; value: undefined };
+
+export const Ok = <T>(t: T): Result<T> => {
+  return { error: undefined, value: t };
+};
+
+export const Err = <E>(e: string | Error): Result<never> => {
+  const error = typeof e === "string" ? new Error(e) : e;
+  return { error, value: undefined };
+};
+
 export type Song = {
   title?: string;
   artist?: string;
@@ -25,6 +38,19 @@ export function parseSig(song: Song): {
     : ["4", "4"];
 
   return { numerator, denominator };
+}
+
+export function guessKey(song: Song): string {
+  if (song.key) {
+    return song.key;
+  } else {
+    const firstChord = getFirstChord(song);
+    return firstChord || "?";
+  }
+}
+
+function getFirstChord(song: Song): string | undefined {
+  return song.bars[0].chords[0];
 }
 
 export type BarType = keyof typeof Bars;

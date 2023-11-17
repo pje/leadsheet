@@ -1,6 +1,6 @@
 import grammar, { SongActionDict, SongGrammar } from "./grammar.ohm-bundle";
 import "./global.d.ts";
-import defaultSong from "./songs/chelsea_bridge.txt";
+import defaultSongRaw from "./songs/chelsea_bridge.txt";
 import { Grammar } from "./node_modules/ohm-js/index";
 import {
   Bar,
@@ -9,9 +9,21 @@ import {
   DegreesToKeys,
   KeysToDegrees,
   Letter,
+  Result,
+  Ok,
+  Err,
   Song,
 } from "./types";
-import { replaceDupesWithRepeats } from "./utils";
+
+const defaultSong = (() => {
+  const result = parseSong(defaultSongRaw, grammar);
+  if (result.error) {
+    console.log(result.error);
+    return;
+  } else {
+    return result.value;
+  }
+})()!;
 
 export function Actions(s: Song): SongActionDict<Song> {
   const defaultMetaFunc = (_1, _2, value, _3) => {
@@ -74,29 +86,27 @@ export function Actions(s: Song): SongActionDict<Song> {
   return _Actions;
 }
 
-function parse(fileBuffer: string, grammar: SongGrammar): Song {
+function parseSong(rawSong: string, grammar: SongGrammar): Result<Song> {
+  const match = grammar.match(rawSong);
+
+  if (match.failed()) {
+    return Err(match.message || "failed to parse song: empty error");
+  }
+
   const song = {
     bars: [],
   };
 
-  const matchResult = grammar.match(fileBuffer);
+  const matchResult = grammar.match(rawSong);
   const semantics = grammar.createSemantics();
 
   semantics.addOperation("eval", Actions(song));
   semantics(matchResult).eval();
 
-  return song;
+  return Ok(song);
 }
 
-function loadSong(rawSong: string): Song {
-  const match = grammar.match(rawSong);
-
-  if (match.failed()) {
-    console.log(match.message);
-    return;
-  }
-
-  const song = parse(rawSong, grammar);
+function loadSong(song: Song): Song {
   const { numerator, denominator } = parseSig(song);
 
   const staffBar = `
@@ -112,16 +122,20 @@ function loadSong(rawSong: string): Song {
     </div>
   </div>`;
 
-  document.querySelector(".title-container .title").textContent = song.title;
-  document.querySelector(".title-container .key").textContent = song.key;
-  // document.querySelector(".song .numerator").textContent = numerator;
-  // document.querySelector(".song .denominator").textContent = denominator;
+  document.querySelector("#title-container .title")!.textContent =
+    song.title || "";
+  document.querySelector("#title-container .key")!.textContent = song.key || "";
+
+  document.querySelector("#title-container .artist")!.textContent =
+    song.artist || "";
+
+  document.querySelector("#title-container .date")!.textContent =
+    song.year || "";
 
   let previousChord: string | undefined = undefined;
 
-  document.querySelector(".song").innerHTML = "";
-
-  document.querySelector(".song").insertAdjacentHTML("beforeend", staffBar);
+  document.querySelector(".song")!.innerHTML = "";
+  document.querySelector(".song")!.insertAdjacentHTML("beforeend", staffBar);
 
   song.bars.map((bar) => {
     const chords = bar.chords.map((c) => {
@@ -137,7 +151,7 @@ function loadSong(rawSong: string): Song {
       <div class="staff"></div>
     </div>`;
 
-    document.querySelector(".song").insertAdjacentHTML("beforeend", html);
+    document.querySelector(".song")!.insertAdjacentHTML("beforeend", html);
   });
 
   return song;
@@ -145,38 +159,48 @@ function loadSong(rawSong: string): Song {
 
 function bootstrap(): void {
   document
-    .querySelector("#transpose-up")
+    .querySelector("#transpose-up")!
     .addEventListener("click", transposeSong.bind(null, 1));
 
   document
-    .querySelector("#transpose-down")
+    .querySelector("#transpose-down")!
     .addEventListener("click", transposeSong.bind(null, -1));
 
   document
-    .querySelector("#song")
+    .querySelector("#song")!
     .addEventListener("change", async (e: InputEvent) => {
-      const f = (e.currentTarget as HTMLInputElement).files[0];
+      const f = (e.currentTarget as HTMLInputElement).files![0];
       const reader = new FileReader();
 
       reader.onload = function (evt) {
-        if (evt.target.readyState != 2) {
+        const target = evt.target!;
+        if (target.readyState != 2) {
           return;
-        } else if (evt.target.error) {
-          console.error(`Error while reading file: ${evt.target.error}`);
+        } else if (target.error) {
+          console.error(`Error while reading file: ${target.error}`);
           return;
         }
 
-        const rawSong = evt.target.result as string;
-        loadSong(rawSong);
+        const rawSong = target.result as string;
+        const result = parseSong(rawSong, grammar);
+        if (result.error) {
+          console.error(result.error);
+        } else {
+          localStorage.setItem("loadedSong", rawSong);
+          loadSong(result.value);
+        }
       };
 
       reader.readAsText(f);
     });
-  loadSong(defaultSong);
+
+  const lastLoadedSong = fetchLoadedSongFromLocalStorage();
+
+  loadSong(lastLoadedSong || defaultSong);
 }
 
 function transpose(key: Letter, halfSteps: number): Letter {
-  const currentDegree = KeysToDegrees.get(key);
+  const currentDegree = KeysToDegrees.get(key)!;
   let newDegree = (currentDegree + halfSteps) % DegreesToKeys.length;
   if (newDegree < 0) {
     newDegree = DegreesToKeys.length + newDegree;
@@ -186,9 +210,26 @@ function transpose(key: Letter, halfSteps: number): Letter {
 
 const noteRegex = /^([A-G]{1}(?:[b#♯♭])?)(.*)$/;
 
+function fetchLoadedSongFromLocalStorage(): Song | undefined {
+  const str = localStorage.getItem("loadedSong");
+
+  if (!str?.trim()) {
+    return undefined;
+  }
+
+  const result = parseSong(str, grammar);
+  if (result.error) {
+    console.error(result.error);
+    return undefined;
+  } else {
+    return result.value;
+  }
+}
+
 function transposeSong(halfSteps: number): void {
-  const songKey = document.querySelector(".title-container .key");
-  const [songKeyLetter, whatever] = songKey.textContent // support "CM" or "C major" or "C Dorian"
+  const songKey = document.querySelector("#title-container .key")!;
+  const [songKeyLetter, whatever] = songKey
+    .textContent! // support "CM" or "C major" or "C Dorian"
     .trim()
     .split(noteRegex)
     .filter(Boolean);
@@ -198,7 +239,7 @@ function transposeSong(halfSteps: number): void {
   songKey.textContent = `${transposedSongKeyLetter}${whatever}`;
 
   Array(...document.querySelectorAll(".bar .chord")).forEach((e) => {
-    const current = e.textContent.trim();
+    const current = e.textContent?.trim();
 
     if (!!current) {
       const matches = current.match(noteRegex);
