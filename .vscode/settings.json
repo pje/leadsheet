@@ -3,8 +3,10 @@
   "deno.lint": true,
   "deno.unstable": false,
   "deno.enablePaths": [
-    "./test.ts",
-    "./browser_test.ts"
+    "./browser_test.ts",
+    "./parser_test.ts",
+    "./test_utils.ts",
+    "./utils_test.ts"
   ],
   "typescript.tsdk": "node_modules/typescript/lib"
 }

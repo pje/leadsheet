@@ -1,19 +1,24 @@
 import grammar, { SongActionDict, SongGrammar } from "./grammar.ohm-bundle";
 import "./global.d.ts";
 import defaultSongRaw from "./songs/chelsea_bridge.txt";
-import { Grammar } from "./node_modules/ohm-js/index";
 import {
   Bar,
   BarType,
   parseSig,
-  DegreesToKeys,
-  KeysToDegrees,
   Letter,
   Result,
   Ok,
   Err,
   Song,
+  Minor,
 } from "./types.ts";
+import {
+  CanonicalizeKeyQualifier,
+  NoteRegex,
+  accidentalPreferenceForKey,
+  conventionalizeKey,
+  transpose,
+} from "./utils";
 
 const defaultSong = (() => {
   const result = parseSong(defaultSongRaw, grammar);
@@ -199,17 +204,6 @@ function bootstrap(): void {
   loadSong(lastLoadedSong || defaultSong);
 }
 
-function transpose(key: Letter, halfSteps: number): Letter {
-  const currentDegree = KeysToDegrees.get(key)!;
-  let newDegree = (currentDegree + halfSteps) % DegreesToKeys.length;
-  if (newDegree < 0) {
-    newDegree = DegreesToKeys.length + newDegree;
-  }
-  return DegreesToKeys[newDegree];
-}
-
-const noteRegex = /^([A-G]{1}(?:[b#♯♭])?)(.*)$/;
-
 function fetchLoadedSongFromLocalStorage(): Song | undefined {
   const str = localStorage.getItem("loadedSong");
 
@@ -228,31 +222,55 @@ function fetchLoadedSongFromLocalStorage(): Song | undefined {
 
 function transposeSong(halfSteps: number): void {
   const songKey = document.querySelector("#title-container .key")!;
-  // support "CM" or "C major" or "C Dorian"
-  const [songKeyLetter, keyQualifier] = songKey
+
+  const [songKeyLetter, keyQualifier]: [Letter, string] = songKey
     .textContent!.trim()
-    .split(noteRegex)
-    .filter(Boolean);
+    .split(NoteRegex)
+    .filter(Boolean) as [Letter, string];
 
-  const transposedSongKeyLetter = transpose(songKeyLetter as Letter, halfSteps);
+  const destinationKey = conventionalizeKey(
+    transpose(songKeyLetter, halfSteps)
+  );
 
-  songKey.textContent = `${transposedSongKeyLetter}${keyQualifier}`;
+  const destinationRelativeMajorKey =
+    CanonicalizeKeyQualifier(keyQualifier) == Minor
+      ? conventionalizeKey(transpose(destinationKey, 3))
+      : destinationKey;
+
+  songKey.textContent = `${destinationKey}${keyQualifier}`;
 
   Array(...document.querySelectorAll(".bar .chord")).forEach((e) => {
     const current = e.textContent?.trim();
 
     if (!!current) {
-      const matches = current.match(noteRegex);
+      const matches = current.match(NoteRegex);
 
       if (matches && matches[1]) {
         const root = matches[1] as Letter;
         const kind: string | undefined = matches[2];
-
-        const newRoot = transpose(root, halfSteps);
+        const flatsOrSharps = accidentalPreferenceForKey(
+          destinationRelativeMajorKey
+        );
+        const newRoot = conventionalizeKey(
+          transpose(root, halfSteps, flatsOrSharps)
+        );
         e.textContent = `${newRoot}${kind}`;
       }
     }
   });
+
+  const transposedOutputEl = document.querySelector("#transposed-steps")!;
+  const oldTransposedOutput = parseInt(transposedOutputEl.textContent!);
+  const newTransposedOutput = (oldTransposedOutput + halfSteps) % 12;
+  transposedOutputEl.textContent = `${
+    newTransposedOutput > 0 ? "+" : ""
+  }${newTransposedOutput}`;
+
+  if (newTransposedOutput == 0) {
+    transposedOutputEl.classList.add("hidden");
+  } else {
+    transposedOutputEl.classList.remove("hidden");
+  }
 }
 
 window.onload = bootstrap;

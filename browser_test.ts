@@ -14,6 +14,7 @@ Deno.test("index.html renders via file:// protocol", async () => {
   await page.goto(`file://${indexAbsolutePath}`);
 
   assertEquals("Chelsea Bridge", await getTitle(page));
+  assertEquals("Billy Strayhorn", await getArtist(page));
   assertEquals("Fm", await getKey(page));
   assertEquals("Eb7", (await getChords(page))[0]);
 
@@ -21,6 +22,7 @@ Deno.test("index.html renders via file:// protocol", async () => {
 
   assertEquals("Dm", await getKey(page));
   assertEquals("C7", (await getChords(page))[0]);
+  assertEquals("-3", await getTransposedAmount(page));
 
   await teardown(browser);
 });
@@ -39,10 +41,26 @@ async function getTitle(page: Page) {
   return title;
 }
 
+async function getArtist(page: Page) {
+  const artistSelector = await page.waitForSelector("#title-container .artist");
+  const artist: string = await artistSelector!.evaluate(
+    (el) => el!.textContent
+  );
+  return artist;
+}
+
 async function getKey(page: Page) {
   const keySelector = await page.waitForSelector("#title-container .key");
   const key: string = await keySelector!.evaluate((el) => el!.textContent);
   return key;
+}
+
+async function getTransposedAmount(page: Page) {
+  const outputSelector = await page.waitForSelector("#title-container output");
+  const amount: string = await outputSelector!.evaluate(
+    (el) => el!.textContent
+  );
+  return amount;
 }
 
 async function getChords(page: Page) {
