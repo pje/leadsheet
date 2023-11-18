@@ -78,10 +78,10 @@ button.transpose {
 }
 
 .song {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    row-gap: 50px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+    row-gap: 20px;
+    column-gap: 1px;
 }
 
 .clef {
@@ -142,12 +142,13 @@ button.transpose {
     flex-direction: column;
 }
 
-.bar:first-child {
-    width: 96px;
+.bar:first-child > .staff{
+    min-width: 120px;
+    place-self: flex-end;
+    justify-content: space-between;
 }
 
 .staff {
-    min-width: 128px;
     height: 68.5px;
     background: repeating-linear-gradient(
         0deg,
@@ -157,15 +158,14 @@ button.transpose {
         transparent 17.5px
     );
     border-color: #111;
-    border-left-style: solid;
-    border-left-width: 1.5px;
-    border-top-style: solid;
-    border-top-width: 1.5px;
+    border-style: solid;
+    border-width: 1.5px;
+    border-bottom: none;
 }
 
 @media (prefers-color-scheme: dark) {
     .staff {
-        border-left-color: #FFFDF3;
+        border-right-color: #FFFDF3;
         border-top-color: #FFFDF3;
 
         background: repeating-linear-gradient(
@@ -191,5 +191,4 @@ button.transpose {
     font-size: 16pt;
     text-align: center;
     flex-basis: 0;
-    /* flex-grow: 1; */
 }
