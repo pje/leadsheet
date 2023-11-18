@@ -86,7 +86,8 @@ button.transpose {
 
 .clef {
     position: relative;
-    top: 10px;
+    top: 11px;
+    left: -30px;
     line-height: 64px;
     font-size: 172px;
 }
@@ -100,13 +101,48 @@ button.transpose {
     font-weight: bold;
 }
 
+.key-signature {
+    display: flex;
+    flex-direction: column;
+    font-size: 35px;
+    line-height: 35px;
+}
+
+.key-signature .accidental {
+    position: relative;
+}
+
+.key-signature .accidental.Bb {
+    top: -21px;
+    left: -40px;
+}
+.key-signature .accidental.Eb {
+    top: -13px;
+    left: -25px;
+}
+.key-signature .accidental.Ab {
+    top: -50px;
+    left: -10px;
+}
+.key-signature .accidental.Db {
+    top: -13px;
+    left: 5px;
+}
+.key-signature .accidental.Gb {
+    top: -13px;
+    left: 20px;
+}
+.key-signature .accidental.Cb {
+    top: -13px;
+    left: 35px;
+}
+
 .bar {
     display: flex;
     flex-direction: column;
 }
 
 .bar:first-child {
-    margin-left: 32px;
     width: 96px;
 }
 

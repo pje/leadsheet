@@ -3,7 +3,8 @@
 // import * as ohm from "https://unpkg.com/ohm-js@17.1/index.mjs"; // works, but fetches remotely
 import * as ohm from "./node_modules/ohm-js/src/main.js"; // works, depends on ./node_modules
 import { Grammar } from "./node_modules/ohm-js/index.d.ts";
-import { replaceDupesWithRepeats } from "./utils.ts";
+import { KeyQualifier, Major, Minor } from "./types.ts";
+import { CanonicalizeKeyQualifier, ReplaceDupesWithRepeats } from "./utils.ts";
 import {
   assert,
   assertEquals,
@@ -49,7 +50,36 @@ year: 2023
   },
 ];
 
-const chords = [
+const grammar: Grammar = ohm.grammar(grammarText);
+
+Deno.test("parser: empty string: should not parse", () => {
+  const match = grammar.match(emptyString);
+  assertFalse(match.succeeded());
+});
+
+Deno.test(ReplaceDupesWithRepeats.name, () => {
+  const input = ["CM", "CM", "CM"];
+  const result = ReplaceDupesWithRepeats(input);
+  assertEquals(["CM", "/", "/"], result);
+});
+
+new Map<string, KeyQualifier>([
+  ["M", Major],
+  ["major", Major],
+  ["Major", Major],
+  ["maj", Major],
+  ["m", Minor],
+  ["minor", Minor],
+  ["Minor", Minor],
+  ["min", Minor],
+]).forEach((v: KeyQualifier, k: string) => {
+  Deno.test(
+    `${CanonicalizeKeyQualifier.name}: "${k}" should map to "${v}"`,
+    () => assertEquals(v, CanonicalizeKeyQualifier(k))
+  );
+});
+
+[
   `C5`,
   `Cm`,
   `Csus`,
@@ -67,34 +97,22 @@ const chords = [
   `C6/9`,
   `Cm11#13(no5)`,
   `F𝄫minMaj9#11(sus4)(no13)(no 5)(♯¹¹)/E`,
-];
-
-const grammar: Grammar = ohm.grammar(grammarText);
-
-Deno.test("parser: empty string: should not parse", () => {
-  const match = grammar.match(emptyString);
-  assertFalse(match.succeeded());
-});
-
-Deno.test("replaceDupesWithRepeats", () => {
-  const input = ["CM", "CM", "CM"];
-  const result = replaceDupesWithRepeats(input);
-  assertEquals(["CM", "/", "/"], result);
-});
-
-chords.forEach((str) =>
-  Deno.test(`parser: chord: ${str}: should parse`, () =>
-    assertGrammarMatch(chordToSong(str)))
+].forEach((c) =>
+  Deno.test(`parser: chord: "${c}" should parse as a valid chord`, () =>
+    assertGrammarMatch(chordToSong(c))
+  )
 );
 
 songs.forEach(({ title, contents }) =>
   Deno.test(`parser: song: ${title}: should parse`, () =>
-    assertGrammarMatch(contents))
+    assertGrammarMatch(contents)
+  )
 );
 
 rawSongs.forEach(({ name, contents }) => {
   Deno.test(`parser: songs dir: ${name} : should parse`, () =>
-    assertGrammarMatch(contents));
+    assertGrammarMatch(contents)
+  );
 });
 
 function assertGrammarMatch(str: string) {

@@ -13,7 +13,7 @@ import {
   Ok,
   Err,
   Song,
-} from "./types";
+} from "./types.ts";
 
 const defaultSong = (() => {
   const result = parseSong(defaultSongRaw, grammar);
@@ -228,15 +228,15 @@ function fetchLoadedSongFromLocalStorage(): Song | undefined {
 
 function transposeSong(halfSteps: number): void {
   const songKey = document.querySelector("#title-container .key")!;
-  const [songKeyLetter, whatever] = songKey
-    .textContent! // support "CM" or "C major" or "C Dorian"
-    .trim()
+  // support "CM" or "C major" or "C Dorian"
+  const [songKeyLetter, keyQualifier] = songKey
+    .textContent!.trim()
     .split(noteRegex)
     .filter(Boolean);
 
   const transposedSongKeyLetter = transpose(songKeyLetter as Letter, halfSteps);
 
-  songKey.textContent = `${transposedSongKeyLetter}${whatever}`;
+  songKey.textContent = `${transposedSongKeyLetter}${keyQualifier}`;
 
   Array(...document.querySelectorAll(".bar .chord")).forEach((e) => {
     const current = e.textContent?.trim();

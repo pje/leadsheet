@@ -121,4 +121,162 @@ export const DegreesToKeys: Array<Letter> = [
   "Ab", // 11
 ];
 
+export type KeySignatureMajorLetter =
+  | "C" // 0 sharps
+  | "G" // 1 sharp
+  | "D" // 2 sharps
+  | "A" // 3 sharps
+  | "E" // 4 sharps
+  | "B" // 5 sharps
+  | "F#" // 6 sharps
+  | "C#" // 7 sharps
+  | "F" // 1 flats
+  | "Bb" // 2 flats
+  | "Eb" // 3 flats
+  | "Ab" // 4 flats
+  | "Db" // 5 flats
+  | "Gb" // 6 flats
+  | "Cb"; // 7 flats
+
+export type SigAccidental =
+  | "F#"
+  | "C#"
+  | "G#"
+  | "D#"
+  | "A#"
+  | "E#"
+  | "B#"
+  | "Bb"
+  | "Eb"
+  | "Ab"
+  | "Db"
+  | "Gb"
+  | "Cb"
+  | "Fb";
+
+export const _0_Sharps: [] = [];
+export const _1_Sharps: ["F#"] = ["F#"];
+export const _2_Sharps: ["F#", "C#"] = ["F#", "C#"];
+export const _3_Sharps: ["F#", "C#", "G#"] = ["F#", "C#", "G#"];
+export const _4_Sharps: ["F#", "C#", "G#", "D#"] = ["F#", "C#", "G#", "D#"];
+export const _5_Sharps: ["F#", "C#", "G#", "D#", "A#"] = [
+  "F#",
+  "C#",
+  "G#",
+  "D#",
+  "A#",
+];
+export const _6_Sharps: ["F#", "C#", "G#", "D#", "A#", "E#"] = [
+  "F#",
+  "C#",
+  "G#",
+  "D#",
+  "A#",
+  "E#",
+];
+export const _7_Sharps: ["F#", "C#", "G#", "D#", "A#", "E#", "B#"] = [
+  "F#",
+  "C#",
+  "G#",
+  "D#",
+  "A#",
+  "E#",
+  "B#",
+];
+export const _0_Flats = [];
+export const _1_Flats: ["Bb"] = ["Bb"];
+export const _2_Flats: ["Bb", "Eb"] = ["Bb", "Eb"];
+export const _3_Flats: ["Bb", "Eb", "Ab"] = ["Bb", "Eb", "Ab"];
+export const _4_Flats: ["Bb", "Eb", "Ab", "Db"] = ["Bb", "Eb", "Ab", "Db"];
+export const _5_Flats: ["Bb", "Eb", "Ab", "Db", "Gb"] = [
+  "Bb",
+  "Eb",
+  "Ab",
+  "Db",
+  "Gb",
+];
+export const _6_Flats: ["Bb", "Eb", "Ab", "Db", "Gb", "Cb"] = [
+  "Bb",
+  "Eb",
+  "Ab",
+  "Db",
+  "Gb",
+  "Cb",
+];
+export const _7_Flats: ["Bb", "Eb", "Ab", "Db", "Gb", "Cb", "Fb"] = [
+  "Bb",
+  "Eb",
+  "Ab",
+  "Db",
+  "Gb",
+  "Cb",
+  "Fb",
+];
+
+export type AccidentalList =
+  | typeof _0_Sharps
+  | typeof _1_Sharps
+  | typeof _2_Sharps
+  | typeof _3_Sharps
+  | typeof _4_Sharps
+  | typeof _5_Sharps
+  | typeof _6_Sharps
+  | typeof _7_Sharps
+  | typeof _0_Flats
+  | typeof _1_Flats
+  | typeof _2_Flats
+  | typeof _3_Flats
+  | typeof _4_Flats
+  | typeof _5_Flats
+  | typeof _6_Flats
+  | typeof _7_Flats;
+
+export const KeySignatureToAccidentalList = new Map<
+  KeySignatureMajorLetter,
+  AccidentalList
+>([
+  ["C", _0_Sharps],
+  ["G", _1_Sharps],
+  ["D", _2_Sharps],
+  ["A", _3_Sharps],
+  ["E", _4_Sharps],
+  ["B", _5_Sharps],
+  ["F#", _6_Sharps],
+  ["C#", _7_Sharps],
+  ["F", _1_Flats],
+  ["Bb", _2_Flats],
+  ["Eb", _3_Flats],
+  ["Ab", _4_Flats],
+  ["Db", _5_Flats],
+  ["Gb", _6_Flats],
+  ["Cb", _7_Flats],
+]);
+
+export const FlatSymbol = "♭";
+export const SharpSymbol = "♯";
+
+export type FlatOrSharpSymbol = typeof FlatSymbol | typeof SharpSymbol;
+
+export const SigAccidentalToSymbol = new Map<SigAccidental, FlatOrSharpSymbol>([
+  ["F#", SharpSymbol],
+  ["C#", SharpSymbol],
+  ["G#", SharpSymbol],
+  ["D#", SharpSymbol],
+  ["A#", SharpSymbol],
+  ["E#", SharpSymbol],
+  ["B#", SharpSymbol],
+  ["Bb", FlatSymbol],
+  ["Eb", FlatSymbol],
+  ["Ab", FlatSymbol],
+  ["Db", FlatSymbol],
+  ["Gb", FlatSymbol],
+  ["Cb", FlatSymbol],
+  ["Fb", FlatSymbol],
+]);
+
+export const Major = "M";
+export const Minor = "m";
+
+export type KeyQualifier = typeof Major | typeof Minor;
+
 export const RepeatedChordSymbol = "/";

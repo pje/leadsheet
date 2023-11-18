@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "allowImportingTsExtensions": true,
     "paths": {
       "ohm-js": [
         "./node_modules/ohm-js/index.d.ts"
