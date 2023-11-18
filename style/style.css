@@ -135,7 +135,7 @@ button.transpose {
 }
 
 .bar:first-child > .staff{
-    min-width: 120px;
+    min-width: 110px;
     place-self: flex-end;
 }
 
