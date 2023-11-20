@@ -20,9 +20,9 @@ jobs:
       - name: build
         run: make build
       - name: fmt
-        run: deno fmt --check test.ts
+        run: deno fmt --check *test.ts
       - name: lint
-        run: deno lint test.ts
+        run: deno lint *test.ts
       - name: unit_test
         run: make unit_test
       # - name: browser_test
