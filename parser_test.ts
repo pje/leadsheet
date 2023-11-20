@@ -71,8 +71,9 @@ Deno.test(`chord symbols`, async (t) => {
     `F𝄫minMaj9#11(sus4)(no13)(no 5)(♯¹¹)/E`,
   ];
   for (const c of cases) {
-    await t.step(`"${c}" should be valid`, () =>
-      assertGrammarMatch(chordToSong(c))
+    await t.step(
+      `"${c}" should be valid`,
+      () => assertGrammarMatch(chordToSong(c)),
     );
   }
 });

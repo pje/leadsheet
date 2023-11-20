@@ -40,7 +40,7 @@ Deno.test("index.html renders via file:// protocol", async () => {
   } catch {
     const filename = path.join(
       screenshotsPath,
-      `test-failure-${time().now().getSeconds()}.png`
+      `test-failure-${time().now().getSeconds()}.png`,
     );
     console.log(`🚨 test failure screenshot saved to: ${filename}`);
     await page.screenshot({ path: filename });
@@ -82,7 +82,7 @@ async function getTransposedAmount(page: Page) {
 async function getChords(page: Page) {
   const chords: Array<string> = await (await page.$("#song"))!.$$eval(
     ".chord",
-    (es) => es.map((e) => e.textContent).filter(String)
+    (es) => es.map((e) => e.textContent).filter(String),
   );
   return chords;
 }
