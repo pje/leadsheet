@@ -27,7 +27,7 @@ export const Bars = {
   ":||": true,
   ":1||": true,
   ":2||": true,
-};
+} as const;
 
 export function parseSig(song: Song): {
   numerator: string;
@@ -186,7 +186,8 @@ export const DegreesToKeys: [
   { spelledWithOneSharp: "G#", spelledWithOneFlat: "Ab" }, // 11
 ];
 
-export type KeySignatureMajorLetter =
+export type KeySignatureMajorLetter = Extract<
+  Letter,
   | "C" // 0 sharps
   | "G" // 1 sharp
   | "D" // 2 sharps
@@ -199,9 +200,11 @@ export type KeySignatureMajorLetter =
   | "Eb" // 3 flats
   | "Ab" // 4 flats
   | "Db" // 5 flats
-  | "Gb"; // 6 flats
+  | "Gb" // 6 flats
+>;
 
-export type SigAccidental =
+export type SigAccidental = Extract<
+  Letter,
   | "F#"
   | "C#"
   | "G#"
@@ -215,7 +218,8 @@ export type SigAccidental =
   | "Db"
   | "Gb"
   | "Cb"
-  | "Fb";
+  | "Fb"
+>;
 
 export const _0_Sharps = [] as const;
 export const _1_Sharps = ["F#"] as const;

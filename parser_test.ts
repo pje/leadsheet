@@ -22,13 +22,9 @@ for await (const songFile of Deno.readDir(`${songsDir}/`)) {
   }
 }
 
-Deno.test("songs dir: sanity check", () => {
-  assert(rawSongs.length > 2);
-});
-
 const emptyString = ``;
 
-const songs = [
+const songFixtures = [
   { title: "oneChord", contents: `| C |` },
   { title: "oneChordNoSpaces", contents: `|C|` },
   { title: "simpleSong", contents: `| CM7 | FM7 | Am7 | Dm7 | G7 | C6 |` },
@@ -54,38 +50,43 @@ Deno.test("empty string: should not parse", () => {
   assertFalse(match.succeeded());
 });
 
-[
-  `C5`,
-  `Cm`,
-  `Csus`,
-  `Csus2`,
-  `Csus4`,
-  `C7`,
-  `CM7`,
-  `CΔ7`,
-  `Cm7`,
-  `C-7`,
-  `Cdim7`,
-  `Caug`,
-  `C⁺`,
-  `C+`,
-  `C6/9`,
-  `Cm11#13(no5)`,
-  `F𝄫minMaj9#11(sus4)(no13)(no 5)(♯¹¹)/E`,
-].forEach((c) =>
-  Deno.test(`chord: "${c}" should parse as a valid chord`, () =>
-    assertGrammarMatch(chordToSong(c))
-  )
-);
+Deno.test(`chord symbols`, async (t) => {
+  const cases = [
+    `C5`,
+    `Cm`,
+    `Csus`,
+    `Csus2`,
+    `Csus4`,
+    `C7`,
+    `CM7`,
+    `CΔ7`,
+    `Cm7`,
+    `C-7`,
+    `Cdim7`,
+    `Caug`,
+    `C⁺`,
+    `C+`,
+    `C6/9`,
+    `Cm11#13(no5)`,
+    `F𝄫minMaj9#11(sus4)(no13)(no 5)(♯¹¹)/E`,
+  ];
+  for (const c of cases) {
+    await t.step(`"${c}" should be valid`, () =>
+      assertGrammarMatch(chordToSong(c))
+    );
+  }
+});
 
-songs.forEach(({ title, contents }) =>
-  Deno.test(`song: ${title}: should parse`, () => assertGrammarMatch(contents))
-);
+Deno.test(`songs`, async (t) => {
+  await t.step("songs dir: sanity check", () => assert(rawSongs.length > 2));
 
-rawSongs.forEach(({ name, contents }) => {
-  Deno.test(`songs dir: ${name} : should parse`, () =>
-    assertGrammarMatch(contents)
-  );
+  for (const { title, contents } of songFixtures) {
+    await t.step(`${title} should parse`, () => assertGrammarMatch(contents));
+  }
+
+  for (const { name, contents } of rawSongs) {
+    await t.step(`${name} should parse`, () => assertGrammarMatch(contents));
+  }
 });
 
 function assertGrammarMatch(str: string) {
