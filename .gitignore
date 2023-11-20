@@ -2,5 +2,6 @@ index.js
 index.js.map
 node_modules
 test.js
+test-failure-*.png
 types.js
 utils.js

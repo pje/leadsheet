@@ -13,7 +13,7 @@ import {
   Minor,
 } from "./types.ts";
 import {
-  CanonicalizeKeyQualifier,
+  canonicalizeKeyQualifier,
   NoteRegex,
   accidentalPreferenceForKey,
   conventionalizeKey,
@@ -127,20 +127,19 @@ function loadSong(song: Song): Song {
     </div>
   </div>`;
 
-  document.querySelector("#title-container .title")!.textContent =
-    song.title || "";
-  document.querySelector("#title-container .key")!.textContent = song.key || "";
+  const titleCntnrElement = document.getElementById("title-container")!;
 
-  document.querySelector("#title-container .artist")!.textContent =
-    song.artist || "";
-
-  document.querySelector("#title-container .date")!.textContent =
-    song.year || "";
+  titleCntnrElement.querySelector(".title")!.textContent = song.title || "";
+  titleCntnrElement.querySelector(".key")!.textContent = song.key || "";
+  titleCntnrElement.querySelector(".artist")!.textContent = song.artist || "";
+  titleCntnrElement.querySelector(".date")!.textContent = song.year || "";
 
   let previousChord: string | undefined = undefined;
 
-  document.querySelector(".song")!.innerHTML = "";
-  document.querySelector(".song")!.insertAdjacentHTML("beforeend", staffBar);
+  const songElement = document.getElementById("song")!;
+
+  songElement.innerHTML = "";
+  songElement.insertAdjacentHTML("beforeend", staffBar);
 
   song.bars.map((bar) => {
     const chords = bar.chords.map((c) => {
@@ -156,23 +155,25 @@ function loadSong(song: Song): Song {
       <div class="staff"></div>
     </div>`;
 
-    document.querySelector(".song")!.insertAdjacentHTML("beforeend", html);
+    songElement.insertAdjacentHTML("beforeend", html);
   });
+
+  setTransposedAmount(0);
 
   return song;
 }
 
 function bootstrap(): void {
   document
-    .querySelector("#transpose-up")!
+    .getElementById("transpose-up")!
     .addEventListener("click", transposeSong.bind(null, 1));
 
   document
-    .querySelector("#transpose-down")!
+    .getElementById("transpose-down")!
     .addEventListener("click", transposeSong.bind(null, -1));
 
   document
-    .querySelector("#song")!
+    .getElementById("songfile")!
     .addEventListener("change", async (e: InputEvent) => {
       const f = (e.currentTarget as HTMLInputElement).files![0];
       const reader = new FileReader();
@@ -186,7 +187,7 @@ function bootstrap(): void {
           return;
         }
 
-        const rawSong = target.result as string;
+        const rawSong = target.result! as string;
         const result = parseSong(rawSong, grammar);
         if (result.error) {
           console.error(result.error);
@@ -221,7 +222,9 @@ function fetchLoadedSongFromLocalStorage(): Song | undefined {
 }
 
 function transposeSong(halfSteps: number): void {
-  const songKey = document.querySelector("#title-container .key")!;
+  const songKey = document
+    .getElementById("title-container")!
+    .querySelector(".key")!;
 
   const [songKeyLetter, keyQualifier]: [Letter, string] = songKey
     .textContent!.trim()
@@ -233,44 +236,51 @@ function transposeSong(halfSteps: number): void {
   );
 
   const destinationRelativeMajorKey =
-    CanonicalizeKeyQualifier(keyQualifier) == Minor
+    canonicalizeKeyQualifier(keyQualifier) == Minor
       ? conventionalizeKey(transpose(destinationKey, 3))
       : destinationKey;
 
   songKey.textContent = `${destinationKey}${keyQualifier}`;
 
-  Array(...document.querySelectorAll(".bar .chord")).forEach((e) => {
-    const current = e.textContent?.trim();
+  Array(...document.querySelectorAll<HTMLDivElement>(".bar .chord")).forEach(
+    (e) => {
+      const current = e.textContent?.trim();
 
-    if (!!current) {
-      const matches = current.match(NoteRegex);
+      if (!!current) {
+        const matches = current.match(NoteRegex);
 
-      if (matches && matches[1]) {
-        const root = matches[1] as Letter;
-        const kind: string | undefined = matches[2];
-        const flatsOrSharps = accidentalPreferenceForKey(
-          destinationRelativeMajorKey
-        );
-        const newRoot = conventionalizeKey(
-          transpose(root, halfSteps, flatsOrSharps)
-        );
-        e.textContent = `${newRoot}${kind}`;
+        if (matches && matches[1]) {
+          const root = matches[1] as Letter;
+          const kind: string | undefined = matches[2];
+          const flatsOrSharps = accidentalPreferenceForKey(
+            destinationRelativeMajorKey
+          );
+          const newRoot = conventionalizeKey(
+            transpose(root, halfSteps, flatsOrSharps)
+          );
+          e.textContent = `${newRoot}${kind}`;
+        }
       }
     }
-  });
+  );
 
-  const transposedOutputEl = document.querySelector("#transposed-steps")!;
-  const oldTransposedOutput = parseInt(transposedOutputEl.textContent!);
-  const newTransposedOutput = (oldTransposedOutput + halfSteps) % 12;
-  transposedOutputEl.textContent = `${
-    newTransposedOutput > 0 ? "+" : ""
-  }${newTransposedOutput}`;
+  addTransposedAmount(halfSteps);
+}
 
-  if (newTransposedOutput == 0) {
-    transposedOutputEl.classList.add("hidden");
-  } else {
-    transposedOutputEl.classList.remove("hidden");
-  }
+function _getTransposedAmountEl() {
+  return document.getElementById("transposed-steps")!;
+}
+
+function setTransposedAmount(n: number, e = _getTransposedAmountEl()) {
+  e.textContent = `${n > 0 ? "+" : ""}${n}`;
+  n == 0 ? e.classList.add("hidden") : e.classList.remove("hidden");
+}
+
+function addTransposedAmount(halfSteps: number) {
+  const transposedAmountEl = _getTransposedAmountEl();
+  const oldTransposedBy = parseInt(transposedAmountEl.textContent!);
+  const newTransposedBy = (oldTransposedBy + halfSteps) % 12;
+  setTransposedAmount(newTransposedBy, transposedAmountEl);
 }
 
 window.onload = bootstrap;

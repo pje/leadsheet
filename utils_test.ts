@@ -9,8 +9,8 @@ import {
   SharpSymbol,
 } from "./types.ts";
 import {
-  CanonicalizeKeyQualifier,
-  ReplaceDupesWithRepeats,
+  canonicalizeKeyQualifier,
+  replaceDupesWithRepeats,
   conventionalizeKey,
   transpose,
 } from "./utils.ts";
@@ -18,13 +18,14 @@ import { assertEquals } from "./test_utils.ts";
 import { DegreesToKeys, KeysToDegrees } from "./types.ts";
 import { assertArrayIncludes } from "https://deno.land/std@0.202.0/assert/assert_array_includes.ts";
 
-Deno.test(ReplaceDupesWithRepeats.name, () => {
+Deno.test(replaceDupesWithRepeats.name, () => {
   const input = ["CM", "CM", "CM"];
-  const result = ReplaceDupesWithRepeats(input);
+  const result = replaceDupesWithRepeats(input);
   assertEquals(["CM", "/", "/"], result);
 });
 
 new Map<string, KeyQualifier>([
+  ["", Major],
   ["M", Major],
   ["major", Major],
   ["Major", Major],
@@ -35,8 +36,8 @@ new Map<string, KeyQualifier>([
   ["min", Minor],
 ]).forEach((v: KeyQualifier, k: string) => {
   Deno.test(
-    `${CanonicalizeKeyQualifier.name}: "${k}" should map to "${v}"`,
-    () => assertEquals(v, CanonicalizeKeyQualifier(k))
+    `${canonicalizeKeyQualifier.name}: "${k}" should map to "${v}"`,
+    () => assertEquals(v, canonicalizeKeyQualifier(k))
   );
 });
 

@@ -69,7 +69,7 @@ button.transpose {
     font-size: 12px;
 }
 
-.song {
+#song {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
     row-gap: 32px;

@@ -15,7 +15,7 @@ import {
   ConventionallyFlatKeyDegrees,
 } from "./types.ts";
 
-export function ReplaceDupesWithRepeats(chords: Array<string>): Array<string> {
+export function replaceDupesWithRepeats(chords: Array<string>): Array<string> {
   let previous: string | undefined = undefined;
   return chords.map((c) => {
     const result = !!c && c == previous ? "/" : c;
@@ -25,22 +25,17 @@ export function ReplaceDupesWithRepeats(chords: Array<string>): Array<string> {
 }
 
 // keyQualifer is, e.g.: "M", "m", "Major", "Minor", "Dorian", etc
-export function CanonicalizeKeyQualifier(rawKeyQualifer: string): KeyQualifier {
+export function canonicalizeKeyQualifier(rawKeyQualifer: string): KeyQualifier {
   switch (rawKeyQualifer.trim()) {
+    case "":
     case "M":
-      return Major;
     case "Major":
-      return Major;
     case "major":
-      return Major;
     case "maj":
       return Major;
     case "m":
-      return Minor;
-    case "minor":
-      return Minor;
     case "Minor":
-      return Minor;
+    case "minor":
     case "min":
       return Minor;
     default:
