@@ -139,25 +139,25 @@ function _nonexhaustiveSwitchGuard(_: never): never {
 
 export type KeyDescription =
   | {
-      natural?: undefined;
-      spelledWithOneFlat: Letter;
-      spelledWithOneSharp: Letter;
-    }
+    natural?: undefined;
+    spelledWithOneFlat: Letter;
+    spelledWithOneSharp: Letter;
+  }
   | {
-      natural: Letter;
-      spelledWithOneFlat?: undefined;
-      spelledWithOneSharp: Letter;
-    }
+    natural: Letter;
+    spelledWithOneFlat?: undefined;
+    spelledWithOneSharp: Letter;
+  }
   | {
-      natural: Letter;
-      spelledWithOneFlat: Letter;
-      spelledWithOneSharp?: undefined;
-    }
+    natural: Letter;
+    spelledWithOneFlat: Letter;
+    spelledWithOneSharp?: undefined;
+  }
   | {
-      natural: Letter;
-      spelledWithOneFlat?: undefined;
-      spelledWithOneSharp?: undefined;
-    };
+    natural: Letter;
+    spelledWithOneFlat?: undefined;
+    spelledWithOneSharp?: undefined;
+  };
 
 export const DegreesToKeys: [
   KeyDescription,

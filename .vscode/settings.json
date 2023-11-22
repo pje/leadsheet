@@ -9,5 +9,8 @@
     "./test_utils.ts",
     "./utils_test.ts"
   ],
+  "[typescript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
   "typescript.tsdk": "node_modules/typescript/lib"
 }

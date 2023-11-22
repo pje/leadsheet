@@ -1,5 +1,6 @@
+/// <reference lib="deno.ns" />
 import { assertEquals } from "https://deno.land/std@0.202.0/assert/assert_equals.ts";
-import { time } from "https://deno.land/x/time.ts/mod.ts";
+import { time } from "https://deno.land/x/time.ts@v2.0.1/mod.ts";
 import puppeteer, {
   Browser,
   Page,

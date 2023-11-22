@@ -232,7 +232,7 @@ function transposeSong(halfSteps: number): void {
     .filter(Boolean) as [Letter, string];
 
   const destinationKey = conventionalizeKey(
-    transpose(songKeyLetter, halfSteps)
+    transpose(songKeyLetter, halfSteps),
   );
 
   const destinationRelativeMajorKey =
@@ -253,15 +253,15 @@ function transposeSong(halfSteps: number): void {
           const root = matches[1] as Letter;
           const kind: string | undefined = matches[2];
           const flatsOrSharps = accidentalPreferenceForKey(
-            destinationRelativeMajorKey
+            destinationRelativeMajorKey,
           );
           const newRoot = conventionalizeKey(
-            transpose(root, halfSteps, flatsOrSharps)
+            transpose(root, halfSteps, flatsOrSharps),
           );
           e.textContent = `${newRoot}${kind}`;
         }
       }
-    }
+    },
   );
 
   addTransposedAmount(halfSteps);

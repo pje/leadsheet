@@ -43,19 +43,19 @@ export function canonicalizeKeyQualifier(rawKeyQualifer: string): KeyQualifier {
 }
 
 export function htmlElementsForKeySignature(
-  keySignature: KeySignatureMajorLetter
+  keySignature: KeySignatureMajorLetter,
 ): Array<string> {
   const accidentalList = KeySignatureToAccidentalList.get(keySignature)!;
 
   return accidentalList.map(
-    (e: SigAccidental) => `<div class="accidental ${e}">${e}</div>`
+    (e: SigAccidental) => `<div class="accidental ${e}">${e}</div>`,
   );
 }
 
 export function transpose(
   noteName: Letter,
   halfSteps: number,
-  preferredAccidental: FlatOrSharpSymbol = SharpSymbol
+  preferredAccidental: FlatOrSharpSymbol = SharpSymbol,
 ): Letter {
   if (halfSteps == 0) return noteName;
 
