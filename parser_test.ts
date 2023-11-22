@@ -1,3 +1,4 @@
+/// <reference lib="deno.ns" />
 // import * as ohm from "./node_modules/ohm-js/index.mjs"; // should work but doesn't! deno bug?
 // import * as ohm from "https://unpkg.com/ohm-js@17.1"; // should work but doesn't! ohm bug? (this is how ohm tells us to install it: https://github.com/ohmjs/ohm#deno)
 // import * as ohm from "https://unpkg.com/ohm-js@17.1/index.mjs"; // works, but fetches remotely
@@ -71,9 +72,8 @@ Deno.test(`chord symbols`, async (t) => {
     `F𝄫minMaj9#11(sus4)(no13)(no 5)(♯¹¹)/E`,
   ];
   for (const c of cases) {
-    await t.step(
-      `"${c}" should be valid`,
-      () => assertGrammarMatch(chordToSong(c)),
+    await t.step(`"${c}" should be valid`, () =>
+      assertGrammarMatch(chordToSong(c))
     );
   }
 });

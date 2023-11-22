@@ -31,7 +31,7 @@ const defaultSong = (() => {
 })()!;
 
 export function Actions(s: Song): SongActionDict<Song> {
-  const defaultMetaFunc = (_1, _2, value, _3) => {
+  const defaultMetaFunc = (_1: any, _2: any, value: any, _3: any) => {
     return value.eval();
   };
   const _Actions: SongActionDict<Song> = {
@@ -174,8 +174,8 @@ function bootstrap(): void {
 
   document
     .getElementById("songfile")!
-    .addEventListener("change", async (e: InputEvent) => {
-      const f = (e.currentTarget as HTMLInputElement).files![0];
+    .addEventListener("change", async (e: Event) => {
+      const f = (e.currentTarget as HTMLInputElement).files![0]!;
       const reader = new FileReader();
 
       reader.onload = function (evt) {

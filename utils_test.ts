@@ -1,3 +1,4 @@
+/// <reference lib="deno.ns" />
 import {
   AllLetters,
   FlatOrSharpSymbol,
@@ -37,9 +38,8 @@ Deno.test(canonicalizeKeyQualifier.name, async (t) => {
     ["min", Minor],
   ]);
   for (const [k, v] of cases) {
-    await t.step(
-      `"${k}" ⇒ "${v}"`,
-      () => assertEquals(v, canonicalizeKeyQualifier(k)),
+    await t.step(`"${k}" ⇒ "${v}"`, () =>
+      assertEquals(v, canonicalizeKeyQualifier(k))
     );
   }
 });
@@ -165,7 +165,7 @@ Deno.test(transpose.name, async (t) => {
     const [input, halfSteps, preferredAccidental] = k;
     await t.step(
       `"${input}" up ${halfSteps} halfSteps (prefer ${preferredAccidental}) should be "${v}"`,
-      () => assertEquals(v, transpose(input, halfSteps, preferredAccidental)),
+      () => assertEquals(v, transpose(input, halfSteps, preferredAccidental))
     );
   }
 });

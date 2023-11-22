@@ -1,18 +1,18 @@
 import {
+  ConventionallyFlatKeyDegrees,
+  Degree,
+  DegreesToKeys,
+  FlatOrSharpSymbol,
+  FlatSymbol,
+  KeyQualifier,
   KeySignatureMajorLetter,
   KeySignatureToAccidentalList,
-  SigAccidental,
-  FlatOrSharpSymbol,
-  SigAccidentalToSymbol,
-  KeyQualifier,
-  Major,
-  Minor,
-  DegreesToKeys,
   KeysToDegrees,
   Letter,
-  FlatSymbol,
+  Major,
+  Minor,
   SharpSymbol,
-  ConventionallyFlatKeyDegrees,
+  SigAccidental,
 } from "./types.ts";
 
 export function replaceDupesWithRepeats(chords: Array<string>): Array<string> {
@@ -64,7 +64,7 @@ export function transpose(
   let newDegree = (currentDegree + halfSteps) % DegreesToKeys.length;
   if (newDegree < 0) newDegree = DegreesToKeys.length + newDegree;
 
-  const result = DegreesToKeys[newDegree];
+  const result = DegreesToKeys[newDegree]!;
 
   if (result.natural) return result.natural;
 

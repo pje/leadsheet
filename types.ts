@@ -33,10 +33,11 @@ export function parseSig(song: Song): {
   numerator: string;
   denominator: string;
 } {
-  const [numerator, denominator] = !!song.sig
-    ? song.sig.split("/")
-    : ["4", "4"];
-
+  let [numerator, denominator] = (song.sig || "").split("/");
+  if (!numerator || !denominator) {
+    numerator = "4";
+    denominator = "4";
+  }
   return { numerator, denominator };
 }
 
@@ -50,7 +51,7 @@ export function guessKey(song: Song): string {
 }
 
 function getFirstChord(song: Song): string | undefined {
-  return song.bars[0].chords[0];
+  return song.bars![0]!.chords[0];
 }
 
 export type BarType = keyof typeof Bars;
