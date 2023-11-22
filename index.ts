@@ -4,19 +4,19 @@ import defaultSongRaw from "./songs/chelsea_bridge.txt";
 import {
   Bar,
   BarType,
-  parseSig,
-  Letter,
-  Result,
-  Ok,
   Err,
-  Song,
+  Letter,
   Minor,
+  Ok,
+  parseSig,
+  Result,
+  Song,
 } from "./types.ts";
 import {
-  canonicalizeKeyQualifier,
-  NoteRegex,
   accidentalPreferenceForKey,
+  canonicalizeKeyQualifier,
   conventionalizeKey,
+  NoteRegex,
   transpose,
 } from "./utils";
 
@@ -55,10 +55,10 @@ export function Actions(s: Song): SongActionDict<Song> {
 
       return s;
     },
-    Chord(chordExpOrRepeat) {
+    Chord(_chordExpOrRepeat) {
       return s;
     },
-    ChordExp(root, flavor) {
+    ChordExp(_root, _flavor) {
       return s;
     },
     metaTitle: defaultMetaFunc,

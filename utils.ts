@@ -1,6 +1,5 @@
 import {
   ConventionallyFlatKeyDegrees,
-  Degree,
   DegreesToKeys,
   FlatOrSharpSymbol,
   FlatSymbol,

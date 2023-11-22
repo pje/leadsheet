@@ -6,7 +6,7 @@ export const Ok = <T>(t: T): Result<T> => {
   return { error: undefined, value: t };
 };
 
-export const Err = <E>(e: string | Error): Result<never> => {
+export const Err = (e: string | Error): Result<never> => {
   const error = typeof e === "string" ? new Error(e) : e;
   return { error, value: undefined };
 };
