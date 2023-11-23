@@ -1,7 +1,3 @@
-/// <reference lib="deno.ns" />
-// import * as ohm from "./node_modules/ohm-js/index.mjs"; // should work but doesn't! deno bug?
-// import * as ohm from "https://unpkg.com/ohm-js@17.1"; // should work but doesn't! ohm bug? (this is how ohm tells us to install it: https://github.com/ohmjs/ohm#deno)
-// import * as ohm from "https://unpkg.com/ohm-js@17.1/index.mjs"; // works, but fetches remotely
 import * as ohm from "./node_modules/ohm-js/src/main.js"; // works, depends on ./node_modules
 import { Grammar } from "./node_modules/ohm-js/index.d.ts";
 import {

@@ -1,4 +1,3 @@
-/// <reference lib="deno.ns" />
 import {
   AllLetters,
   ColorClass,

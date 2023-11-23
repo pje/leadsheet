@@ -1,7 +1,6 @@
 {
   "imports": {
     "path": "node:path",
-    "fs": "node:fs",
-    "puppeteer": "https://deno.land/x/puppeteer@16.2.0/mod.ts"
+    "fs": "node:fs"
   }
 }
