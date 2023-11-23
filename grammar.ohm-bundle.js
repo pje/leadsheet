@@ -1,5 +1,4 @@
-"use strict";
-const { makeRecipe } = require("ohm-js");
+import { makeRecipe } from "ohm-js";
 const result = makeRecipe([
   "grammar",
   {
@@ -994,4 +993,4 @@ const result = makeRecipe([
     ],
   },
 ]);
-module.exports = result;
+export default result;

@@ -1,8 +1,6 @@
 {
   "imports": {
-    "./grammar.ohm-bundle": "./grammar.ohm-bundle.d.ts",
-    "ohm-js": "./node_modules/ohm-js/index.d.ts",
-    "ohm-js/": "./node_modules/ohm-js/",
+    "./grammar.ohm-bundle": "./grammar.ohm-bundle.js",
     "path": "node:path",
     "fs": "node:fs"
   }

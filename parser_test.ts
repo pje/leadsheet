@@ -1,4 +1,3 @@
-import * as ohm from "ohm-js/src/main.js";
 import {
   assert,
   assertFalse,
@@ -8,8 +7,6 @@ import { Parse } from "./parser.ts";
 
 const songsDir = "./songs";
 const rawSongs: Array<{ name: string; contents: string }> = [];
-const grammarText = await Deno.readTextFile("./grammar.ohm");
-const grammar = ohm.grammar(grammarText);
 
 for await (const songFile of Deno.readDir(`${songsDir}/`)) {
   if (songFile.name.endsWith(".txt")) {
@@ -42,8 +39,9 @@ year: 2023
 ];
 
 Deno.test("empty string: should not parse", () => {
-  const match = grammar.match(emptyString);
-  assertFalse(match.succeeded());
+  const result = Parse(emptyString);
+  assertFalse(!!result.value);
+  assert(result.error);
 });
 
 Deno.test(`chord symbols`, async (t) => {
@@ -87,7 +85,7 @@ Deno.test(`songs`, async (t) => {
 });
 
 function assertGrammarMatch(str: string) {
-  const result = Parse(str, grammar);
+  const result = Parse(str);
 
   if (result.error) {
     fail(`grammar failed to match!

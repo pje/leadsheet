@@ -1,4 +1,3 @@
-import grammar from "./grammar.ohm-bundle";
 import "./global.d.ts";
 import defaultSongRaw from "./songs/chelsea_bridge.txt";
 import { ColorClass, Key, Letter, Minor, parseSig, Song } from "./types.ts";
@@ -22,7 +21,7 @@ type State = {
 };
 
 const defaultSong = (() => {
-  const result = Parse(defaultSongRaw, grammar);
+  const result = Parse(defaultSongRaw);
   if (result.error) {
     console.log(result.error);
     return;
@@ -116,7 +115,7 @@ function bootstrap(): void {
         }
 
         const rawSong = target.result! as string;
-        const result = Parse(rawSong, grammar);
+        const result = Parse(rawSong);
         if (result.error) {
           console.error(result.error);
         } else {
@@ -140,7 +139,7 @@ function fetchLoadedSongFromLocalStorage(): Song | undefined {
     return undefined;
   }
 
-  const result = Parse(str, grammar);
+  const result = Parse(str);
   if (result.error) {
     console.error(result.error);
     return undefined;

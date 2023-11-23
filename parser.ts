@@ -1,7 +1,9 @@
-import { SongActionDict, SongGrammar } from "./grammar.ohm-bundle";
+// @deno-types="./grammar.ohm-bundle.d.ts"
+import grammar from "./grammar.ohm-bundle";
+import type { SongActionDict } from "./grammar.ohm-bundle.d.ts";
 import { Bar, BarType, Err, guessKey, Ok, Result, Song } from "./types.ts";
 
-export function Parse(rawSong: string, grammar: SongGrammar): Result<Song> {
+export function Parse(rawSong: string): Result<Song> {
   const matchResult = grammar.match(rawSong);
 
   if (matchResult.failed()) {

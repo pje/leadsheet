@@ -27,7 +27,7 @@
     // end strictness flags
     "paths": {
       "ohm-js": [
-        "./node_modules/ohm-js/index.d.ts"
+        "./node_modules/ohm-js/index"
       ]
     },
     "target": "ES2015"

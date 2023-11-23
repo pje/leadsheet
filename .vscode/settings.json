@@ -5,7 +5,6 @@
   "editor.defaultFormatter": "denoland.vscode-deno",
   "deno.enablePaths": [
     "./browser_test.ts",
-    "./grammar.ohm-bundle.d.ts",
     "./parser.ts",
     "./parser_test.ts",
     "./test_utils.ts",
