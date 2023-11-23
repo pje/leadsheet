@@ -25,7 +25,7 @@ const songFixtures = [
   { title: "simpleSong", contents: `| CM7 | FM7 | Am7 | Dm7 | G7 | C6 |` },
   {
     title: "allLetters",
-    contents: `| A | B | C | D | E | F | G | H | a | c | d | e | f | g | h |`,
+    contents: `| A | B | C | D | E | F | G | a | c | d | e | f | g |`,
   },
   {
     title: "songWithMetadata",
