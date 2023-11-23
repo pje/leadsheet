@@ -62,7 +62,6 @@ Song {
     | caseInsensitive<"E">
     | caseInsensitive<"F">
     | caseInsensitive<"G">
-    | caseInsensitive<"H">
 
   accidental =
     | "##" | "𝄪" | "♯♯"
