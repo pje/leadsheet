@@ -1,3 +1,4 @@
+import * as log from "https://deno.land/std@0.207.0/log/mod.ts";
 import { assertEquals } from "https://deno.land/std@0.202.0/assert/assert_equals.ts";
 import { time } from "https://deno.land/x/time.ts@v2.0.1/mod.ts";
 import puppeteer, {
@@ -42,7 +43,7 @@ Deno.test("index.html renders via file:// protocol", async () => {
       screenshotsPath,
       `test-failure-${time().now().getSeconds()}.png`,
     );
-    console.log(`🚨 test failure screenshot saved to: ${filename}`);
+    log.info(`🚨 test failure screenshot saved to: ${filename}`);
     await page.screenshot({ path: filename });
   }
 });

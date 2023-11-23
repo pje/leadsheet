@@ -6,6 +6,9 @@ import {
   BarType,
   ColorClass,
   Err,
+  guessKey,
+  Key,
+  KeyQualifier,
   Letter,
   Minor,
   Ok,
@@ -24,6 +27,11 @@ import {
 
 const settings = {
   colorChords: false,
+};
+
+type State = {
+  key: Key;
+  song: string | undefined;
 };
 
 const defaultSong = (() => {
@@ -104,7 +112,7 @@ function parseSong(rawSong: string, grammar: SongGrammar): Result<Song> {
     return Err(match.message || "failed to parse song: empty error");
   }
 
-  const song = {
+  const song: Song = {
     bars: [],
   };
 
@@ -113,6 +121,8 @@ function parseSong(rawSong: string, grammar: SongGrammar): Result<Song> {
 
   semantics.addOperation("eval", Actions(song));
   semantics(matchResult).eval();
+
+  song.key ||= guessKey(song);
 
   return Ok(song);
 }
@@ -240,10 +250,12 @@ function transposeSong(halfSteps: number): void {
     .getElementById("title-container")!
     .querySelector(".key")!;
 
-  const [songKeyLetter, keyQualifier]: [Letter, string] = songKey
+  let [songKeyLetter, keyQualifier]: [Letter, string] = songKey
     .textContent!.trim()
     .split(NoteRegex)
     .filter(Boolean) as [Letter, string];
+
+  keyQualifier ||= "M";
 
   const destinationKey = conventionalizeKey(
     transpose(songKeyLetter, halfSteps),

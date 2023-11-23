@@ -1,3 +1,5 @@
+import { NoteRegex } from "./utils.ts";
+
 export type Result<T> =
   | { error: undefined; value: T }
   | { error: Error; value: undefined };
@@ -42,16 +44,11 @@ export function parseSig(song: Song): {
 }
 
 export function guessKey(song: Song): string {
-  if (song.key) {
-    return song.key;
-  } else {
-    const firstChord = getFirstChord(song);
-    return firstChord || "?";
-  }
+  return song.key || getFirstChord(song) || "?";
 }
 
-function getFirstChord(song: Song): string | undefined {
-  return song.bars![0]!.chords[0];
+function getFirstChord(song: Song): string {
+  return song.bars![0]!.chords[0]!;
 }
 
 export type BarType = keyof typeof Bars;
@@ -317,3 +314,41 @@ export const ConventionallyFlatKeyDegrees = [
 export const RepeatedChordSymbol = "/";
 
 export type ColorClass = "maj" | "min" | "dom" | "pow" | "sus" | "aug" | "dim";
+
+export type Ionian = "ionian";
+export type Dorian = "dorian";
+export type Phyrgian = "phyrgian";
+export type Lydian = "lydian";
+export type Mixolydian = "mixolydian";
+export type Aeolian = "aeolian";
+export type Locrian = "locrian";
+export type Mode =
+  | Ionian
+  | Dorian
+  | Phyrgian
+  | Lydian
+  | Mixolydian
+  | Aeolian
+  | Locrian;
+
+export type KeyFlavorMajor = "major";
+export type KeyFlavorMinor = "minor";
+
+export type KeyFlavor = KeyFlavorMajor | Mode;
+
+export type Key = {
+  tonic: Letter;
+  flavor: KeyFlavor;
+};
+
+export function KeyFromString(s: string): Key | undefined {
+  const matches = s.match(NoteRegex);
+  if (matches?.groups && matches?.groups[0] && matches?.groups[1]) {
+    return ({
+      tonic: matches.groups[0] as Letter,
+      flavor: matches.groups[1] as KeyFlavor,
+    });
+  } else {
+    return undefined;
+  }
+}
