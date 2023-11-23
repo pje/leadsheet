@@ -1,0 +1,34 @@
+{
+  "name": "leadsheet",
+  "displayName": "leadsheet",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.84.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "leadsheet",
+        "aliases": [
+          "Leadsheet",
+          "leadsheet"
+        ],
+        "extensions": [
+          ".leadsheet"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "leadsheet",
+        "scopeName": "source.leadsheet",
+        "path": "./syntaxes/leadsheet.tmLanguage.json"
+      }
+    ]
+  }
+}
