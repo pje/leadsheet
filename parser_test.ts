@@ -3,7 +3,21 @@ import {
   assertFalse,
   fail,
 } from "https://deno.land/std@0.202.0/assert/mod.ts";
-import { Parse } from "./parser.ts";
+import { ParseChord, ParseSong } from "./parser.ts";
+import {
+  ChordQuality,
+  Letter,
+  QualityAugmented,
+  QualityDiminished,
+  QualityDominant,
+  QualityMajor,
+  QualityMinor,
+  QualityMinorMajor,
+  QualityPower,
+  QualitySuspended,
+  Result,
+} from "./types.ts";
+import { assertEquals } from "./test_utils.ts";
 
 const songsDir = "./songs";
 const rawSongs: Array<{ name: string; contents: string }> = [];
@@ -39,35 +53,76 @@ year: 2023
 ];
 
 Deno.test("empty string: should not parse", () => {
-  const result = Parse(emptyString);
+  const result = ParseSong(emptyString);
   assertFalse(!!result.value);
   assert(result.error);
 });
 
 Deno.test(`chord symbols`, async (t) => {
-  const cases = [
-    `C5`,
-    `Cm`,
-    `Csus`,
-    `Csus2`,
-    `Csus4`,
-    `C7`,
-    `CM7`,
-    `CΔ7`,
-    `Cm7`,
-    `C-7`,
-    `Cdim7`,
-    `Caug`,
-    `C⁺`,
-    `C+`,
-    `C6/9`,
-    `Cm11#13(no5)`,
-    `F𝄫minMaj9#11(sus4)(no13)(no 5)(♯¹¹)/E`,
-  ];
-  for (const c of cases) {
+  const positiveCases = new Map<string, [Letter, ChordQuality]>([
+    [`C5`, ["C", QualityPower]],
+    [`C`, ["C", QualityMajor]],
+    [`CM`, ["C", QualityMajor]],
+    [`Cmaj`, ["C", QualityMajor]],
+    [`C6`, ["C", QualityMajor]],
+    [`C6/9`, ["C", QualityMajor]],
+    [`CM7`, ["C", QualityMajor]],
+    [`CM11`, ["C", QualityMajor]],
+    [`CM13`, ["C", QualityMajor]],
+    [`Cm`, ["C", QualityMinor]],
+    [`Cmin`, ["C", QualityMinor]],
+    [`Csus`, ["C", QualitySuspended]],
+    [`Csus2`, ["C", QualitySuspended]],
+    [`Csus4`, ["C", QualitySuspended]],
+    [`C7`, ["C", QualityDominant]],
+    [`C9`, ["C", QualityDominant]],
+    [`C11`, ["C", QualityDominant]],
+    [`C13`, ["C", QualityDominant]],
+    [`CM7`, ["C", QualityMajor]],
+    [`CΔ7`, ["C", QualityMajor]],
+    [`Cm7`, ["C", QualityMinor]],
+    [`Cm9`, ["C", QualityMinor]],
+    [`Cm11`, ["C", QualityMinor]],
+    [`Cm13`, ["C", QualityMinor]],
+    [`C-7`, ["C", QualityMinor]],
+    [`Cdim7`, ["C", QualityDiminished]],
+    [`Caug`, ["C", QualityAugmented]],
+    [`C⁺`, ["C", QualityAugmented]],
+    [`C+`, ["C", QualityAugmented]],
+    [`Cm11#13(no5)`, ["C", QualityMinor]],
+    [`F𝄫minMaj9#11(sus4)(no13)(no 5)(♯¹¹)/E`, [
+      "F𝄫" as Letter, // TODO: this should be canonicalized to Eb
+      QualityMinorMajor,
+    ]],
+  ]);
+  for (
+    const [str, [expectedTonic, expectedQualityClass]] of positiveCases
+  ) {
     await t.step(
-      `"${c}" should be valid`,
-      () => assertGrammarMatch(chordToSong(c)),
+      `"${str}" should parse as { tonic: "${expectedTonic}", quality: "${expectedQualityClass}" }`,
+      () => {
+        const chord = parserResultOrFail(ParseChord(str));
+
+        assertEquals(expectedTonic, chord.tonic);
+        assertEquals(expectedQualityClass, chord.qualityClass);
+      },
+    );
+  }
+
+  const negativeCases = [
+    ``,
+    `wat`,
+    `Hm7`,
+    `C Minor`, // can't allow spaces after the tonic
+  ];
+  for (const c of negativeCases) {
+    await t.step(
+      `"${c}" should be invalid`,
+      () => {
+        const result = ParseChord(c);
+        assertFalse(!!result.value);
+        assert(result.error);
+      },
     );
   }
 });
@@ -76,26 +131,25 @@ Deno.test(`songs`, async (t) => {
   await t.step("songs dir: sanity check", () => assert(rawSongs.length > 2));
 
   for (const { title, contents } of songFixtures) {
-    await t.step(`${title} should parse`, () => assertGrammarMatch(contents));
+    await t.step(`${title} should parse`, () => assertValidSong(contents));
   }
 
   for (const { name, contents } of rawSongs) {
-    await t.step(`${name} should parse`, () => assertGrammarMatch(contents));
+    await t.step(`${name} should parse`, () => assertValidSong(contents));
   }
 });
 
-function assertGrammarMatch(str: string) {
-  const result = Parse(str);
+function assertValidSong(str: string) {
+  const _song = parserResultOrFail(ParseSong(str));
 
-  if (result.error) {
-    fail(`grammar failed to match!
-  input: ${str}
-  failure: ${result.error.message}`);
-  } else {
-    assert(true); // Great Job!™
-  }
+  assert(true); // Great Job!™
 }
 
-function chordToSong(c: string) {
-  return `| ${c} |`;
+function parserResultOrFail<T>(result: Result<T>): T {
+  if (result.error) {
+    fail(`grammar failed to match!
+  failure: ${result.error.message}`);
+  } else {
+    return result.value;
+  }
 }

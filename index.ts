@@ -9,7 +9,7 @@ import {
   NoteRegex,
   transpose,
 } from "./utils";
-import { Parse } from "./parser";
+import { ParseSong } from "./parser";
 
 const settings = {
   colorChords: false,
@@ -21,7 +21,7 @@ type State = {
 };
 
 const defaultSong = (() => {
-  const result = Parse(defaultSongRaw);
+  const result = ParseSong(defaultSongRaw);
   if (result.error) {
     console.log(result.error);
     return;
@@ -115,7 +115,7 @@ function bootstrap(): void {
         }
 
         const rawSong = target.result! as string;
-        const result = Parse(rawSong);
+        const result = ParseSong(rawSong);
         if (result.error) {
           console.error(result.error);
         } else {
@@ -139,7 +139,7 @@ function fetchLoadedSongFromLocalStorage(): Song | undefined {
     return undefined;
   }
 
-  const result = Parse(str);
+  const result = ParseSong(str);
   if (result.error) {
     console.error(result.error);
     return undefined;

@@ -314,6 +314,24 @@ export const ConventionallyFlatKeyDegrees = [
 export const RepeatedChordSymbol = "/";
 
 export type ColorClass = "maj" | "min" | "dom" | "pow" | "sus" | "aug" | "dim";
+export type ChordQuality =
+  | typeof QualityMajor
+  | typeof QualityMinor
+  | typeof QualityMinorMajor
+  | typeof QualityDominant
+  | typeof QualityPower
+  | typeof QualitySuspended
+  | typeof QualityAugmented
+  | typeof QualityDiminished;
+
+export const QualityMajor = "maj" as const;
+export const QualityMinorMajor = "minmaj" as const;
+export const QualityMinor = "min" as const;
+export const QualityDominant = "dom" as const;
+export const QualityPower = "pow" as const;
+export const QualitySuspended = "sus" as const;
+export const QualityAugmented = "aug" as const;
+export const QualityDiminished = "dim" as const;
 
 export type Ionian = "ionian";
 export type Dorian = "dorian";
