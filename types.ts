@@ -315,3 +315,5 @@ export const ConventionallyFlatKeyDegrees = [
 ];
 
 export const RepeatedChordSymbol = "/";
+
+export type ColorClass = "maj" | "min" | "dom" | "pow" | "sus" | "aug" | "dim";

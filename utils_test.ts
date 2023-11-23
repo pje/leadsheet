@@ -1,6 +1,7 @@
 /// <reference lib="deno.ns" />
 import {
   AllLetters,
+  ColorClass,
   FlatOrSharpSymbol,
   FlatSymbol,
   KeyQualifier,
@@ -11,6 +12,7 @@ import {
 } from "./types.ts";
 import {
   canonicalizeKeyQualifier,
+  chordColor,
   conventionalizeKey,
   replaceDupesWithRepeats,
   transpose,
@@ -199,6 +201,48 @@ Deno.test(conventionalizeKey.name, async (t) => {
   for (const [k, v] of cases) {
     await t.step(`${k} ⇒ ${v}`, () => {
       assertEquals(v, conventionalizeKey(k));
+    });
+  }
+});
+
+Deno.test(chordColor.name, async (t) => {
+  const cases = new Map<string, ColorClass | undefined>([
+    ["C7", "dom"],
+    ["C9", "dom"],
+    ["C11", "dom"],
+    ["C13", "dom"],
+    ["Calt", "dom"],
+    ["C ", "maj"],
+    ["C", "maj"],
+    ["CM", "maj"],
+    ["C6", "maj"],
+    ["CM7", "maj"],
+    ["CM9", "maj"],
+    ["CM11", "maj"],
+    ["CM13", "maj"],
+    ["C6/9", "maj"],
+    ["Cm", "min"],
+    ["Cm6", "min"],
+    ["Cm7", "min"],
+    ["Cm9", "min"],
+    ["Cm11", "min"],
+    ["Cm13", "min"],
+    ["Cm11#13(no5)", "min"],
+    ["C5", "pow"],
+    ["Csus", "sus"],
+    ["Csus2", "sus"],
+    ["Csus4", "sus"],
+    ["Cdim", "dim"],
+    ["Co", "dim"],
+    ["Cdim7", "dim"],
+    ["Caug", "aug"],
+    ["C+", "aug"],
+    ["C𝄫minMaj9#11(sus4)(no13)(no 5)(♯¹¹)/E", undefined],
+  ]);
+
+  for (const [k, v] of cases) {
+    await t.step(`${k} ⇒ ${v}`, () => {
+      assertEquals(v, chordColor(k));
     });
   }
 });

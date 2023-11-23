@@ -4,6 +4,7 @@ import defaultSongRaw from "./songs/chelsea_bridge.txt";
 import {
   Bar,
   BarType,
+  ColorClass,
   Err,
   Letter,
   Minor,
@@ -15,10 +16,15 @@ import {
 import {
   accidentalPreferenceForKey,
   canonicalizeKeyQualifier,
+  chordColor,
   conventionalizeKey,
   NoteRegex,
   transpose,
 } from "./utils";
+
+const settings = {
+  colorChords: false,
+};
 
 const defaultSong = (() => {
   const result = parseSong(defaultSongRaw, grammar);
@@ -135,7 +141,7 @@ function loadSong(song: Song): Song {
   titleCntnrElement.querySelector(".date")!.textContent = song.year || "";
 
   let previousChord: string | undefined = undefined;
-
+  let previousChordColorClass: ColorClass | undefined = undefined;
   const songElement = document.getElementById("song")!;
 
   songElement.innerHTML = "";
@@ -144,8 +150,16 @@ function loadSong(song: Song): Song {
   song.bars.map((bar) => {
     const chords = bar.chords.map((c) => {
       const result = c == previousChord ? "/" : c;
+
+      const colorClass = (["%", "/"].includes(result))
+        ? previousChordColorClass
+        : chordColor(c);
+
       previousChord = c;
-      return `<div class="chord">${result}</div>`;
+      previousChordColorClass = colorClass;
+      return `<div class="chord ${
+        settings.colorChords && colorClass
+      }">${result}</div>`;
     });
 
     const html = `<div class="bar">

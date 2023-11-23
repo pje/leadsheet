@@ -38,6 +38,12 @@ h1, h2, h3, h4, h5 {
     display: none;
 }
 
+#toolbar-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
 #title-container {
     display: flex;
     gap: 10px;
@@ -190,4 +196,60 @@ button.transpose {
 
 .hidden {
     visibility: hidden;
+}
+:root{
+    --light-gray-4:    #a89984;
+
+    --neutral-red:    #cc241d;
+    --neutral-green:  #98971a;
+    --neutral-yellow: #d79921;
+    --neutral-blue:   #458588;
+    --neutral-purple: #b16286;
+    --neutral-aqua:   #689d6a;
+    --neutral-orange: #d65d0e;
+
+    --faded-red:    #9d0006;
+    --faded-green:  #79740e;
+    --faded-yellow: #b57614;
+    --faded-blue:   #076678;
+    --faded-purple: #8f3f71;
+    --faded-aqua:   #427b58;
+    --faded-orange: #af3a03;
+
+    --bright-red:    #fb4934;
+    --bright-green:  #b8bb26;
+    --bright-yellow: #fabd2f;
+    --bright-blue:   #83a598;
+    --bright-purple: #d3869b;
+    --bright-aqua:   #8ec07c;
+    --bright-orange: #fe8019;
+}
+
+
+.dom {
+    color: var(--neutral-red);
+}
+
+.maj {
+    color: var(--bright-green);
+}
+
+.min {
+    color: var(--bright-blue);
+}
+
+.sus {
+    color: var(--bright-orange);
+}
+
+.aug {
+    color: var(--bright-yellow);
+}
+
+.dim {
+    color: var(--bright-purple);
+}
+
+.pow {
+    color: var(--light-gray-4);
 }
