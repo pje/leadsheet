@@ -1,21 +1,7 @@
-import grammar, { SongActionDict, SongGrammar } from "./grammar.ohm-bundle";
+import grammar from "./grammar.ohm-bundle";
 import "./global.d.ts";
 import defaultSongRaw from "./songs/chelsea_bridge.txt";
-import {
-  Bar,
-  BarType,
-  ColorClass,
-  Err,
-  guessKey,
-  Key,
-  KeyQualifier,
-  Letter,
-  Minor,
-  Ok,
-  parseSig,
-  Result,
-  Song,
-} from "./types.ts";
+import { ColorClass, Key, Letter, Minor, parseSig, Song } from "./types.ts";
 import {
   accidentalPreferenceForKey,
   canonicalizeKeyQualifier,
@@ -24,6 +10,7 @@ import {
   NoteRegex,
   transpose,
 } from "./utils";
+import { Parse } from "./parser";
 
 const settings = {
   colorChords: false,
@@ -35,7 +22,7 @@ type State = {
 };
 
 const defaultSong = (() => {
-  const result = parseSong(defaultSongRaw, grammar);
+  const result = Parse(defaultSongRaw, grammar);
   if (result.error) {
     console.log(result.error);
     return;
@@ -43,89 +30,6 @@ const defaultSong = (() => {
     return result.value;
   }
 })()!;
-
-export function Actions(s: Song): SongActionDict<Song> {
-  const defaultMetaFunc = (_1: any, _2: any, value: any, _3: any) => {
-    return value.eval();
-  };
-  const _Actions: SongActionDict<Song> = {
-    Song(metadata, bars) {
-      metadata.children.map((e) => e.eval());
-      bars.eval();
-      return s;
-    },
-    Bars(barline, bars, _2) {
-      bars.children.forEach((barNode) => {
-        const chords = barNode.children.map((chordNode) => {
-          return chordNode.sourceString;
-        });
-        const bar: Bar = {
-          openBar: barline.sourceString as BarType,
-          closeBar: barline.sourceString as BarType,
-          chords,
-        };
-        s.bars.push(bar);
-      });
-
-      return s;
-    },
-    Chord(_chordExpOrRepeat) {
-      return s;
-    },
-    ChordExp(_root, _flavor) {
-      return s;
-    },
-    metaTitle: defaultMetaFunc,
-    metaArtist: defaultMetaFunc,
-    metaYear: defaultMetaFunc,
-    metaSig: defaultMetaFunc,
-    metaKey: defaultMetaFunc,
-    metaTitleValue(_) {
-      s.title = this.sourceString;
-      return s;
-    },
-    metaArtistValue(_) {
-      s.artist = this.sourceString;
-      return s;
-    },
-    metaYearValue(_) {
-      s.year = this.sourceString;
-      return s;
-    },
-    metaSigValue(_) {
-      s.sig = this.sourceString;
-      return s;
-    },
-    metaKeyValue(_) {
-      s.key = this.sourceString;
-      return s;
-    },
-  };
-
-  return _Actions;
-}
-
-function parseSong(rawSong: string, grammar: SongGrammar): Result<Song> {
-  const match = grammar.match(rawSong);
-
-  if (match.failed()) {
-    return Err(match.message || "failed to parse song: empty error");
-  }
-
-  const song: Song = {
-    bars: [],
-  };
-
-  const matchResult = grammar.match(rawSong);
-  const semantics = grammar.createSemantics();
-
-  semantics.addOperation("eval", Actions(song));
-  semantics(matchResult).eval();
-
-  song.key ||= guessKey(song);
-
-  return Ok(song);
-}
 
 function loadSong(song: Song): Song {
   const { numerator, denominator } = parseSig(song);
@@ -212,7 +116,7 @@ function bootstrap(): void {
         }
 
         const rawSong = target.result! as string;
-        const result = parseSong(rawSong, grammar);
+        const result = Parse(rawSong, grammar);
         if (result.error) {
           console.error(result.error);
         } else {
@@ -236,7 +140,7 @@ function fetchLoadedSongFromLocalStorage(): Song | undefined {
     return undefined;
   }
 
-  const result = parseSong(str, grammar);
+  const result = Parse(str, grammar);
   if (result.error) {
     console.error(result.error);
     return undefined;
