@@ -1,5 +1,6 @@
 // @deno-types="./grammar.ohm-bundle.d.ts"
 import grammar from "./grammar.ohm-bundle";
+import type { IterationNode, NonterminalNode } from "ohm-js";
 import type { SongActionDict } from "./grammar.ohm-bundle.d.ts";
 import { Bar, BarType, Err, guessKey, Ok, Result, Song } from "./types.ts";
 
@@ -25,9 +26,15 @@ export function Parse(rawSong: string): Result<Song> {
 }
 
 function Actions(s: Song): SongActionDict<Song> {
-  const defaultMetaFunc = (_1: any, _2: any, value: any, _3: any) => {
+  function defaultMetaFunc(
+    _1: NonterminalNode,
+    _2: NonterminalNode,
+    value: IterationNode,
+    _3: NonterminalNode,
+  ) {
     return value.eval();
-  };
+  }
+
   const _Actions: SongActionDict<Song> = {
     Song(metadata, bars) {
       metadata.children.map((e) => e.eval());
