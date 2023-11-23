@@ -86,6 +86,7 @@ Song {
     | eleven
     | nine
     | seven
+    | six_and_nine
     | six
     | five
     | four
@@ -95,6 +96,7 @@ Song {
   eleven = | "11" | "¹¹"
   nine = | "9" | "⁹"
   seven = | "7" | "⁷"
+  six_and_nine = | six "/"? nine
   six = | "6" | "⁶"
   five = | "5" | "⁵"
   four = | "4" | "⁴"

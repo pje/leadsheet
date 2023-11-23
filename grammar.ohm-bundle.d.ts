@@ -97,6 +97,12 @@ export interface SongActionDict<T> extends BaseActionDict<T> {
   eleven?: (this: NonterminalNode, arg0: TerminalNode) => T;
   nine?: (this: NonterminalNode, arg0: TerminalNode) => T;
   seven?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  six_and_nine?: (
+    this: NonterminalNode,
+    arg0: NonterminalNode,
+    arg1: IterationNode,
+    arg2: NonterminalNode,
+  ) => T;
   six?: (this: NonterminalNode, arg0: TerminalNode) => T;
   five?: (this: NonterminalNode, arg0: TerminalNode) => T;
   four?: (this: NonterminalNode, arg0: TerminalNode) => T;
