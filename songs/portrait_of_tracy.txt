@@ -1,0 +1,22 @@
+title: Portrait of Tracy
+artist: Jaco Pastorius
+year: 1976
+sig: 4/4
+key: G
+
+| GM7 DM7 AM7 E |
+| CM9 GM9 | EM9 CM9 | / GM9 |
+| EM9 Eb7#9 | EM9 CM9 | EM9 Eb7#9 |
+| E(add2)/G# / / Dsus4 | G6/9 | / | / |
+| Esus24 Bm9 | Esus24 Bm9 | Esus24 Bm9 | Esus24 |
+// switches to 5/4
+| C6/9 | Bm7 | BbM7 | Bm7 |
+| C6/9 | Bm7 | BbM7 |
+// switches to 6/4
+| BbM7 |
+// switches to 5/4
+||3x: Ab13#11 | G D/G A/G D/G :||
+| G#m7b5(add9) | G/C D/G BbM7 FM7 |
+// switches to 4/4
+| CM9 GM9 | EM9 CM9 | GM9 |
+| EM9 Eb7#9 | EM9#4 ||
