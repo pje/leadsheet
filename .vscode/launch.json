@@ -17,6 +17,15 @@
         "${fileBasename}"
       ],
       "attachSimplePort": 9229
+    },
+    {
+      "name": "Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/vscode_extension",
+        "${workspaceFolder}/vscode_extension/example.leadsheet"
+      ]
     }
   ]
 }

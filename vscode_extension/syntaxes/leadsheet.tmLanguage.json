@@ -3,36 +3,32 @@
   "name": "Leadsheet",
   "patterns": [
     {
-      "include": "#chord"
+      "include": "#comment"
     },
     {
       "include": "#barline"
     },
     {
-      "include": "#comment"
+      "include": "#chord"
     },
     {
       "include": "#metadata"
     }
   ],
   "repository": {
-    "chord": {
-      "patterns": [
-        {
-          "name": "variable.other.leadsheet",
-          "match": "\\b[A-G][A-Za-z1-9#b♯♭𝄫𝄪♮Δ\\+⁺o°\\-⁻ø⁹⁷⁶⁵⁴²³¹/\\(\\)]*\\b"
-        },
-        {
-          "name": "variable.other.leadsheet",
-          "match": "%"
-        }
-      ]
-    },
     "barline": {
       "patterns": [
         {
           "name": "constant.other.leadsheet",
-          "match": ":?[12]?\\|{1,2}[12]?:?"
+          "match": ":?\\d?x?\\|{1,2}\\d?x?:?"
+        }
+      ]
+    },
+    "chord": {
+      "patterns": [
+        {
+          "name": "variable.other.leadsheet",
+          "match": "(?:[%/]|(?:[A-G][A-Za-z1-9#b♯♭𝄫𝄪♮Δ\\+⁺o°\\-⁻ø⁹⁷⁶⁵⁴²³¹/\\(\\)]*))"
         }
       ]
     },
