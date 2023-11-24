@@ -1,5 +1,6 @@
+import { ParseChord } from "./parser.ts";
 import {
-  ColorClass,
+  ChordQuality,
   ConventionallyFlatKeyDegrees,
   DegreesToKeys,
   FlatOrSharpSymbol,
@@ -95,25 +96,8 @@ export function accidentalPreferenceForKey(key: Letter) {
 
 export function chordColor(
   c: string,
-): ColorClass | undefined {
-  c = c.trim();
-  if (c.match(/^[A-G]{1}[#♯b♭𝄪𝄫]?m(?:6|7|9|11|13)?/)) {
-    return "min";
-  } else if (c.match(/^[A-G]{1}[#♯b♭𝄪𝄫]?(?:M|6|(?:6\/9)|$)/)) {
-    return "maj";
-  } else if (c.match(/^[A-G]{1}[#♯b♭𝄪𝄫]?(?:7|9|11|13|alt)/)) {
-    return "dom";
-  } else if (c.match(/^[A-G]{1}[#♯b♭𝄪𝄫]?(?:5)/)) {
-    return "pow";
-  } else if (c.match(/^[A-G]{1}[#♯b♭𝄪𝄫]?sus/)) {
-    return "sus";
-  } else if (c.match(/^[A-G]{1}[#♯b♭𝄪𝄫]?(?:dim|o)/)) {
-    return "dim";
-  } else if (c.match(/^[A-G]{1}[#♯b♭𝄪𝄫]?(?:aug|\+|⁺)/)) {
-    return "aug";
-  } else {
-    return undefined;
-  }
+): ChordQuality | undefined {
+  return ParseChord(c).value?.qualityClass;
 }
 
 export const NoteRegex = /^([A-G]{1}(?:[#♯b♭𝄪𝄫])?)(.*)$/;

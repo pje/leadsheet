@@ -313,7 +313,6 @@ export const ConventionallyFlatKeyDegrees = [
 
 export const RepeatedChordSymbol = "/";
 
-export type ColorClass = "maj" | "min" | "dom" | "pow" | "sus" | "aug" | "dim";
 export type ChordQuality =
   | typeof QualityMajor
   | typeof QualityMinor
