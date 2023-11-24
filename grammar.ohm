@@ -147,6 +147,9 @@ Song <: Chord {
 
   Bars = Barline (Chord+ Barline+)+
 
+  lineComment = "//"(~newline any)+newline
+  space += lineComment // this overrides ohmjs's built-in definition of spaces to include our comments. This seems to be the easiest way to get ohmjs to handle comments (e.g. https://github.com/ohmjs/ohm/blob/39ccead882a/examples/simple-lisp/src/simple-lisp.mjs#L35)
+
   metadata =
     | metaTitle
     | metaArtist

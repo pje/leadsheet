@@ -131,6 +131,13 @@ export interface SongActionDict<T> extends ChordActionDict<T> {
     arg1: IterationNode,
     arg2: IterationNode,
   ) => T;
+  lineComment?: (
+    this: NonterminalNode,
+    arg0: TerminalNode,
+    arg1: IterationNode,
+    arg2: NonterminalNode,
+  ) => T;
+  space?: (this: NonterminalNode, arg0: NonterminalNode | TerminalNode) => T;
   metadata?: (this: NonterminalNode, arg0: NonterminalNode) => T;
   metaTitle?: (
     this: NonterminalNode,

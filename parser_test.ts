@@ -51,6 +51,18 @@ year: 2023
 | A | B | C |
 `,
   },
+  {
+    title: "songWithComments",
+    contents: `
+| A |
+// comment
+| B | // comment
+// comment
+| C
+// comment
+| D |
+`,
+  },
 ];
 
 Deno.test("empty string: should not parse", () => {
