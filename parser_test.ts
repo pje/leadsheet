@@ -5,6 +5,7 @@ import {
 } from "https://deno.land/std@0.202.0/assert/mod.ts";
 import { ParseChord, ParseSong } from "./parser.ts";
 import {
+  Chord,
   ChordQuality,
   Letter,
   QualityAugmented,
@@ -73,54 +74,85 @@ Deno.test("empty string: should not parse", () => {
 });
 
 Deno.test(`chord symbols`, async (t) => {
-  const positiveCases = new Map<string, [Letter, ChordQuality]>([
-    [`C5`, ["C", QualityPower]],
-    [`C`, ["C", QualityMajor]],
-    [`CM`, ["C", QualityMajor]],
-    [`Cmaj`, ["C", QualityMajor]],
-    [`C6`, ["C", QualityMajor]],
-    [`C6/9`, ["C", QualityMajor]],
-    [`CM7`, ["C", QualityMajor]],
-    [`CM11`, ["C", QualityMajor]],
-    [`CM13`, ["C", QualityMajor]],
-    [`Cm`, ["C", QualityMinor]],
-    [`Cmin`, ["C", QualityMinor]],
-    [`Csus`, ["C", QualitySuspended]],
-    [`Csus2`, ["C", QualitySuspended]],
-    [`Csus4`, ["C", QualitySuspended]],
-    [`C7`, ["C", QualityDominant]],
-    [`C9`, ["C", QualityDominant]],
-    [`C11`, ["C", QualityDominant]],
-    [`C13`, ["C", QualityDominant]],
-    [`CM7`, ["C", QualityMajor]],
-    [`CΔ7`, ["C", QualityMajor]],
-    [`Cm7`, ["C", QualityMinor]],
-    [`Cm9`, ["C", QualityMinor]],
-    [`Cm11`, ["C", QualityMinor]],
-    [`Cm13`, ["C", QualityMinor]],
-    [`C-7`, ["C", QualityMinor]],
-    [`Cdim7`, ["C", QualityDiminished]],
-    [`Caug`, ["C", QualityAugmented]],
-    [`C⁺`, ["C", QualityAugmented]],
-    [`C+`, ["C", QualityAugmented]],
-    [`C/D`, ["C", QualityMajor]],
-    [`Cm/D`, ["C", QualityMinor]],
-    [`Cm11#13(no5)`, ["C", QualityMinor]],
-    [`F𝄫minMaj9#11(sus4)(no13)(no 5)(♯¹¹)/E`, [
-      "F𝄫" as Letter, // TODO: this should be canonicalized to Eb
-      QualityMinorMajor,
-    ]],
+  const positiveCases = new Map<
+    string,
+    Pick<Chord, "tonic" | "qualityClass" | "alterations">
+  >([
+    [`C5`, { tonic: "C", qualityClass: QualityPower, alterations: [] }],
+    [`C`, { tonic: "C", qualityClass: QualityMajor, alterations: [] }],
+    [`CM`, { tonic: "C", qualityClass: QualityMajor, alterations: [] }],
+    [`Cmaj`, { tonic: "C", qualityClass: QualityMajor, alterations: [] }],
+    [`C6`, { tonic: "C", qualityClass: QualityMajor, alterations: [] }],
+    [`C6/9`, { tonic: "C", qualityClass: QualityMajor, alterations: [] }],
+    [`CM7`, { tonic: "C", qualityClass: QualityMajor, alterations: [] }],
+    [`CM11`, { tonic: "C", qualityClass: QualityMajor, alterations: [] }],
+    [`CM13`, { tonic: "C", qualityClass: QualityMajor, alterations: [] }],
+    [`Cm`, { tonic: "C", qualityClass: QualityMinor, alterations: [] }],
+    [`Cmin`, { tonic: "C", qualityClass: QualityMinor, alterations: [] }],
+    [`Csus`, { tonic: "C", qualityClass: QualitySuspended, alterations: [] }],
+    [`Csus2`, { tonic: "C", qualityClass: QualitySuspended, alterations: [] }],
+    [`Csus4`, { tonic: "C", qualityClass: QualitySuspended, alterations: [] }],
+    [`C7`, { tonic: "C", qualityClass: QualityDominant, alterations: [] }],
+    [`C9`, { tonic: "C", qualityClass: QualityDominant, alterations: [] }],
+    [`C11`, { tonic: "C", qualityClass: QualityDominant, alterations: [] }],
+    [`C13`, { tonic: "C", qualityClass: QualityDominant, alterations: [] }],
+    [`CM7`, { tonic: "C", qualityClass: QualityMajor, alterations: [] }],
+    [`CΔ7`, { tonic: "C", qualityClass: QualityMajor, alterations: [] }],
+    [`Cm7`, { tonic: "C", qualityClass: QualityMinor, alterations: [] }],
+    [`Cm9`, { tonic: "C", qualityClass: QualityMinor, alterations: [] }],
+    [`Cm11`, { tonic: "C", qualityClass: QualityMinor, alterations: [] }],
+    [`Cm13`, { tonic: "C", qualityClass: QualityMinor, alterations: [] }],
+    [`C-7`, { tonic: "C", qualityClass: QualityMinor, alterations: [] }],
+    [`Cdim7`, { tonic: "C", qualityClass: QualityDiminished, alterations: [] }],
+    [`Caug`, { tonic: "C", qualityClass: QualityAugmented, alterations: [] }],
+    [`C⁺`, { tonic: "C", qualityClass: QualityAugmented, alterations: [] }],
+    [`C+`, { tonic: "C", qualityClass: QualityAugmented, alterations: [] }],
+    [`C/D`, { tonic: "C", qualityClass: QualityMajor, alterations: ["/D"] }],
+    [`Cm/D`, { tonic: "C", qualityClass: QualityMinor, alterations: ["/D"] }],
+    [`Cm11#13(no5)`, {
+      tonic: "C",
+      qualityClass: QualityMinor,
+      alterations: ["#13", "(no5)"],
+    }],
+    [`F𝄫minMaj9#11(sus4)(no13)(no 5)(omit 5)(♯¹¹)/E`, {
+      tonic: "F𝄫" as Letter, // TODO: this should be canonicalized to Eb
+      qualityClass: QualityMinorMajor,
+      alterations: [
+        "#11",
+        "(sus4)",
+        "(no13)",
+        "(no 5)",
+        "(omit 5)",
+        "(♯¹¹)",
+        "/E",
+      ],
+    }],
   ]);
   for (
-    const [str, [expectedTonic, expectedQualityClass]] of positiveCases
+    const [str, expectedChord] of positiveCases
   ) {
     await t.step(
-      `"${str}" should parse as { tonic: "${expectedTonic}", quality: "${expectedQualityClass}" }`,
+      `"${str}" should parse as ${JSON.stringify(expectedChord)}`,
       () => {
         const chord = parserResultOrFail(ParseChord(str));
 
-        assertEquals(expectedTonic, chord.tonic);
-        assertEquals(expectedQualityClass, chord.qualityClass);
+        assertEquals(
+          expectedChord.tonic!,
+          chord.tonic,
+          "unexpected chord tonic",
+        );
+
+        assertEquals(
+          expectedChord.qualityClass!,
+          chord.qualityClass,
+          "unexpected chord quality",
+        );
+
+        assertEquals(
+          expectedChord.alterations!,
+          chord.alterations,
+          "unexpected chord alterations",
+        );
       },
     );
   }
