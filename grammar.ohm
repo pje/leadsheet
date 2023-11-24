@@ -7,48 +7,9 @@
 // 👉 lowercase names don't ("lexical rule")
 //  see: https://ohmjs.org/docs/syntax-reference#syntactic-lexical
 
-Song {
-  Song = metadata* Bars
-
-  Bars = Barline (Chord+ Barline+)+
-
-  metadata =
-    | metaTitle
-    | metaArtist
-    | metaYear
-    | metaKey
-    | metaSig
-
-  metaTitle  = caseInsensitive<"title:">  spaceNoNL* metaTitleValue  newline
-  metaArtist = caseInsensitive<"artist:"> spaceNoNL* metaArtistValue newline
-  metaYear   = caseInsensitive<"year:">   spaceNoNL* metaYearValue   newline
-  metaSig    = caseInsensitive<"sig:">    spaceNoNL* metaSigValue    newline
-  metaKey    = caseInsensitive<"key:">    spaceNoNL* metaKeyValue    newline
-
-  metaTitleValue  = (~newline any)+
-  metaArtistValue = (~newline any)+
-  metaYearValue   = (~newline any)+
-  metaSigValue    = (~newline any)+
-  metaKeyValue    = (~newline any)+
-
-  Barline =
-    | ":||:"
-    | ":1||"
-    | ":2||"
-    | ":||"
-    | "||:"
-    | "||"
-    | "|"
-
-  Chord = ChordExp | RepeatPreviousChord
-
+// Defines a grammar for Jazz/Pop Chord notation
+Chord {
   ChordExp = root flavor
-
-  RepeatPreviousChord =
-    | "-"
-    | "%"
-    | "/"
-    | "𝄎"
 
   root = noteLetter accidental?
 
@@ -177,4 +138,48 @@ Song {
 
   newline = "\r"? "\n"
   spaceNoNL = ~newline "\x00".."\x20"
+}
+
+// Defines a grammar for a simple, markdown-like format for writing leadsheets
+// (actually just chord charts, no melody supported yet)
+Song <: Chord {
+  Song = metadata* Bars
+
+  Bars = Barline (Chord+ Barline+)+
+
+  metadata =
+    | metaTitle
+    | metaArtist
+    | metaYear
+    | metaKey
+    | metaSig
+
+  metaTitle  = caseInsensitive<"title:">  spaceNoNL* metaTitleValue  newline
+  metaArtist = caseInsensitive<"artist:"> spaceNoNL* metaArtistValue newline
+  metaYear   = caseInsensitive<"year:">   spaceNoNL* metaYearValue   newline
+  metaSig    = caseInsensitive<"sig:">    spaceNoNL* metaSigValue    newline
+  metaKey    = caseInsensitive<"key:">    spaceNoNL* metaKeyValue    newline
+
+  metaTitleValue  = (~newline any)+
+  metaArtistValue = (~newline any)+
+  metaYearValue   = (~newline any)+
+  metaSigValue    = (~newline any)+
+  metaKeyValue    = (~newline any)+
+
+  Barline =
+    | ":||:"
+    | ":1||"
+    | ":2||"
+    | ":||"
+    | "||:"
+    | "||"
+    | "|"
+
+  RepeatPreviousChord =
+    | "-"
+    | "%"
+    | "/"
+    | "𝄎"
+
+  Chord = ChordExp | RepeatPreviousChord
 }

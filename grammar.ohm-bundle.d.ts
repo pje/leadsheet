@@ -5,73 +5,19 @@ import {
   BaseActionDict,
   Grammar,
   IterationNode,
+  Namespace,
   Node,
   NonterminalNode,
   Semantics,
   TerminalNode,
 } from "ohm-js";
 
-export interface SongActionDict<T> extends BaseActionDict<T> {
-  Song?: (
-    this: NonterminalNode,
-    arg0: IterationNode,
-    arg1: NonterminalNode,
-  ) => T;
-  Bars?: (
-    this: NonterminalNode,
-    arg0: NonterminalNode,
-    arg1: IterationNode,
-    arg2: IterationNode,
-  ) => T;
-  metadata?: (this: NonterminalNode, arg0: NonterminalNode) => T;
-  metaTitle?: (
-    this: NonterminalNode,
-    arg0: NonterminalNode,
-    arg1: IterationNode,
-    arg2: NonterminalNode,
-    arg3: NonterminalNode,
-  ) => T;
-  metaArtist?: (
-    this: NonterminalNode,
-    arg0: NonterminalNode,
-    arg1: IterationNode,
-    arg2: NonterminalNode,
-    arg3: NonterminalNode,
-  ) => T;
-  metaYear?: (
-    this: NonterminalNode,
-    arg0: NonterminalNode,
-    arg1: IterationNode,
-    arg2: NonterminalNode,
-    arg3: NonterminalNode,
-  ) => T;
-  metaSig?: (
-    this: NonterminalNode,
-    arg0: NonterminalNode,
-    arg1: IterationNode,
-    arg2: NonterminalNode,
-    arg3: NonterminalNode,
-  ) => T;
-  metaKey?: (
-    this: NonterminalNode,
-    arg0: NonterminalNode,
-    arg1: IterationNode,
-    arg2: NonterminalNode,
-    arg3: NonterminalNode,
-  ) => T;
-  metaTitleValue?: (this: NonterminalNode, arg0: IterationNode) => T;
-  metaArtistValue?: (this: NonterminalNode, arg0: IterationNode) => T;
-  metaYearValue?: (this: NonterminalNode, arg0: IterationNode) => T;
-  metaSigValue?: (this: NonterminalNode, arg0: IterationNode) => T;
-  metaKeyValue?: (this: NonterminalNode, arg0: IterationNode) => T;
-  Barline?: (this: NonterminalNode, arg0: TerminalNode) => T;
-  Chord?: (this: NonterminalNode, arg0: NonterminalNode) => T;
+export interface ChordActionDict<T> extends BaseActionDict<T> {
   ChordExp?: (
     this: NonterminalNode,
     arg0: NonterminalNode,
     arg1: NonterminalNode,
   ) => T;
-  RepeatPreviousChord?: (this: NonterminalNode, arg0: TerminalNode) => T;
   root?: (
     this: NonterminalNode,
     arg0: NonterminalNode,
@@ -161,6 +107,76 @@ export interface SongActionDict<T> extends BaseActionDict<T> {
   spaceNoNL?: (this: NonterminalNode, arg0: TerminalNode) => T;
 }
 
+export interface ChordSemantics extends Semantics {
+  addOperation<T>(name: string, actionDict: ChordActionDict<T>): this;
+  extendOperation<T>(name: string, actionDict: ChordActionDict<T>): this;
+  addAttribute<T>(name: string, actionDict: ChordActionDict<T>): this;
+  extendAttribute<T>(name: string, actionDict: ChordActionDict<T>): this;
+}
+
+export interface ChordGrammar extends Grammar {
+  createSemantics(): ChordSemantics;
+  extendSemantics(superSemantics: ChordSemantics): ChordSemantics;
+}
+
+export interface SongActionDict<T> extends ChordActionDict<T> {
+  Song?: (
+    this: NonterminalNode,
+    arg0: IterationNode,
+    arg1: NonterminalNode,
+  ) => T;
+  Bars?: (
+    this: NonterminalNode,
+    arg0: NonterminalNode,
+    arg1: IterationNode,
+    arg2: IterationNode,
+  ) => T;
+  metadata?: (this: NonterminalNode, arg0: NonterminalNode) => T;
+  metaTitle?: (
+    this: NonterminalNode,
+    arg0: NonterminalNode,
+    arg1: IterationNode,
+    arg2: NonterminalNode,
+    arg3: NonterminalNode,
+  ) => T;
+  metaArtist?: (
+    this: NonterminalNode,
+    arg0: NonterminalNode,
+    arg1: IterationNode,
+    arg2: NonterminalNode,
+    arg3: NonterminalNode,
+  ) => T;
+  metaYear?: (
+    this: NonterminalNode,
+    arg0: NonterminalNode,
+    arg1: IterationNode,
+    arg2: NonterminalNode,
+    arg3: NonterminalNode,
+  ) => T;
+  metaSig?: (
+    this: NonterminalNode,
+    arg0: NonterminalNode,
+    arg1: IterationNode,
+    arg2: NonterminalNode,
+    arg3: NonterminalNode,
+  ) => T;
+  metaKey?: (
+    this: NonterminalNode,
+    arg0: NonterminalNode,
+    arg1: IterationNode,
+    arg2: NonterminalNode,
+    arg3: NonterminalNode,
+  ) => T;
+  metaTitleValue?: (this: NonterminalNode, arg0: IterationNode) => T;
+  metaArtistValue?: (this: NonterminalNode, arg0: IterationNode) => T;
+  metaYearValue?: (this: NonterminalNode, arg0: IterationNode) => T;
+  metaSigValue?: (this: NonterminalNode, arg0: IterationNode) => T;
+  metaKeyValue?: (this: NonterminalNode, arg0: IterationNode) => T;
+  Barline?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  RepeatPreviousChord?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  Chord?: (this: NonterminalNode, arg0: NonterminalNode) => T;
+}
+
 export interface SongSemantics extends Semantics {
   addOperation<T>(name: string, actionDict: SongActionDict<T>): this;
   extendOperation<T>(name: string, actionDict: SongActionDict<T>): this;
@@ -173,5 +189,8 @@ export interface SongGrammar extends Grammar {
   extendSemantics(superSemantics: SongSemantics): SongSemantics;
 }
 
-declare const grammar: SongGrammar;
-export default grammar;
+declare const ns: {
+  Chord: ChordGrammar;
+  Song: SongGrammar;
+};
+export default ns;

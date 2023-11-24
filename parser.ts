@@ -209,7 +209,7 @@ function ChordActions(c: Chord): SongActionDict<Chord> {
 }
 
 export function ParseChord(rawChord: string): Result<Chord> {
-  const matchResult = grammar.match(rawChord, "ChordExp");
+  const matchResult = grammar.Chord.match(rawChord, "ChordExp");
 
   if (matchResult.failed()) {
     return Err(matchResult.message || "failed to parse chord: empty error");
@@ -225,7 +225,7 @@ export function ParseChord(rawChord: string): Result<Chord> {
     alterations: [],
   };
 
-  const semantics = grammar.createSemantics();
+  const semantics = grammar.Chord.createSemantics();
 
   semantics.addOperation("eval", ChordActions(chord));
   semantics(matchResult).eval();
@@ -234,7 +234,7 @@ export function ParseChord(rawChord: string): Result<Chord> {
 }
 
 export function ParseSong(rawSong: string): Result<Song> {
-  const matchResult = grammar.match(rawSong);
+  const matchResult = grammar.Song.match(rawSong, "Song");
 
   if (matchResult.failed()) {
     return Err(matchResult.message || "failed to parse song: empty error");
@@ -244,7 +244,7 @@ export function ParseSong(rawSong: string): Result<Song> {
     bars: [],
   };
 
-  const semantics = grammar.createSemantics();
+  const semantics = grammar.Song.createSemantics();
 
   semantics.addOperation("eval", Actions(song));
   semantics(matchResult).eval();
