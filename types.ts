@@ -31,6 +31,16 @@ export const Bars = {
   ":2||": true,
 } as const;
 
+export type Chord = {
+  _raw: string;
+  tonic: Letter;
+  flavor: string | undefined;
+  quality: string | undefined;
+  qualityClass: ChordQuality | undefined;
+  extent: string | undefined;
+  alterations: Array<string>;
+};
+
 export function parseSig(song: Song): {
   numerator: string;
   denominator: string;
@@ -48,13 +58,13 @@ export function guessKey(song: Song): string {
 }
 
 function getFirstChord(song: Song): string {
-  return song.bars![0]!.chords[0]!;
+  return song.bars![0]!.chords[0]!._raw;
 }
 
 export type BarType = keyof typeof Bars;
 
 export type Bar = {
-  chords: Array<string>;
+  chords: Array<Chord>;
   openBar: BarType;
   closeBar: BarType;
 };
@@ -311,7 +321,13 @@ export const ConventionallyFlatKeyDegrees = [
   11, // Ab
 ];
 
-export const RepeatedChordSymbol = "/";
+export const RepeatedChordSymbol = "%";
+export const AllRepeatedChordSymbols = [
+  RepeatedChordSymbol,
+  "/",
+  "-",
+  "𝄎",
+];
 
 export type ChordQuality =
   | typeof QualityMajor

@@ -1,16 +1,12 @@
 // @deno-types="./grammar.ohm-bundle.d.ts"
 import grammar from "./grammar.ohm-bundle";
-import type {
-  IterationNode,
-  Node,
-  NonterminalNode,
-  TerminalNode,
-} from "ohm-js";
+import type { IterationNode, NonterminalNode, TerminalNode } from "ohm-js";
 import type { SongActionDict } from "./grammar.ohm-bundle.d.ts";
 import {
+  AllRepeatedChordSymbols,
   Bar,
   BarType,
-  ChordQuality,
+  Chord,
   Err,
   guessKey,
   Letter,
@@ -27,50 +23,38 @@ import {
   Song,
 } from "./types.ts";
 
-export type Chord = {
-  _raw: string;
-  tonic: Letter;
-  flavor: string | undefined;
-  quality: string | undefined;
-  qualityClass: ChordQuality | undefined;
-  extent: string | undefined;
-  alterations: Array<string>;
-};
+function isImplicitMajor(
+  quality: IterationNode,
+  extent: IterationNode,
+  _alterations: IterationNode,
+): boolean {
+  return (
+    quality.sourceString.trim() === "" && extent.sourceString.startsWith("6")
+  );
+}
+
+function isImplicitDominant(
+  quality: IterationNode,
+  extent: IterationNode,
+  _alterations: IterationNode,
+): boolean {
+  return (
+    quality.sourceString.trim() === "" &&
+    ["7", "9", "11", "13", "alt"].some((s) => extent.sourceString.startsWith(s))
+  );
+}
+
+function isImplicitPower(
+  quality: IterationNode,
+  extent: IterationNode,
+  _alterations: IterationNode,
+): boolean {
+  return (
+    quality.sourceString.trim() === "" && extent.sourceString.startsWith("5")
+  );
+}
 
 function ChordActions(c: Chord): SongActionDict<Chord> {
-  function isImplicitMajor(
-    quality: IterationNode,
-    extent: IterationNode,
-    _alterations: IterationNode,
-  ): boolean {
-    return (
-      quality.sourceString.trim() === "" && extent.sourceString.startsWith("6")
-    );
-  }
-
-  function isImplicitDominant(
-    quality: IterationNode,
-    extent: IterationNode,
-    _alterations: IterationNode,
-  ): boolean {
-    return (
-      quality.sourceString.trim() === "" &&
-      ["7", "9", "11", "13", "alt"].some((s) =>
-        extent.sourceString.startsWith(s)
-      )
-    );
-  }
-
-  function isImplicitPower(
-    quality: IterationNode,
-    extent: IterationNode,
-    _alterations: IterationNode,
-  ): boolean {
-    return (
-      quality.sourceString.trim() === "" && extent.sourceString.startsWith("5")
-    );
-  }
-
   const _Actions: SongActionDict<Chord> = {
     ChordExp(root, flavor) {
       root.eval();
@@ -287,10 +271,23 @@ function Actions(s: Song): SongActionDict<Song> {
       return s;
     },
     Bars(barline, bars, _2) {
+      let previousChord: Chord | undefined = undefined;
+
       bars.children.forEach((barNode) => {
-        const chords = barNode.children.map((chordNode) => {
-          return chordNode.sourceString;
-        });
+        const chords = barNode.children.map(
+          (chordNode) => {
+            if (
+              !previousChord ||
+              !AllRepeatedChordSymbols.includes(chordNode.sourceString.trim())
+            ) {
+              // i.e. not a repetition
+              previousChord = (ParseChord(chordNode.sourceString).value)!;
+            }
+
+            return ({ ...previousChord });
+          },
+        );
+
         const bar: Bar = {
           openBar: barline.sourceString as BarType,
           closeBar: barline.sourceString as BarType,

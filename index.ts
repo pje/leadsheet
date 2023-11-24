@@ -1,18 +1,29 @@
 import "./global.d.ts";
 import defaultSongRaw from "./songs/chelsea_bridge.txt";
-import { ChordQuality, Key, Letter, Minor, parseSig, Song } from "./types.ts";
+import {
+  AllRepeatedChordSymbols,
+  Chord,
+  ChordQuality,
+  guessKey,
+  Key,
+  Letter,
+  Minor,
+  parseSig,
+  RepeatedChordSymbol,
+  Song,
+} from "./types.ts";
 import {
   accidentalPreferenceForKey,
   canonicalizeKeyQualifier,
-  chordColor,
   conventionalizeKey,
+  htmlElementsForKeySignature,
   NoteRegex,
   transpose,
 } from "./utils";
 import { ParseSong } from "./parser";
 
 const settings = {
-  colorChords: false,
+  colorChords: true,
 };
 
 type State = {
@@ -53,7 +64,7 @@ function loadSong(song: Song): Song {
   titleCntnrElement.querySelector(".artist")!.textContent = song.artist || "";
   titleCntnrElement.querySelector(".date")!.textContent = song.year || "";
 
-  let previousChord: string | undefined = undefined;
+  let previousChord: Chord | undefined = undefined;
   let previousChordColorClass: ChordQuality | undefined = undefined;
   const songElement = document.getElementById("song")!;
 
@@ -62,11 +73,13 @@ function loadSong(song: Song): Song {
 
   song.bars.map((bar) => {
     const chords = bar.chords.map((c) => {
-      const result = c == previousChord ? "/" : c;
+      const result = c._raw == previousChord?._raw
+        ? RepeatedChordSymbol
+        : c._raw;
 
-      const colorClass = (["%", "/"].includes(result))
+      const colorClass = (AllRepeatedChordSymbols.includes(result))
         ? previousChordColorClass
-        : chordColor(c);
+        : c.qualityClass;
 
       previousChord = c;
       previousChordColorClass = colorClass;

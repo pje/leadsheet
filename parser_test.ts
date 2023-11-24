@@ -37,6 +37,7 @@ const songFixtures = [
   { title: "oneChord", contents: `| C |` },
   { title: "oneChordNoSpaces", contents: `|C|` },
   { title: "simpleSong", contents: `| CM7 | FM7 | Am7 | Dm7 | G7 | C6 |` },
+  { title: "repetition", contents: `| C | % | D | % |` },
   {
     title: "allLetters",
     contents: `| A | B | C | D | E | F | G | a | c | d | e | f | g |`,
