@@ -4,8 +4,6 @@ import {
   AllRepeatedChordSymbols,
   Chord,
   ChordQuality,
-  guessKey,
-  Key,
   Letter,
   Minor,
   parseSig,
@@ -16,7 +14,6 @@ import {
   accidentalPreferenceForKey,
   canonicalizeKeyQualifier,
   conventionalizeKey,
-  htmlElementsForKeySignature,
   NoteRegex,
   transpose,
 } from "./utils";
@@ -24,11 +21,6 @@ import { ParseSong } from "./parser";
 
 const settings = {
   colorChords: true,
-};
-
-type State = {
-  key: Key;
-  song: string | undefined;
 };
 
 const defaultSong = (() => {

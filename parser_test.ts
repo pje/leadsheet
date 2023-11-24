@@ -6,7 +6,6 @@ import {
 import { ParseChord, ParseSong } from "./parser.ts";
 import {
   Chord,
-  ChordQuality,
   Letter,
   QualityAugmented,
   QualityDiminished,
