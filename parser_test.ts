@@ -104,6 +104,7 @@ Deno.test(`chord symbols`, async (t) => {
     [`C⁺`, ["C", QualityAugmented]],
     [`C+`, ["C", QualityAugmented]],
     [`C/D`, ["C", QualityMajor]],
+    [`Cm/D`, ["C", QualityMinor]],
     [`Cm11#13(no5)`, ["C", QualityMinor]],
     [`F𝄫minMaj9#11(sus4)(no13)(no 5)(♯¹¹)/E`, [
       "F𝄫" as Letter, // TODO: this should be canonicalized to Eb
