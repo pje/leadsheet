@@ -29,7 +29,8 @@ function isImplicitMajor(
   _alterations: IterationNode,
 ): boolean {
   return (
-    quality.sourceString.trim() === "" && extent.sourceString.startsWith("6")
+    quality.sourceString.trim() === "" &&
+    (extent.sourceString.trim() === "" || extent.sourceString.startsWith("6"))
   );
 }
 

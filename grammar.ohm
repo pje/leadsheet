@@ -126,7 +126,7 @@ Chord {
     | accidental extent                          // e.g. #11, b13
     | alteration_symbol extent                   // e.g. Δ9,  ⁺7
     | alteration_add_no_omit extent              // e.g. "no 5", no5, "add 5", "omit 5"
-    | "/" (extent | root)                        // e.g. C/G
+    | "/" root                                   // e.g. C/G
     | caseInsensitive<"alt"> extent?             // e.g. alt, alt7
     | caseInsensitive<"sus"> ("2"|"4")?          // e.g. sus, sus2, sus4
     | spaceNoNL? extent                          // e.g. `C7`, `C 9`
