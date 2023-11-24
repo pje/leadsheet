@@ -170,13 +170,19 @@ Song <: Chord {
   metaKeyValue    = (~newline any)+
 
   Barline =
-    | ":||:"
-    | ":1||"
-    | ":2||"
-    | ":||"
-    | "||:"
-    | "||"
-    | "|"
+    | BarlineWithRepeats
+    | DoubleBarline
+    | SingleBarline
+
+  BarlineWithRepeats =
+    | BarRepeatSignifierClose (DoubleBarline | SingleBarline)
+    | (DoubleBarline | SingleBarline) BarRepeatSignifierOpen
+
+  BarRepeatSignifierOpen = (digit caseInsensitive<"x">?)? ":"
+  BarRepeatSignifierClose = ":" (digit caseInsensitive<"x">?)?
+
+  DoubleBarline = "||"
+  SingleBarline = "|"
 
   RepeatPreviousChord =
     | "-"

@@ -179,7 +179,26 @@ export interface SongActionDict<T> extends ChordActionDict<T> {
   metaYearValue?: (this: NonterminalNode, arg0: IterationNode) => T;
   metaSigValue?: (this: NonterminalNode, arg0: IterationNode) => T;
   metaKeyValue?: (this: NonterminalNode, arg0: IterationNode) => T;
-  Barline?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  Barline?: (this: NonterminalNode, arg0: NonterminalNode) => T;
+  BarlineWithRepeats?: (
+    this: NonterminalNode,
+    arg0: NonterminalNode,
+    arg1: NonterminalNode,
+  ) => T;
+  BarRepeatSignifierOpen?: (
+    this: NonterminalNode,
+    arg0: IterationNode,
+    arg1: IterationNode,
+    arg2: TerminalNode,
+  ) => T;
+  BarRepeatSignifierClose?: (
+    this: NonterminalNode,
+    arg0: TerminalNode,
+    arg1: IterationNode,
+    arg2: IterationNode,
+  ) => T;
+  DoubleBarline?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  SingleBarline?: (this: NonterminalNode, arg0: TerminalNode) => T;
   RepeatPreviousChord?: (this: NonterminalNode, arg0: TerminalNode) => T;
   Chord?: (this: NonterminalNode, arg0: NonterminalNode) => T;
 }
