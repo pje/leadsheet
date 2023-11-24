@@ -1,6 +1,6 @@
 import "./global.d.ts";
 import defaultSongRaw from "./songs/chelsea_bridge.txt";
-import { ColorClass, Key, Letter, Minor, parseSig, Song } from "./types.ts";
+import { ChordQuality, Key, Letter, Minor, parseSig, Song } from "./types.ts";
 import {
   accidentalPreferenceForKey,
   canonicalizeKeyQualifier,
@@ -54,7 +54,7 @@ function loadSong(song: Song): Song {
   titleCntnrElement.querySelector(".date")!.textContent = song.year || "";
 
   let previousChord: string | undefined = undefined;
-  let previousChordColorClass: ColorClass | undefined = undefined;
+  let previousChordColorClass: ChordQuality | undefined = undefined;
   const songElement = document.getElementById("song")!;
 
   songElement.innerHTML = "";
