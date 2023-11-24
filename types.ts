@@ -22,15 +22,6 @@ export type Song = {
   bars: Array<Bar>;
 };
 
-export const Bars = {
-  "|": true,
-  "||": true,
-  "||:": true,
-  ":||": true,
-  ":1||": true,
-  ":2||": true,
-} as const;
-
 export type Chord = {
   _raw: string;
   tonic: Letter;
@@ -61,12 +52,10 @@ function getFirstChord(song: Song): string {
   return song.bars![0]!.chords[0]!._raw;
 }
 
-export type BarType = keyof typeof Bars;
-
 export type Bar = {
   chords: Array<Chord>;
-  openBar: BarType;
-  closeBar: BarType;
+  openBar: string;
+  closeBar: string;
 };
 
 export const AllDegrees = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] as const;

@@ -5,7 +5,6 @@ import type { SongActionDict } from "./grammar.ohm-bundle.d.ts";
 import {
   AllRepeatedChordSymbols,
   Bar,
-  BarType,
   Chord,
   Err,
   guessKey,
@@ -290,8 +289,8 @@ function Actions(s: Song): SongActionDict<Song> {
         );
 
         const bar: Bar = {
-          openBar: barline.sourceString as BarType,
-          closeBar: barline.sourceString as BarType,
+          openBar: barline.sourceString,
+          closeBar: barline.sourceString,
           chords,
         };
         s.bars.push(bar);
