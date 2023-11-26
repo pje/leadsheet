@@ -1,6 +1,6 @@
 {
   "name": "leadsheet.js",
-  "description": "reads songs from a text file. shows you their chords. can transpose them in the UI.",
+  "description": "parses leadsheets. renders leadsheets in the browser. transposes them too ✍️🎶🎷",
   "version": "0.0.1",
   "main": "index.js",
   "dependencies": {

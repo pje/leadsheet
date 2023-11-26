@@ -57,25 +57,25 @@ async function teardown(browser: Browser) {
 }
 
 async function getTitle(page: Page) {
-  const titleSelector = await page.waitForSelector("#title-container .title");
+  const titleSelector = await page.waitForSelector("#metadata .title");
   const title: string = await titleSelector!.evaluate((e) => e!.textContent);
   return title;
 }
 
 async function getArtist(page: Page) {
-  const artistSelector = await page.waitForSelector("#title-container .artist");
+  const artistSelector = await page.waitForSelector("#metadata .artist");
   const artist: string = await artistSelector!.evaluate((e) => e!.textContent);
   return artist;
 }
 
 async function getKey(page: Page) {
-  const keySelector = await page.waitForSelector("#title-container .key");
+  const keySelector = await page.waitForSelector("#metadata .key");
   const key: string = await keySelector!.evaluate((e) => e!.textContent);
   return key;
 }
 
 async function getTransposedAmount(page: Page) {
-  const outputSelector = await page.waitForSelector("#title-container output");
+  const outputSelector = await page.waitForSelector("#metadata output");
   const amount: string = await outputSelector!.evaluate((e) => e!.textContent);
   return amount;
 }

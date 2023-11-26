@@ -9,11 +9,12 @@
     </script>
   </head>
 
-  <body>
-    <div id="toolbar-container">
+  <body id="root">
+    <div id="toolbar">
       <input type="file" id="songfile" name="songfile" />
+      <details id="settings"></details>
     </div>
-    <div id="title-container">
+    <div id="metadata">
       <h1 class="title"> </h1>
       <h3 class="artist"> </h3>
       <h4 class="date"> </h4>
@@ -27,19 +28,6 @@
       </div>
     </div>
 
-    <div id="song">
-      <div class="bar">
-        <div class="chords"><div class="chord"></div></div>
-        <div class="staff flex-row">
-          <div class="clef">𝄞</div>
-          <div class="key-signature"></div>
-          <div class="time-signature">
-            <div class="numerator"> </div>
-            <div class="slash" hidden>/</div>
-            <div class="denominator"> </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div id="song"></div>
   </body>
 </html>

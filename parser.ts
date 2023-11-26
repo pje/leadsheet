@@ -61,6 +61,7 @@ function ChordActions(c: Chord): SongActionDict<Chord> {
 
       if (flavor.sourceString === "") {
         c.qualityClass = QualityMajor;
+        c.flavor = QualityMajor;
       } else {
         flavor.eval();
       }
@@ -79,6 +80,8 @@ function ChordActions(c: Chord): SongActionDict<Chord> {
       extent: IterationNode,
       alterations: IterationNode,
     ) {
+      c.flavor = this.sourceString;
+
       if (isImplicitPower(quality, extent, alterations)) {
         c.qualityClass = QualityPower;
       } else if (isImplicitMajor(quality, extent, alterations)) {
@@ -215,7 +218,7 @@ export function ParseChord(rawChord: string): Result<Chord> {
     return Err(matchResult.message || "failed to parse chord: empty error");
   }
 
-  const chord = {
+  const chord: Chord = {
     _raw: rawChord,
     tonic: <Letter> "C",
     flavor: undefined,
@@ -242,6 +245,11 @@ export function ParseSong(rawSong: string): Result<Song> {
 
   const song: Song = {
     bars: [],
+    title: undefined,
+    artist: undefined,
+    year: undefined,
+    sig: undefined,
+    key: undefined,
   };
 
   const semantics = grammar.Song.createSemantics();

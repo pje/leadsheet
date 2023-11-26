@@ -8,5 +8,8 @@
 .flex-row {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+}
+
+.flex-justify-start {
+    justify-content: flex-start;
 }

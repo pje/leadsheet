@@ -101,3 +101,22 @@ export function chordColor(
 }
 
 export const NoteRegex = /^([A-G]{1}(?:[#♯b♭𝄪𝄫])?)(.*)$/;
+
+export function unicodeifyMusicalSymbols(s: string) {
+  return s.replace("b", "♭").replace("#", "♯");
+}
+
+export function superscriptize(s: string) {
+  return s.split("").map((c) => "⁰¹²³⁴⁵⁶⁷⁸⁹"[parseInt(c)] || c).join("");
+}
+
+export function titleize(s: string): string {
+  return s.split(/(?=[A-Z][a-z])|[\-_]/).map((str) => {
+    if (str === "") {
+      return str;
+    } else {
+      const [head, ...rest] = str;
+      return `${head?.toUpperCase()}${rest.join("")}`;
+    }
+  }).join(" ");
+}

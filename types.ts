@@ -14,11 +14,11 @@ export const Err = (e: string | Error): Result<never> => {
 };
 
 export type Song = {
-  title?: string;
-  artist?: string;
-  year?: string;
-  sig?: string;
-  key?: string;
+  title: string | undefined;
+  artist: string | undefined;
+  year: string | undefined;
+  sig: string | undefined;
+  key: string | undefined;
   bars: Array<Bar>;
 };
 
