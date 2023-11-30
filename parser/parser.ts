@@ -216,7 +216,6 @@ export function ParseChord(rawChord: string): Result<Chord> {
   }
 
   const chord: Chord = {
-    _raw: rawChord,
     tonic: <Letter> "C",
     flavor: undefined,
     quality: undefined,

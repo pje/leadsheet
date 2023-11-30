@@ -4,6 +4,7 @@ import {
   Chord,
   ChordQuality,
   parseSig,
+  printChord,
   RepeatedChordSymbol,
   Song,
   transposeSong,
@@ -220,10 +221,10 @@ function drawSettings(
 }
 
 function formatChordName(c: Readonly<Chord>): string {
-  const concatenated = `${c.tonic}${c.flavor}`;
+  const printed = printChord.bind(c)();
   return state.settings.unicodeChordSymbols.enabled
-    ? unicodeifyMusicalSymbols(superscriptize(concatenated))
-    : concatenated;
+    ? unicodeifyMusicalSymbols(superscriptize(printed))
+    : printed;
 }
 
 function formatKeyName(str: string): string {

@@ -1,4 +1,4 @@
-import { Minor } from "./types.ts";
+import { Minor, printChord } from "./types.ts";
 import {
   accidentalPreferenceForKey,
   canonicalizeKeyQualifier,
@@ -80,5 +80,5 @@ export function guessKey(this: Readonly<Song>): string {
 }
 
 function getFirstChord(this: Readonly<Song>): string {
-  return this.bars![0]!.chords[0]!._raw;
+  return printChord.bind(this.bars![0]!.chords[0]!)();
 }

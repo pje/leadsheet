@@ -2,7 +2,6 @@ import { FlatOrSharpSymbol } from "./types.ts";
 import { conventionalizeKey, transpose } from "./utils.ts";
 
 export type Chord = {
-  _raw: string;
   tonic: Letter;
   flavor: string | undefined;
   quality: string | undefined;
@@ -20,8 +19,13 @@ export function transposeChord(
   const newRoot = conventionalizeKey(
     transpose(chord.tonic, halfSteps, flatsOrSharps),
   );
+
   chord.tonic = newRoot;
   return chord;
+}
+
+export function printChord(this: Chord): string {
+  return `${this.tonic}${this.flavor}`;
 }
 
 export const AllLetters = [
