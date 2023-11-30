@@ -203,7 +203,7 @@ button.transpose {
 
 .bar .chords .chord {
     min-height: 26px;
-    font-size: 16pt;
+    font-size: 20pt;
     text-align: center;
     flex-basis: 0;
 }
