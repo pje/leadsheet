@@ -66,20 +66,38 @@ function _nonexhaustiveSwitchGuard(_: never): never {
   throw new Error("Switch statement was non-exhaustive");
 }
 
+type LetterSpelledWithOneSharp =
+  | "A#"
+  | "B#"
+  | "C#"
+  | "D#"
+  | "E#"
+  | "F#"
+  | "G#";
+
+type LetterSpelledWithOneFlat =
+  | "Ab"
+  | "Bb"
+  | "Cb"
+  | "Db"
+  | "Eb"
+  | "Fb"
+  | "Gb";
+
 export type KeyDescription =
   | {
     natural?: undefined;
-    spelledWithOneFlat: Letter;
-    spelledWithOneSharp: Letter;
+    spelledWithOneFlat: LetterSpelledWithOneFlat;
+    spelledWithOneSharp: LetterSpelledWithOneSharp;
   }
   | {
     natural: Letter;
     spelledWithOneFlat?: undefined;
-    spelledWithOneSharp: Letter;
+    spelledWithOneSharp: LetterSpelledWithOneSharp;
   }
   | {
     natural: Letter;
-    spelledWithOneFlat: Letter;
+    spelledWithOneFlat: LetterSpelledWithOneFlat;
     spelledWithOneSharp?: undefined;
   }
   | {

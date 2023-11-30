@@ -10,6 +10,7 @@ import {
   QualityAugmented,
   QualityDiminished,
   QualityDominant,
+  QualityHalfDiminished,
   QualityMajor,
   QualityMinor,
   QualityMinorMajor,
@@ -57,8 +58,8 @@ function ChordActions(c: Chord): SongActionDict<Chord> {
       root.eval();
 
       if (flavor.sourceString === "") {
-        c.qualityClass = QualityMajor;
-        c.flavor = QualityMajor;
+        c.quality = QualityMajor;
+        // c.flavor = QualityMajor;
       } else {
         flavor.eval();
       }
@@ -77,14 +78,14 @@ function ChordActions(c: Chord): SongActionDict<Chord> {
       extent: IterationNode,
       alterations: IterationNode,
     ) {
-      c.flavor = this.sourceString;
+      // c.flavor = this.sourceString;
 
       if (isImplicitPower(quality, extent, alterations)) {
-        c.qualityClass = QualityPower;
+        c.quality = QualityPower;
       } else if (isImplicitMajor(quality, extent, alterations)) {
-        c.qualityClass = QualityMajor;
+        c.quality = QualityMajor;
       } else if (isImplicitDominant(quality, extent, alterations)) {
-        c.qualityClass = QualityDominant;
+        c.quality = QualityDominant;
       } else if (quality.sourceString !== "") {
         if (quality.numChildren > 1) {
           throw new Error(
@@ -131,13 +132,13 @@ function ChordActions(c: Chord): SongActionDict<Chord> {
       return c;
     },
     sus(_arg0: NonterminalNode) {
-      c.qualityClass = QualitySuspended;
+      c.quality = QualitySuspended;
       return c;
     },
     minor_major(
       _arg0: NonterminalNode | TerminalNode,
     ) {
-      c.qualityClass = QualityMinorMajor;
+      c.quality = QualityMinorMajor;
       return c;
     },
     minor_major_with_parens(
@@ -147,35 +148,35 @@ function ChordActions(c: Chord): SongActionDict<Chord> {
       _arg3: NonterminalNode,
       _arg4: TerminalNode,
     ) {
-      c.qualityClass = QualityMinorMajor;
+      c.quality = QualityMinorMajor;
       return c;
     },
     augmented(
       _arg0: NonterminalNode | TerminalNode,
     ) {
-      c.qualityClass = QualityAugmented;
+      c.quality = QualityAugmented;
       return c;
     },
     diminished(
       _arg0: NonterminalNode | TerminalNode,
     ) {
-      c.qualityClass = QualityDiminished;
+      c.quality = QualityDiminished;
       return c;
     },
     dominant(_arg0: NonterminalNode) {
-      c.qualityClass = QualityDominant;
+      c.quality = QualityDominant;
       return c;
     },
     half_diminished(_arg0: NonterminalNode) {
-      c.qualityClass = QualityDiminished;
+      c.quality = QualityHalfDiminished;
       return c;
     },
     major(_arg0: NonterminalNode | TerminalNode) {
-      c.qualityClass = QualityMajor;
+      c.quality = QualityMajor;
       return c;
     },
     minor(_arg0: NonterminalNode | TerminalNode) {
-      c.qualityClass = QualityMinor;
+      c.quality = QualityMinor;
       return c;
     },
     // alteration(_arg0: NonterminalNode) {
@@ -217,9 +218,7 @@ export function ParseChord(rawChord: string): Result<Chord> {
 
   const chord: Chord = {
     tonic: <Letter> "C",
-    flavor: undefined,
-    quality: undefined,
-    qualityClass: undefined,
+    quality: QualityMajor,
     extent: undefined,
     alterations: [],
   };

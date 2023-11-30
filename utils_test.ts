@@ -22,7 +22,7 @@ import {
   chordColor,
   conventionalizeKey,
   replaceDupesWithRepeats,
-  transpose,
+  transposeLetter,
 } from "./utils.ts";
 import { assertEquals } from "./test_utils.ts";
 import { DegreesToKeys, KeysToDegrees } from "./types.ts";
@@ -63,7 +63,7 @@ Deno.test(`Degree Maps sanity checks`, async (t) => {
   }
 });
 
-Deno.test(transpose.name, async (t) => {
+Deno.test(transposeLetter.name, async (t) => {
   const cases = new Map<[Letter, number, FlatOrSharpSymbol], Letter>([
     [["A", 0, SharpSymbol], "A"],
     [["A#", 0, SharpSymbol], "A#"],
@@ -175,7 +175,8 @@ Deno.test(transpose.name, async (t) => {
     const [input, halfSteps, preferredAccidental] = k;
     await t.step(
       `"${input}" up ${halfSteps} halfSteps (prefer ${preferredAccidental}) should be "${v}"`,
-      () => assertEquals(v, transpose(input, halfSteps, preferredAccidental)),
+      () =>
+        assertEquals(v, transposeLetter(input, halfSteps, preferredAccidental)),
     );
   }
 });

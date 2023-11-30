@@ -4,7 +4,7 @@ import {
   canonicalizeKeyQualifier,
   conventionalizeKey,
   NoteRegex,
-  transpose,
+  transposeLetter,
 } from "./utils.ts";
 import { Chord, Letter, transposeChord } from "./chord.ts";
 
@@ -38,12 +38,12 @@ export function transposeSong(this: Readonly<Song>, halfSteps: number): Song {
   keyQualifier ||= "M";
 
   const destinationKey = conventionalizeKey(
-    transpose(songKeyLetter, halfSteps),
+    transposeLetter(songKeyLetter, halfSteps),
   );
 
   const destinationRelativeMajorKey =
     canonicalizeKeyQualifier(keyQualifier) == Minor
-      ? conventionalizeKey(transpose(destinationKey, 3))
+      ? conventionalizeKey(transposeLetter(destinationKey, 3))
       : destinationKey;
 
   const flatsOrSharps = accidentalPreferenceForKey(

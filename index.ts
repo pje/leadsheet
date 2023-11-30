@@ -103,7 +103,7 @@ function renderBars(
       const [result, colorClass] = previousChord && previousChordColorClass &&
           _formatChordName(previousChord) === formattedChordName
         ? [RepeatedChordSymbol, previousChordColorClass]
-        : [formattedChordName, c.qualityClass!];
+        : [formattedChordName, c.quality!];
 
       previousChord = c;
       previousChordColorClass = colorClass;

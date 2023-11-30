@@ -53,7 +53,7 @@ export function htmlElementsForKeySignature(
   );
 }
 
-export function transpose(
+export function transposeLetter(
   noteName: Letter,
   halfSteps: number,
   preferredAccidental: FlatOrSharpSymbol = SharpSymbol,
@@ -97,7 +97,7 @@ export function accidentalPreferenceForKey(key: Letter) {
 export function chordColor(
   c: string,
 ): ChordQuality | undefined {
-  return ParseChord(c).value?.qualityClass;
+  return ParseChord(c).value?.quality;
 }
 
 export const NoteRegex = /^([A-G]{1}(?:[#♯b♭𝄪𝄫])?)(.*)$/;

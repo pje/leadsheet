@@ -9,7 +9,7 @@ watch: deps ohm_bundle
 test: unit_test browser_test
 
 unit_test:
-	deno test --allow-read utils_test.ts parser/parser_test.ts
+	deno test --allow-read chord_test.ts utils_test.ts parser/parser_test.ts
 
 browser_test:
 	PUPPETEER_PRODUCT=chrome deno run -A --unstable https://deno.land/x/puppeteer@16.2.0/install.ts

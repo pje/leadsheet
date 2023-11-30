@@ -6,6 +6,7 @@
   "deno.enablePaths": [
     "./browser_test.ts",
     "./chord.ts",
+    "./chord_test.ts",
     "./parser/parser_test.ts",
     "./parser/parser.ts",
     "./song.ts",
