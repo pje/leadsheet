@@ -8,7 +8,7 @@ import puppeteer, {
 import * as path from "https://deno.land/std@0.204.0/path/mod.ts";
 
 const indexAbsolutePath = path.resolve("./index.html");
-const songFilePath = path.resolve("./songs/chelsea_bridge.txt");
+const songFilePath = path.resolve("./songs/chelsea_bridge.leadsheet");
 const screenshotsPath = Deno.realPathSync(".");
 
 Deno.test("index.html renders via file:// protocol", async () => {

@@ -1,5 +1,5 @@
 import "./global.d.ts";
-import defaultSongRaw from "./songs/chelsea_bridge.txt";
+import defaultSongRaw from "./songs/chelsea_bridge.leadsheet";
 import {
   Chord,
   ChordQuality,

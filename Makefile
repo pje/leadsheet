@@ -1,10 +1,10 @@
 .PHONY: build deps test unit_test browser_test ohm_bundle watch
 
 build: deps ohm_bundle
-	npx esbuild index.ts --outfile=index.js --bundle --sourcemap --loader:.txt=text
+	npx esbuild index.ts --outfile=index.js --bundle --sourcemap --loader:.leadsheet=text
 
 watch: deps ohm_bundle
-	npx esbuild index.ts --outfile=index.js --bundle --sourcemap --loader:.txt=text --watch
+	npx esbuild index.ts --outfile=index.js --bundle --sourcemap --loader:.leadsheet=text --watch
 
 test: unit_test browser_test
 
