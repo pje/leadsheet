@@ -11,4 +11,5 @@
   open index.html
 
   act -j test -W .github/workflows/test.yaml  # to run/test/develop github actions locally
+  code --extensionDevelopmentPath=vscode_extension . # to develop with the (experimental) vscode syntax enabled for *.leadsheet files
 ```
