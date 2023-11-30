@@ -1,4 +1,8 @@
+import { Letter } from "./chord.ts";
 import { NoteRegex } from "./utils.ts";
+
+export * from "./chord.ts";
+export * from "./song.ts";
 
 export type Result<T> =
   | { error: undefined; value: T }
@@ -13,79 +17,8 @@ export const Err = (e: string | Error): Result<never> => {
   return { error, value: undefined };
 };
 
-export type Song = {
-  title: string | undefined;
-  artist: string | undefined;
-  year: string | undefined;
-  sig: string | undefined;
-  key: string | undefined;
-  bars: Array<Bar>;
-};
-
-export type Chord = {
-  _raw: string;
-  tonic: Letter;
-  flavor: string | undefined;
-  quality: string | undefined;
-  qualityClass: ChordQuality | undefined;
-  extent: string | undefined;
-  alterations: Array<string>;
-};
-
-export function parseSig(song: Song): {
-  numerator: string;
-  denominator: string;
-} {
-  let [numerator, denominator] = (song.sig || "").split("/");
-  if (!numerator || !denominator) {
-    numerator = "4";
-    denominator = "4";
-  }
-  return { numerator, denominator };
-}
-
-export function guessKey(song: Song): string {
-  return song.key || getFirstChord(song) || "?";
-}
-
-function getFirstChord(song: Song): string {
-  return song.bars![0]!.chords[0]!._raw;
-}
-
-export type Bar = {
-  chords: Array<Chord>;
-  openBar: string;
-  closeBar: string;
-};
-
 export const AllDegrees = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] as const;
 export type Degree = (typeof AllDegrees)[number];
-
-export const AllLetters = [
-  "A",
-  "A#",
-  "Bb",
-  "B",
-  "B#",
-  "Cb",
-  "C",
-  "C#",
-  "Db",
-  "D",
-  "D#",
-  "Eb",
-  "E",
-  "E#",
-  "Fb",
-  "F",
-  "F#",
-  "Gb",
-  "G",
-  "G#",
-  "Ab",
-] as const;
-
-export type Letter = (typeof AllLetters)[number];
 
 export function KeysToDegrees(key: Letter): Degree {
   switch (key) {
@@ -317,25 +250,6 @@ export const AllRepeatedChordSymbols = [
   "-",
   "𝄎",
 ];
-
-export type ChordQuality =
-  | typeof QualityMajor
-  | typeof QualityMinor
-  | typeof QualityMinorMajor
-  | typeof QualityDominant
-  | typeof QualityPower
-  | typeof QualitySuspended
-  | typeof QualityAugmented
-  | typeof QualityDiminished;
-
-export const QualityMajor = "maj" as const;
-export const QualityMinorMajor = "minmaj" as const;
-export const QualityMinor = "min" as const;
-export const QualityDominant = "dom" as const;
-export const QualityPower = "pow" as const;
-export const QualitySuspended = "sus" as const;
-export const QualityAugmented = "aug" as const;
-export const QualityDiminished = "dim" as const;
 
 export type Ionian = "ionian";
 export type Dorian = "dorian";

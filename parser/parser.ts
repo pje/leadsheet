@@ -1,15 +1,12 @@
 // @deno-types="./grammar.ohm-bundle.d.ts"
-import grammar from "./grammar.ohm-bundle";
+import grammar from "./grammar.ohm-bundle.js";
 import type { IterationNode, NonterminalNode, TerminalNode } from "ohm-js";
-import type { SongActionDict } from "./grammar.ohm-bundle.d.ts";
+import type { SongActionDict } from "./grammar.ohm-bundle.js";
 import {
-  AllRepeatedChordSymbols,
   Bar,
   Chord,
-  Err,
   guessKey,
   Letter,
-  Ok,
   QualityAugmented,
   QualityDiminished,
   QualityDominant,
@@ -18,9 +15,9 @@ import {
   QualityMinorMajor,
   QualityPower,
   QualitySuspended,
-  Result,
   Song,
-} from "./types.ts";
+} from "../types.ts";
+import { AllRepeatedChordSymbols, Err, Ok, Result } from "../types.ts";
 
 function isImplicitMajor(
   quality: IterationNode,
@@ -257,7 +254,7 @@ export function ParseSong(rawSong: string): Result<Song> {
   semantics.addOperation("eval", Actions(song));
   semantics(matchResult).eval();
 
-  song.key ||= guessKey(song);
+  song.key ||= guessKey.bind(song)();
 
   return Ok(song);
 }

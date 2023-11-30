@@ -5,10 +5,14 @@
   "editor.defaultFormatter": "denoland.vscode-deno",
   "deno.enablePaths": [
     "./browser_test.ts",
-    "./parser.ts",
-    "./parser_test.ts",
+    "./chord.ts",
+    "./parser/parser_test.ts",
+    "./parser/parser.ts",
+    "./song.ts",
     "./test_utils.ts",
-    "./utils_test.ts"
+    "./types.ts",
+    "./utils_test.ts",
+    "./utils.ts",
   ],
   "[typescript]": {
     "editor.defaultFormatter": "denoland.vscode-deno"

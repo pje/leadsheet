@@ -3,25 +3,13 @@ import defaultSongRaw from "./songs/chelsea_bridge.txt";
 import {
   Chord,
   ChordQuality,
-  FlatOrSharpSymbol,
-  guessKey,
-  Letter,
-  Minor,
   parseSig,
   RepeatedChordSymbol,
   Song,
+  transposeSong,
 } from "./types.ts";
-import {
-  accidentalPreferenceForKey,
-  canonicalizeKeyQualifier,
-  conventionalizeKey,
-  NoteRegex,
-  superscriptize,
-  titleize,
-  transpose,
-  unicodeifyMusicalSymbols,
-} from "./utils";
-import { ParseSong } from "./parser";
+import { superscriptize, titleize, unicodeifyMusicalSymbols } from "./utils.ts";
+import { ParseSong } from "./parser/parser.ts";
 
 const SettingsKeys = ["colorChords", "unicodeChordSymbols"] as const;
 type Settings = {
@@ -90,11 +78,11 @@ function bootstrap(): void {
 
   document
     .getElementById("transpose-up")!
-    .addEventListener("click", transposeSong.bind(null, 1));
+    .addEventListener("click", handleTransposeSong.bind(null, 1));
 
   document
     .getElementById("transpose-down")!
-    .addEventListener("click", transposeSong.bind(null, -1));
+    .addEventListener("click", handleTransposeSong.bind(null, -1));
 
   document
     .getElementById("songfile")!
@@ -173,7 +161,7 @@ function drawClefAndSignatures(
   song: Readonly<Song>,
   rootElement: HTMLElement = document.getElementById("root")!,
 ) {
-  const { numerator, denominator } = parseSig(song);
+  const { numerator, denominator } = parseSig.bind(song)();
 
   const staffElements = `
   <div class="clef">𝄞</div>
@@ -231,7 +219,6 @@ function drawSettings(
   settingsElement.insertAdjacentHTML("beforeend", html);
 }
 
-// TODO: Class instance method
 function formatChordName(c: Readonly<Chord>): string {
   const concatenated = `${c.tonic}${c.flavor}`;
   return state.settings.unicodeChordSymbols.enabled
@@ -239,7 +226,6 @@ function formatChordName(c: Readonly<Chord>): string {
     : concatenated;
 }
 
-// TODO: Class instance method
 function formatKeyName(str: string): string {
   return state.settings.unicodeChordSymbols.enabled
     ? unicodeifyMusicalSymbols(superscriptize(str))
@@ -264,64 +250,11 @@ function fetchLoadedSongFromLocalStorage(): Song | undefined {
 }
 
 // TODO: Action
-function transposeSong(halfSteps: number): void {
-  const transposedSong: Song = transposeSongPure(state.song!, halfSteps);
+function handleTransposeSong(halfSteps: number): void {
+  const transposedSong: Song = transposeSong.bind(state.song!)(halfSteps);
   state.song = transposedSong;
   drawSong(transposedSong);
   addTransposedAmount(halfSteps);
-}
-
-// TODO: Class instance method
-function transposeSongPure(s: Readonly<Song>, halfSteps: number): Song {
-  const song: Song = { ...s };
-
-  const songKey = guessKey(song);
-
-  let [songKeyLetter, keyQualifier]: [Letter, string] = songKey
-    .trim()
-    .split(NoteRegex)
-    .filter(Boolean) as [Letter, string];
-
-  keyQualifier ||= "M";
-
-  const destinationKey = conventionalizeKey(
-    transpose(songKeyLetter, halfSteps),
-  );
-
-  const destinationRelativeMajorKey =
-    canonicalizeKeyQualifier(keyQualifier) == Minor
-      ? conventionalizeKey(transpose(destinationKey, 3))
-      : destinationKey;
-
-  const flatsOrSharps = accidentalPreferenceForKey(
-    destinationRelativeMajorKey,
-  );
-
-  song.bars = song.bars.map((bar) => {
-    bar.chords = bar.chords.map((chord) =>
-      transposeChordPure(chord, halfSteps, flatsOrSharps)
-    );
-
-    return bar;
-  });
-
-  song.key = `${destinationKey}${keyQualifier}`;
-
-  return song;
-}
-
-// TODO: Class instance method
-function transposeChordPure(
-  c: Readonly<Chord>,
-  halfSteps: number,
-  flatsOrSharps: FlatOrSharpSymbol,
-): Chord {
-  const chord: Chord = { ...c };
-  const newRoot = conventionalizeKey(
-    transpose(chord.tonic, halfSteps, flatsOrSharps),
-  );
-  chord.tonic = newRoot;
-  return chord;
 }
 
 // TODO: Action

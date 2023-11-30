@@ -1,4 +1,4 @@
-import { ParseChord } from "./parser.ts";
+import { ParseChord } from "./parser/parser.ts";
 import {
   ChordQuality,
   ConventionallyFlatKeyDegrees,
@@ -106,8 +106,22 @@ export function unicodeifyMusicalSymbols(s: string) {
   return s.replace("b", "♭").replace("#", "♯");
 }
 
+const superscriptChars: { [K in string]: string } = {
+  "0": "⁰",
+  "1": "¹",
+  "2": "²",
+  "3": "³",
+  "4": "⁴",
+  "5": "⁵",
+  "6": "⁶",
+  "7": "⁷",
+  "8": "⁸",
+  "9": "⁹",
+  "o": "°",
+} as const;
+
 export function superscriptize(s: string) {
-  return s.split("").map((c) => "⁰¹²³⁴⁵⁶⁷⁸⁹"[parseInt(c)] || c).join("");
+  return s.split("").map((c) => superscriptChars[c] || c).join("");
 }
 
 export function titleize(s: string): string {
