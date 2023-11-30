@@ -23,28 +23,11 @@ const state: {
   settings: defaultSettings,
 };
 
-const defaultSong = (() => {
-  const result = ParseSong(defaultSongRaw);
-  if (result.error) {
-    console.log(result.error);
-    return;
-  } else {
-    return result.value;
-  }
-})()!;
-
-function loadSong(song: Song): Song {
-  state.song = song;
-  setTransposedAmount(0);
-  drawSong(song, document.getElementById("root")!);
-  return song;
-}
-
 function bootstrap(): void {
-  drawSettings(state.settings);
+  renderSettings(state.settings);
 
   const lastLoadedSong = fetchLoadedSongFromLocalStorage();
-  loadSong(lastLoadedSong || defaultSong);
+  loadSong(lastLoadedSong || _loadDefaultSong()!);
 
   document.querySelectorAll("#settings input")!.forEach((el) => {
     el.addEventListener("change", async (e: Event) => {
@@ -55,7 +38,7 @@ function bootstrap(): void {
         state.settings[settingKey].enabled = !!inputElement.checked;
       }
 
-      drawSong(state.song!);
+      renderSong(state.song!);
     });
   });
 
@@ -96,16 +79,16 @@ function bootstrap(): void {
     });
 }
 
-function drawSong(
+function renderSong(
   song: Readonly<Song>,
   rootElement: HTMLElement = document.getElementById("root")!,
 ) {
-  drawMetadata(song, rootElement);
-  drawBars(song, rootElement);
-  drawClefAndSignatures(song, rootElement);
+  renderMetadata(song, rootElement);
+  renderBars(song, rootElement);
+  renderClefAndSignatures(song, rootElement);
 }
 
-function drawBars(
+function renderBars(
   song: Readonly<Song>,
   rootElement: HTMLElement = document.getElementById("root")!,
 ) {
@@ -116,9 +99,9 @@ function drawBars(
 
   song.bars.map((bar) => {
     const chords = bar.chords.map((c) => {
-      const formattedChordName = formatChordName(c);
+      const formattedChordName = _formatChordName(c);
       const [result, colorClass] = previousChord && previousChordColorClass &&
-          formatChordName(previousChord) === formattedChordName
+          _formatChordName(previousChord) === formattedChordName
         ? [RepeatedChordSymbol, previousChordColorClass]
         : [formattedChordName, c.qualityClass!];
 
@@ -140,7 +123,7 @@ function drawBars(
   });
 }
 
-function drawClefAndSignatures(
+function renderClefAndSignatures(
   song: Readonly<Song>,
   rootElement: HTMLElement = document.getElementById("root")!,
 ) {
@@ -164,14 +147,14 @@ function drawClefAndSignatures(
   firstBarStaffElement.classList.add("flex-row", "flex-justify-start");
 }
 
-function drawMetadata(
+function renderMetadata(
   song: Readonly<Song>,
   rootElement: HTMLElement = document.getElementById("root")!,
 ) {
   const metadataElement = rootElement.querySelector("#metadata")!;
 
   const formattedSongKey = song.key && song.key !== ""
-    ? formatKeyName(song.key)
+    ? _formatKeyName(song.key)
     : "?";
 
   metadataElement.querySelector(".title")!.textContent = song.title || "";
@@ -180,7 +163,7 @@ function drawMetadata(
   metadataElement.querySelector(".date")!.textContent = song.year || "";
 }
 
-function drawSettings(
+function renderSettings(
   settings: Readonly<typeof state.settings>,
   rootElement: HTMLElement = document.getElementById("root")!,
 ) {
@@ -202,17 +185,12 @@ function drawSettings(
   settingsElement.insertAdjacentHTML("beforeend", html);
 }
 
-function formatChordName(c: Readonly<Chord>): string {
-  const printed = printChord.bind(c)();
-  return state.settings.unicodeChordSymbols.enabled
-    ? unicodeifyMusicalSymbols(superscriptize(printed))
-    : printed;
-}
-
-function formatKeyName(str: string): string {
-  return state.settings.unicodeChordSymbols.enabled
-    ? unicodeifyMusicalSymbols(superscriptize(str))
-    : str;
+// TODO: Action
+function loadSong(song: Song): Song {
+  state.song = song;
+  setTransposedAmount(0);
+  renderSong(song, document.getElementById("root")!);
+  return song;
 }
 
 // TODO: Action
@@ -236,7 +214,7 @@ function fetchLoadedSongFromLocalStorage(): Song | undefined {
 function handleTransposeSong(halfSteps: number): void {
   const transposedSong: Song = transposeSong.bind(state.song!)(halfSteps);
   state.song = transposedSong;
-  drawSong(transposedSong);
+  renderSong(transposedSong);
   addTransposedAmount(halfSteps);
 }
 
@@ -257,6 +235,29 @@ function addTransposedAmount(halfSteps: number) {
 
 function _getTransposedAmountEl() {
   return document.getElementById("transposed-steps")!;
+}
+
+function _formatChordName(c: Readonly<Chord>): string {
+  const printed = printChord.bind(c)();
+  return state.settings.unicodeChordSymbols.enabled
+    ? unicodeifyMusicalSymbols(superscriptize(printed))
+    : printed;
+}
+
+function _formatKeyName(str: string): string {
+  return state.settings.unicodeChordSymbols.enabled
+    ? unicodeifyMusicalSymbols(superscriptize(str))
+    : str;
+}
+
+function _loadDefaultSong(): Song | undefined {
+  const result = ParseSong(defaultSongRaw);
+  if (result.error) {
+    console.log(result.error);
+    return;
+  } else {
+    return result.value;
+  }
 }
 
 window.onload = bootstrap;
