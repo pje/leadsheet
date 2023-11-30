@@ -130,7 +130,7 @@ function renderClefAndSignatures(
   const { numerator, denominator } = parseSig.bind(song)();
 
   const staffElements = `
-  <div class="clef">𝄞</div>
+  <div class="clef treble">𝄞</div>
   <div class="time-signature">
     <div class="numerator">${numerator}</div>
     <div class="slash" hidden>/</div>
