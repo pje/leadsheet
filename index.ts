@@ -11,25 +11,7 @@ import {
 } from "./types.ts";
 import { superscriptize, titleize, unicodeifyMusicalSymbols } from "./utils.ts";
 import { ParseSong } from "./parser/parser.ts";
-
-const SettingsKeys = ["colorChords", "unicodeChordSymbols"] as const;
-type Settings = {
-  [K in typeof SettingsKeys[number]]: {
-    enabled: boolean;
-    description: string;
-  };
-};
-
-const _settings: Settings = {
-  colorChords: {
-    enabled: true,
-    description: "Color chord symbols by type (maj, min, dom, etc)",
-  },
-  unicodeChordSymbols: {
-    enabled: false,
-    description: `Spell chords using unicode symbols (e.g. D♭⁷ vs Db7)`,
-  },
-} as const;
+import { defaultSettings, Settings, SettingsKeys } from "./settings.ts";
 
 const state: {
   song: Song | undefined;
@@ -38,7 +20,7 @@ const state: {
 } = {
   song: undefined,
   transposedSteps: 0,
-  settings: _settings,
+  settings: defaultSettings,
 };
 
 const defaultSong = (() => {
