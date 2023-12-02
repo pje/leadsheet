@@ -5,13 +5,13 @@
   flex-direction: column;
 }
 
+.flex-justify-start {
+  justify-content: flex-start;
+}
+
 .flex-row {
   display: flex;
   flex-direction: row;
-}
-
-.flex-justify-start {
-  justify-content: flex-start;
 }
 
 .hidden {

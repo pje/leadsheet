@@ -32,77 +32,77 @@
 
 html {
   font-size: 100%; /* use rem units everywhere now */
-}
 
-body {
-  width: auto;
-  padding-left: 32px;
-  padding-right: 32px;
+  body {
+    width: auto;
+    padding-left: 32px;
+    padding-right: 32px;
 
-  @media (prefers-color-scheme: light) {
-    background-color: rgb(255, 255, 243);
-    color: #111;
+    @media (prefers-color-scheme: light) {
+      background-color: rgb(255, 255, 243);
+      color: #111;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      background-color: #151515;
+      color: #fffdf3;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+      margin: unset;
+    }
+
+    .date:empty,
+    .artist:empty {
+      display: none;
+    }
+
+    #toolbar {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+
+    #settings[open] {
+      display: flex;
+      text-align: end;
+    }
+
+    #metadata {
+      display: flex;
+      gap: 10px;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .key-selector {
+      align-items: center;
+      display: flex;
+      min-width: 100px;
+      justify-content: flex-end;
+
+      .transpose-buttons {
+        display: flex;
+        flex-direction: column;
+        margin-left: 4px;
+      }
+
+      .key {
+        text-align: right;
+        min-width: 64px;
+      }
+    }
+
+    button.transpose {
+      width: 24px;
+      font-size: 12px;
+    }
   }
-
-  @media (prefers-color-scheme: dark) {
-    background-color: #151515;
-    color: #fffdf3;
-  }
-}
-
-h1,
-h2,
-h3,
-h4,
-h5 {
-  margin: unset;
-}
-
-.date:empty,
-.artist:empty {
-  display: none;
-}
-
-#toolbar {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-#settings[open] {
-  display: flex;
-  text-align: end;
-}
-
-#metadata {
-  display: flex;
-  gap: 10px;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.key-selector {
-  align-items: center;
-  display: flex;
-  min-width: 100px;
-  justify-content: flex-end;
-
-  .transpose-buttons {
-    display: flex;
-    flex-direction: column;
-    margin-left: 4px;
-  }
-
-  .key {
-    text-align: right;
-    min-width: 64px;
-  }
-}
-
-button.transpose {
-  width: 24px;
-  font-size: 12px;
 }
 
 #song {
