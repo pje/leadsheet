@@ -1,23 +1,27 @@
 {
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno",
+    "editor.formatOnSave": true,
+  },
   "deno.enable": true,
-  "deno.lint": true,
-  "deno.unstable": false,
-  "editor.defaultFormatter": "denoland.vscode-deno",
   "deno.enablePaths": [
     "./browser_test.ts",
-    "./chord.ts",
     "./chord_test.ts",
+    "./chord.ts",
     "./parser/parser_test.ts",
     "./parser/parser.ts",
-    "./song.ts",
     "./song_test.ts",
+    "./song.ts",
     "./test_utils.ts",
     "./types.ts",
     "./utils_test.ts",
     "./utils.ts"
   ],
-  "[typescript]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
-  },
+  "deno.lint": true,
+  "deno.unstable": false,
   "typescript.tsdk": "node_modules/typescript/lib"
 }
