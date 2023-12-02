@@ -221,6 +221,8 @@ export function ParseChord(rawChord: string): Result<Chord> {
   const chord: Chord = {
     tonic: <Letter> "C",
     quality: QualityMajor,
+    extent: undefined,
+    alterations: [],
   };
 
   const semantics = grammar.Chord.createSemantics();
