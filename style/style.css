@@ -68,6 +68,10 @@ html {
       justify-content: space-between;
     }
 
+    #settings {
+      cursor: default;
+    }
+
     #settings[open] {
       display: flex;
       text-align: end;
