@@ -17,11 +17,23 @@ export type Song = {
   bars: Array<Bar>;
 };
 
+export const NoChord = "N.C." as const;
+export type Chordish = Chord | typeof NoChord;
+
 export type Bar = {
-  chords: Array<Chord>;
+  chords: Array<Chordish>;
   openBar: string;
   closeBar: string;
 };
+
+export function printChordish(this: Chordish): string {
+  switch (this) {
+    case NoChord:
+      return NoChord;
+    default:
+      return printChord.bind(this)();
+  }
+}
 
 // Returns a new Song transposed by `halfSteps`
 // TODO: Class instance method
@@ -51,9 +63,14 @@ export function transposeSong(this: Readonly<Song>, halfSteps: number): Song {
   );
 
   song.bars = song.bars.map((bar) => {
-    bar.chords = bar.chords.map((chord) =>
-      transposeChord.bind(chord)(halfSteps, flatsOrSharps)
-    );
+    bar.chords = bar.chords.map((chordish) => {
+      switch (chordish) {
+        case NoChord:
+          return chordish;
+        default:
+          return transposeChord.bind(chordish)(halfSteps, flatsOrSharps);
+      }
+    });
 
     return bar;
   });
@@ -76,9 +93,14 @@ export function parseSig(this: Readonly<Song>): {
 }
 
 export function guessKey(this: Readonly<Song>): string {
-  return this.key || getFirstChord.bind(this)() || "?";
+  if (this.key) return this.key;
+  const c = getFirstChord.bind(this)();
+  return c ? printChord.bind(c)() : "?";
 }
 
-function getFirstChord(this: Readonly<Song>): string {
-  return printChord.bind(this.bars![0]!.chords[0]!)();
+function getFirstChord(this: Readonly<Song>): Chord | undefined {
+  for (const chordish of this.bars![0]!.chords) {
+    if (chordish === NoChord) continue;
+    return chordish;
+  }
 }

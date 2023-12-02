@@ -1,5 +1,5 @@
 import { Letter } from "./chord.ts";
-import { NoteRegex } from "./utils.ts";
+import { nonexhaustiveSwitchGuard, NoteRegex } from "./utils.ts";
 
 export * from "./chord.ts";
 export * from "./song.ts";
@@ -58,12 +58,8 @@ export function KeysToDegrees(key: Letter): Degree {
     default:
       // just here to get static exhaustiveness checking (TS 5.x)
       // if we add another value to Letter, we will start getting compile-time errors here
-      _nonexhaustiveSwitchGuard(key);
+      nonexhaustiveSwitchGuard(key);
   }
-}
-
-function _nonexhaustiveSwitchGuard(_: never): never {
-  throw new Error("Switch statement was non-exhaustive");
 }
 
 type LetterSpelledWithOneSharp =

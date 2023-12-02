@@ -5,8 +5,10 @@ import type { SongActionDict } from "./grammar.ohm-bundle.js";
 import {
   Bar,
   Chord,
+  Chordish,
   guessKey,
   Letter,
+  NoChord,
   QualityAugmented,
   QualityDiminished,
   QualityDominant,
@@ -54,7 +56,7 @@ function isImplicitPower(
 
 function ChordActions(c: Chord): SongActionDict<Chord> {
   const _Actions: SongActionDict<Chord> = {
-    ChordExp(root, flavor) {
+    Chord(root, flavor) {
       root.eval();
 
       if (flavor.sourceString === "") {
@@ -210,7 +212,7 @@ function ChordActions(c: Chord): SongActionDict<Chord> {
 }
 
 export function ParseChord(rawChord: string): Result<Chord> {
-  const matchResult = grammar.Chord.match(rawChord, "ChordExp");
+  const matchResult = grammar.Chord.match(rawChord, "Chord");
 
   if (matchResult.failed()) {
     return Err(matchResult.message || "failed to parse chord: empty error");
@@ -257,6 +259,10 @@ export function ParseSong(rawSong: string): Result<Song> {
   return Ok(song);
 }
 
+function isRepeat(s: string): boolean {
+  return AllRepeatedChordSymbols.includes(s);
+}
+
 function Actions(s: Song): SongActionDict<Song> {
   function defaultMetaFunc(
     _1: NonterminalNode,
@@ -274,20 +280,32 @@ function Actions(s: Song): SongActionDict<Song> {
       return s;
     },
     Bars(barline, bars, _2) {
-      let previousChord: Chord | undefined = undefined;
+      let previousChord: Chordish | undefined = undefined;
 
       bars.children.forEach((barNode) => {
         const chords = barNode.children.map(
-          (chordNode) => {
-            if (
-              !previousChord ||
-              !AllRepeatedChordSymbols.includes(chordNode.sourceString.trim())
-            ) {
-              // i.e. not a repetition
-              previousChord = (ParseChord(chordNode.sourceString).value)!;
-            }
+          (chordishNode) => {
+            const chordString = chordishNode.sourceString.trim();
 
-            return ({ ...previousChord });
+            if (
+              chordString === NoChord ||
+              (previousChord === NoChord && isRepeat(chordString))
+            ) {
+              previousChord = NoChord;
+              return NoChord;
+            } else {
+              previousChord = <Chord | undefined> previousChord;
+
+              if (!previousChord) {
+                // first chord in song
+                previousChord = (ParseChord(chordString).value)!;
+              } else if (!isRepeat(chordString)) {
+                // i.e. not a repetition
+                previousChord = (ParseChord(chordString).value)!;
+              }
+
+              return ({ ...previousChord });
+            }
           },
         );
 
@@ -301,10 +319,10 @@ function Actions(s: Song): SongActionDict<Song> {
 
       return s;
     },
-    Chord(_chordExpOrRepeat) {
+    Chordish(_) {
       return s;
     },
-    ChordExp(_root, _flavor) {
+    Chord(_root, _flavor) {
       return s;
     },
     metaTitle: defaultMetaFunc,

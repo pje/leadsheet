@@ -1,10 +1,11 @@
 import "./global.d.ts";
 import defaultSongRaw from "./songs/chelsea_bridge.leadsheet";
 import {
-  Chord,
+  Chordish,
   ChordQuality,
+  NoChord,
   parseSig,
-  printChord,
+  printChordish,
   RepeatedChordSymbol,
   Song,
   transposeSong,
@@ -92,20 +93,21 @@ function renderBars(
   song: Readonly<Song>,
   rootElement: HTMLElement = document.getElementById("root")!,
 ) {
-  let previousChord: Chord | undefined = undefined;
-  let previousChordColorClass: ChordQuality | undefined = undefined;
+  let previousChord: Chordish | undefined = undefined;
+  let previousChordColorClass: ChordishQuality | undefined = undefined;
   const songElement = rootElement.querySelector("#song")!;
   songElement.innerHTML = "";
 
   song.bars.map((bar) => {
-    const chords = bar.chords.map((c) => {
-      const formattedChordName = _formatChordName(c);
+    const chords = bar.chords.map((chordish) => {
+      const formattedChordName = _formatChordName(chordish);
       const [result, colorClass] = previousChord && previousChordColorClass &&
-          _formatChordName(previousChord) === formattedChordName
+          _formatChordName(previousChord) === formattedChordName &&
+          previousChord !== NoChord
         ? [RepeatedChordSymbol, previousChordColorClass]
-        : [formattedChordName, c.quality!];
+        : [formattedChordName, _getColorClass(chordish)];
 
-      previousChord = c;
+      previousChord = chordish;
       previousChordColorClass = colorClass;
       return `<div class="chord ${
         state.settings.colorChords.enabled && colorClass
@@ -237,11 +239,20 @@ function _getTransposedAmountEl() {
   return document.getElementById("transposed-steps")!;
 }
 
-function _formatChordName(c: Readonly<Chord>): string {
-  const printed = printChord.bind(c)();
+function _formatChordName(c: Readonly<Chordish>): string {
+  const printed = printChordish.bind(c)();
   return state.settings.unicodeChordSymbols.enabled
     ? unicodeifyMusicalSymbols(superscriptize(printed))
     : printed;
+}
+
+function _getColorClass(c: Readonly<Chordish>): ChordishQuality {
+  switch (c) {
+    case NoChord:
+      return "no-chord";
+    default:
+      return c.quality;
+  }
 }
 
 function _formatKeyName(str: string): string {
@@ -259,6 +270,8 @@ function _loadDefaultSong(): Song | undefined {
     return result.value;
   }
 }
+
+export type ChordishQuality = ChordQuality | "no-chord";
 
 window.onload = bootstrap;
 

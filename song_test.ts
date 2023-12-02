@@ -12,10 +12,12 @@ const songFixture: Song = {
     {
       openBar: "|",
       closeBar: "|",
-      chords: [{
-        tonic: "C",
-        quality: QualityMinor,
-      }],
+      chords: [
+        {
+          tonic: "C",
+          quality: QualityMinor,
+        },
+      ],
     },
   ],
 };

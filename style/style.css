@@ -249,3 +249,7 @@ button.transpose {
 .chord.pow {
     color: var(--light-gray-4);
 }
+
+.chord.no-chord {
+    color: inherit;
+}

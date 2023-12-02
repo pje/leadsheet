@@ -1,5 +1,5 @@
 import { FlatOrSharpSymbol } from "./types.ts";
-import { transposeLetter } from "./utils.ts";
+import { nonexhaustiveSwitchGuard, transposeLetter } from "./utils.ts";
 
 export type Chord = {
   tonic: Letter;
@@ -8,12 +8,12 @@ export type Chord = {
   alterations?: Array<string>;
 };
 
-export function transposeChord(
-  this: Readonly<Chord>,
+export function transposeChord<T extends Chord>(
+  this: Readonly<T>,
   halfSteps: number,
   flatsOrSharps: FlatOrSharpSymbol,
-): Chord {
-  const chord: Chord = { ...this };
+): T {
+  const chord: T = { ...this };
 
   const newRoot = transposeLetter(chord.tonic, halfSteps, flatsOrSharps);
   chord.tonic = newRoot;
@@ -36,11 +36,19 @@ export function transposeChord(
   return chord;
 }
 
-export function printChord(this: Readonly<Chord>): string {
+export function printChord<T extends Chord>(this: Readonly<T>): string {
   return `${this.tonic}${flavor.bind(this)()}`;
 }
 
-export function printQuality(this: Chord): string {
+function flavor(this: Readonly<Chord>): string {
+  return [
+    printQuality.bind(this)(),
+    this.extent,
+    this.alterations?.join("") || "",
+  ].join("");
+}
+
+function printQuality<T extends Chord>(this: T): string {
   switch (this.quality) {
     case QualityMajor:
       if (this.extent == "6") {
@@ -67,15 +75,9 @@ export function printQuality(this: Chord): string {
       return "o";
     case QualityHalfDiminished:
       return "ø";
+    default:
+      nonexhaustiveSwitchGuard(this.quality);
   }
-}
-
-export function flavor(this: Readonly<Chord>): string {
-  return [
-    printQuality.bind(this)(),
-    this.extent,
-    this.alterations?.join("") || "",
-  ].join("");
 }
 
 export const AllLetters = [

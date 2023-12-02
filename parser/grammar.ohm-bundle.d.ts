@@ -13,7 +13,7 @@ import {
 } from "ohm-js";
 
 export interface ChordActionDict<T> extends BaseActionDict<T> {
-  ChordExp?: (
+  Chord?: (
     this: NonterminalNode,
     arg0: NonterminalNode,
     arg1: NonterminalNode,
@@ -131,6 +131,7 @@ export interface SongActionDict<T> extends ChordActionDict<T> {
     arg1: IterationNode,
     arg2: IterationNode,
   ) => T;
+  Chordish?: (this: NonterminalNode, arg0: NonterminalNode) => T;
   lineComment?: (
     this: NonterminalNode,
     arg0: TerminalNode,
@@ -200,7 +201,7 @@ export interface SongActionDict<T> extends ChordActionDict<T> {
   DoubleBarline?: (this: NonterminalNode, arg0: TerminalNode) => T;
   SingleBarline?: (this: NonterminalNode, arg0: TerminalNode) => T;
   RepeatPreviousChord?: (this: NonterminalNode, arg0: TerminalNode) => T;
-  Chord?: (this: NonterminalNode, arg0: NonterminalNode) => T;
+  NoChord?: (this: NonterminalNode, arg0: TerminalNode) => T;
 }
 
 export interface SongSemantics extends Semantics {

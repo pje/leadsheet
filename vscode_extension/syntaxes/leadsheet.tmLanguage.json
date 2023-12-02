@@ -28,6 +28,10 @@
       "patterns": [
         {
           "name": "variable.other.leadsheet",
+          "match": "(?<!\\w)(?:N\\.C\\.|NC)(?<!\\w)"
+        },
+        {
+          "name": "variable.other.leadsheet",
           "match": "(?:[%/]|(?:[A-G][A-Za-z1-9#b♯♭𝄫𝄪♮Δ\\+⁺o°\\-⁻ø⁹⁷⁶⁵⁴²³¹/\\(\\)]*))"
         }
       ]

@@ -32,6 +32,7 @@ for await (const songFile of Deno.readDir(`${songsDir}/`)) {
 const emptyString = ``;
 
 const songFixtures = [
+  { title: "noChord", contents: `| N.C. |` },
   { title: "oneChord", contents: `| C |` },
   { title: "oneChordNoSpaces", contents: `|C|` },
   { title: "simpleSong", contents: `| CM7 | FM7 | Am7 | Dm7 | G7 | C6 |` },

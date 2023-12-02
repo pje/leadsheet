@@ -134,3 +134,7 @@ export function titleize(s: string): string {
     }
   }).join(" ");
 }
+
+export function nonexhaustiveSwitchGuard(_: never): never {
+  throw new Error("Switch statement was non-exhaustive");
+}
