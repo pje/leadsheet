@@ -41,8 +41,8 @@ const emptySong: Song = {
 
 const _emptyBar: Bar = {
   chords: [],
-  openBar: "|",
-  closeBar: "|",
+  openBarline: "|",
+  closeBarline: "|",
 };
 
 function bar(...chords: string[]): Bar {
@@ -106,10 +106,10 @@ const songFixtures: Array<{
       ...emptySong,
       key: "C",
       bars: [
-        { ...bar("C"), openBar: "||:", closeBar: ":|" },
-        { ...bar("D"), openBar: ":|", closeBar: "|2x:" },
-        { ...bar("C"), openBar: "|2x:", closeBar: "|" },
-        { ...bar("D"), openBar: "|", closeBar: ":||" },
+        { ...bar("C"), openBarline: "||:", closeBarline: ":|" },
+        { ...bar("D"), openBarline: ":|", closeBarline: "|2x:" },
+        { ...bar("C"), openBarline: "|2x:", closeBarline: "|" },
+        { ...bar("D"), openBarline: "|", closeBarline: ":||" },
       ],
     },
   },

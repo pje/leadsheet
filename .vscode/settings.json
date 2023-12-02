@@ -14,7 +14,7 @@
     "./test_utils.ts",
     "./types.ts",
     "./utils_test.ts",
-    "./utils.ts",
+    "./utils.ts"
   ],
   "[typescript]": {
     "editor.defaultFormatter": "denoland.vscode-deno"

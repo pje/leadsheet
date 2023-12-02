@@ -4,6 +4,7 @@ import type { IterationNode, NonterminalNode, TerminalNode } from "ohm-js";
 import type { SongActionDict } from "./grammar.ohm-bundle.js";
 import {
   Bar,
+  Barline,
   Chord,
   Chordish,
   guessKey,
@@ -319,8 +320,8 @@ function Actions(s: Song): SongActionDict<Song> {
           /\s/,
         )[0];
         const bar: Bar = {
-          openBar: previousBarline,
-          closeBar: thisBarline,
+          openBarline: <Barline> previousBarline,
+          closeBarline: <Barline> thisBarline,
           chords,
         };
         previousBarline = thisBarline;

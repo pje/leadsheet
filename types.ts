@@ -302,3 +302,11 @@ export function KeyFromString(s: string): Key | undefined {
     return undefined;
   }
 }
+
+export type BarlineClass =
+  | "barline-single-open"
+  | "barline-single-close"
+  | "barline-double-open"
+  | "barline-double-close"
+  | "barline-repeat-open"
+  | "barline-repeat-close";

@@ -10,8 +10,8 @@ const songFixture: Song = {
   key: "",
   bars: [
     {
-      openBar: "|",
-      closeBar: "|",
+      openBarline: "|",
+      closeBarline: "|",
       chords: [
         {
           tonic: "C",

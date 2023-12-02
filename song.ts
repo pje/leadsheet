@@ -28,9 +28,59 @@ export type Chordish = Chord | typeof NoChord;
 
 export type Bar = {
   chords: Array<Chordish>;
-  openBar: string;
-  closeBar: string;
+  openBarline: Barline;
+  closeBarline: Barline;
 };
+
+export type Barline =
+  | typeof SingleBarline
+  | typeof DoubleBarline
+  | BarlineWithRepeats;
+
+export type BarlineWithRepeats =
+  | typeof BarlineRepeatOpenDouble
+  | typeof BarlineRepeatCloseDouble
+  | typeof BarlineRepeatOpenSingle
+  | typeof BarlineRepeatOpenSingle1
+  | typeof BarlineRepeatOpenSingle2
+  | typeof BarlineRepeatOpenSingle2x
+  | typeof BarlineRepeatCloseSingle
+  | typeof BarlineRepeatCloseSingle1
+  | typeof BarlineRepeatCloseSingle2
+  | typeof BarlineRepeatCloseSingle2x
+  | typeof BarlineRepeatOpenDouble1
+  | typeof BarlineRepeatOpenDouble1x
+  | typeof BarlineRepeatOpenDouble2
+  | typeof BarlineRepeatOpenDouble2x
+  | typeof BarlineRepeatCloseDouble1
+  | typeof BarlineRepeatCloseDouble1x
+  | typeof BarlineRepeatCloseDouble2
+  | typeof BarlineRepeatCloseDouble2x;
+
+export const BarlineRepeatOpenDouble = "||:" as const;
+export const BarlineRepeatCloseDouble = ":||" as const;
+export const BarlineRepeatOpenSingle = "|:" as const;
+export const BarlineRepeatOpenSingle1 = "|1:" as const;
+export const BarlineRepeatOpenSingle2 = "|2:" as const;
+export const BarlineRepeatOpenSingle2x = "|2x:" as const;
+export const BarlineRepeatCloseSingle = ":|" as const;
+export const BarlineRepeatCloseSingle1 = ":1|" as const;
+export const BarlineRepeatCloseSingle2 = ":2|" as const;
+export const BarlineRepeatCloseSingle2x = ":2x|" as const;
+export const BarlineRepeatOpenDouble1 = "||1:" as const;
+export const BarlineRepeatOpenDouble1x = "||1x:" as const;
+export const BarlineRepeatOpenDouble2 = "||2:" as const;
+export const BarlineRepeatOpenDouble2x = "||2x:" as const;
+export const BarlineRepeatCloseDouble1 = ":1||" as const;
+export const BarlineRepeatCloseDouble1x = ":1x||" as const;
+export const BarlineRepeatCloseDouble2 = ":2||" as const;
+export const BarlineRepeatCloseDouble2x = ":2x||" as const;
+
+// BarRepeatSignifierOpen = (digit caseInsensitive<"x">?)? ":"
+// BarRepeatSignifierClose = ":" (digit caseInsensitive<"x">?)?
+
+export const DoubleBarline = "||";
+export const SingleBarline = "|";
 
 export function printChordish(this: Chordish): string {
   switch (this) {

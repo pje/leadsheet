@@ -5,10 +5,10 @@ browser_test_files=browser_test.ts
 unit_test_files=$(filter-out $(browser_test_files),$(test_files))
 
 build: deps ohm_bundle
-	npx esbuild index.ts --outfile=index.js --bundle --sourcemap --loader:.leadsheet=text
+	npx esbuild --target=chrome58 index.ts --outfile=index.js --bundle --sourcemap --loader:.leadsheet=text
 
 watch: deps ohm_bundle
-	npx esbuild index.ts --outfile=index.js --bundle --sourcemap --loader:.leadsheet=text --watch
+	npx esbuild --target=chrome58 index.ts --outfile=index.js --bundle --sourcemap --loader:.leadsheet=text --watch
 
 test: unit_test browser_test
 
