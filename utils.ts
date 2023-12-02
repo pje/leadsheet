@@ -103,7 +103,13 @@ export function chordColor(
 export const NoteRegex = /^([A-G]{1}(?:[#♯b♭𝄪𝄫])?)(.*)$/;
 
 export function unicodeifyMusicalSymbols(s: string) {
-  return s.replace("b", "♭").replace("#", "♯");
+  return s.replace(
+    "b",
+    `<span class="unicode-flat">♭</span>`,
+  ).replace(
+    "#",
+    `<span class="unicode-sharp">♯</span>`,
+  );
 }
 
 const superscriptChars: { [K in string]: string } = {

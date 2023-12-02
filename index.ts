@@ -192,7 +192,11 @@ function renderMetadata(
     : "?";
 
   metadataElement.querySelector(".title")!.textContent = song.title || "";
-  metadataElement.querySelector(".key")!.textContent = formattedSongKey;
+  metadataElement.querySelector(".key")!.textContent = "";
+  metadataElement.querySelector(".key")!.insertAdjacentHTML(
+    "afterbegin",
+    formattedSongKey,
+  );
   metadataElement.querySelector(".artist")!.textContent = song.artist || "";
   metadataElement.querySelector(".date")!.textContent = song.year || "";
 }

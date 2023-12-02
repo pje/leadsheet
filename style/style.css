@@ -27,7 +27,8 @@
   --bright-aqua: #8ec07c;
   --bright-orange: #fe8019;
 
-  --staff-line-height: 14.75px;
+  --staff-line-height: 15px;
+  --staff-height: calc(var(--staff-line-height) * 4);
 }
 
 html {
@@ -105,11 +106,19 @@ html {
   }
 }
 
+.unicode-flat,
+.unicode-sharp {
+  position: relative;
+  font-size: 15pt;
+  left: -5px;
+  bottom: 2px;
+  margin-right: -8px;
+}
+
 #song {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   row-gap: 32px;
-  column-gap: 1px;
 
   .bar {
     &:nth-child(4n-3) {
@@ -136,6 +145,7 @@ html {
 
       .chord {
         min-height: 26px;
+        white-space: nowrap; /* this prevents long chord names from breaking into multiple lines*/
         font-size: 20pt;
         text-align: center;
         flex-basis: 0;
@@ -168,29 +178,30 @@ html {
     }
 
     .staff {
-      height: calc(var(--staff-line-height) * 4.1);
+      height: var(--staff-height);
       border-bottom: none;
-      border-top: none;
+      border-top: solid;
+      border-top-width: 1px;
 
       @media (prefers-color-scheme: light) {
         border-color: #111;
         background: repeating-linear-gradient(
-          0deg,
+          to top,
           #151515,
           #151515 1px,
-          transparent 1px,
-          transparent var(--staff-line-height)
+          transparent 0px,
+          transparent 25%
         );
       }
 
       @media (prefers-color-scheme: dark) {
         border-color: #fffdf3;
         background: repeating-linear-gradient(
-          0deg,
+          to top,
           #fffdf3,
           #fffdf3 1px,
-          transparent 1px,
-          transparent var(--staff-line-height)
+          transparent 0px,
+          transparent 25%
         );
       }
 
@@ -252,6 +263,16 @@ html {
         border-right-width: 1.5px;
       }
 
+      /* &.barline-single-open {
+        border-left-style: solid;
+        border-left-width: 1.5px;
+      } */
+
+      &.barline-double-open {
+        border-left-style: double;
+        border-left-width: 8.5px;
+      }
+
       &.barline-double-close {
         border-right-style: double;
         border-right-width: 8.5px;
@@ -278,16 +299,6 @@ html {
           line-height: 3.2rem;
         }
       }
-
-      /* &.barline-single-open {
-                border-left-style: solid;
-                border-left-width: 1.5px;
-            }
-
-            &.barline-double-open {
-                border-left-style: solid;
-                border-left-width: 10.5px;
-            } */
     }
   }
 }
