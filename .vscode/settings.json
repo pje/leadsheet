@@ -10,6 +10,7 @@
     "./parser/parser_test.ts",
     "./parser/parser.ts",
     "./song.ts",
+    "./song_test.ts",
     "./test_utils.ts",
     "./types.ts",
     "./utils_test.ts",
