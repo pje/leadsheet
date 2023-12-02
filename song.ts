@@ -6,7 +6,13 @@ import {
   NoteRegex,
   transposeLetter,
 } from "./utils.ts";
-import { Chord, Letter, transposeChord } from "./chord.ts";
+import {
+  Chord,
+  Letter,
+  QualityMajor,
+  QualityMinor,
+  transposeChord,
+} from "./chord.ts";
 
 export type Song = {
   title: string | undefined;
@@ -95,7 +101,13 @@ export function parseSig(this: Readonly<Song>): {
 export function guessKey(this: Readonly<Song>): string {
   if (this.key) return this.key;
   const c = getFirstChord.bind(this)();
-  return c ? printChord.bind(c)() : "?";
+  if (c && c.quality === QualityMajor) {
+    return c.tonic;
+  } else if (c && c.quality === QualityMinor) {
+    return `${c.tonic}m`;
+  } else {
+    return `${c?.tonic || "?"}`;
+  }
 }
 
 function getFirstChord(this: Readonly<Song>): Chord | undefined {

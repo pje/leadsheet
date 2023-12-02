@@ -16,6 +16,7 @@ const songFixture: Song = {
         {
           tonic: "C",
           quality: QualityMinor,
+          extent: "7",
         },
       ],
     },

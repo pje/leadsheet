@@ -72,7 +72,13 @@ function ChordActions(c: Chord): SongActionDict<Chord> {
       _arg0: NonterminalNode,
       _arg1: IterationNode,
     ) {
-      c.tonic = <Letter> this.sourceString;
+      c.tonic = <Letter> this.sourceString.replace(
+        /(^[A-Ga-g])/g,
+        function (t) {
+          return t.toUpperCase();
+        },
+      );
+
       return c;
     },
     flavor(
@@ -279,10 +285,11 @@ function Actions(s: Song): SongActionDict<Song> {
       bars.eval();
       return s;
     },
-    Bars(barline, bars, _2) {
+    Bars(barline, barChords, closingBarlines) {
       let previousChord: Chordish | undefined = undefined;
+      let previousBarline = barline.sourceString;
 
-      bars.children.forEach((barNode) => {
+      barChords.children.forEach((barNode, i) => {
         const chords = barNode.children.map(
           (chordishNode) => {
             const chordString = chordishNode.sourceString.trim();
@@ -308,12 +315,15 @@ function Actions(s: Song): SongActionDict<Song> {
             }
           },
         );
-
+        const thisBarline = closingBarlines.children[i]?.sourceString?.split(
+          /\s/,
+        )[0];
         const bar: Bar = {
-          openBar: barline.sourceString,
-          closeBar: barline.sourceString,
+          openBar: previousBarline,
+          closeBar: thisBarline,
           chords,
         };
+        previousBarline = thisBarline;
         s.bars.push(bar);
       });
 

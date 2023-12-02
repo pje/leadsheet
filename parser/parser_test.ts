@@ -4,7 +4,7 @@ import {
   fail,
 } from "https://deno.land/std@0.202.0/assert/mod.ts";
 import { ParseChord, ParseSong } from "./parser.ts";
-import { Result } from "../types.ts";
+import { Bar, Chordish, Result, Song } from "../types.ts";
 import {
   Chord,
   Letter,
@@ -30,17 +30,111 @@ for await (const songFile of Deno.readDir(`${songsDir}/`)) {
 }
 
 const emptyString = ``;
+const emptySong: Song = {
+  title: undefined,
+  artist: undefined,
+  year: undefined,
+  sig: undefined,
+  key: "?",
+  bars: [],
+};
 
-const songFixtures = [
-  { title: "noChord", contents: `| N.C. |` },
-  { title: "oneChord", contents: `| C |` },
-  { title: "oneChordNoSpaces", contents: `|C|` },
-  { title: "simpleSong", contents: `| CM7 | FM7 | Am7 | Dm7 | G7 | C6 |` },
-  { title: "repetition", contents: `| C | % | D | % |` },
-  { title: "barlineRepetition", contents: `||: C :| D |2x: C | D :||` },
+const _emptyBar: Bar = {
+  chords: [],
+  openBar: "|",
+  closeBar: "|",
+};
+
+function bar(...chords: string[]): Bar {
+  return {
+    ..._emptyBar,
+    chords: chords.map((str: string) =>
+      str === "N.C." ? str : ParseChord(str).value!
+    ),
+  };
+}
+
+const songFixtures: Array<{
+  title: string;
+  contents: string;
+  expected: Song;
+}> = [
+  {
+    title: "noChord",
+    contents: `| N.C. |`,
+    expected: { ...emptySong, key: "?", bars: [bar("N.C.")] },
+  },
+  {
+    title: "oneChord",
+    contents: `| C |`,
+    expected: { ...emptySong, key: "C", bars: [bar("C")] },
+  },
+  {
+    title: "oneChordNoSpaces",
+    contents: `|C|`,
+    expected: { ...emptySong, key: "C", bars: [bar("C")] },
+  },
+  {
+    title: "simpleSong",
+    contents: `| CM7 | FM7 | Am7 | Dm7 | G7 | C6 |`,
+    expected: {
+      ...emptySong,
+      key: "C",
+      bars: [
+        bar("CM7"),
+        bar("FM7"),
+        bar("Am7"),
+        bar("Dm7"),
+        bar("G7"),
+        bar("C6"),
+      ],
+    },
+  },
+  {
+    title: "repetition",
+    contents: `| C | % | D | % |`,
+    expected: {
+      ...emptySong,
+      key: "C",
+      bars: [bar("C"), bar("C"), bar("D"), bar("D")],
+    },
+  },
+  {
+    title: "barlineRepetition",
+    contents: `||: C :| D |2x: C | D :||`,
+    expected: {
+      ...emptySong,
+      key: "C",
+      bars: [
+        { ...bar("C"), openBar: "||:", closeBar: ":|" },
+        { ...bar("D"), openBar: ":|", closeBar: "|2x:" },
+        { ...bar("C"), openBar: "|2x:", closeBar: "|" },
+        { ...bar("D"), openBar: "|", closeBar: ":||" },
+      ],
+    },
+  },
   {
     title: "allLetters",
     contents: `| A | B | C | D | E | F | G | a | c | d | e | f | g |`,
+    expected: {
+      ...emptySong,
+      key: "A",
+      bars: [
+        bar("A"),
+        bar("B"),
+        bar("C"),
+        bar("D"),
+        bar("E"),
+        bar("F"),
+        bar("G"),
+        bar("A"),
+        bar("C"),
+        bar("D"),
+        bar("E"),
+        bar("F"),
+        bar("G"),
+      ],
+    },
   },
   {
     title: "songWithMetadata",
@@ -50,6 +144,18 @@ year: 2023
 
 | A | B | C |
 `,
+    expected: {
+      ...emptySong,
+      key: "A",
+      title: "my song",
+      artist: "some guy",
+      year: "2023",
+      bars: [
+        bar("A"),
+        bar("B"),
+        bar("C"),
+      ],
+    },
   },
   {
     title: "songWithComments",
@@ -58,10 +164,20 @@ year: 2023
 // comment
 | B | // comment
 // comment
-| C
+| C |
 // comment
 | D |
 `,
+    expected: {
+      ...emptySong,
+      key: "A",
+      bars: [
+        bar("A"),
+        bar("B"),
+        bar("C"),
+        bar("D"),
+      ],
+    },
   },
 ];
 
@@ -176,8 +292,15 @@ Deno.test(`chord symbols`, async (t) => {
 Deno.test(`songs`, async (t) => {
   await t.step("songs dir: sanity check", () => assert(rawSongs.length > 2));
 
-  for (const { title, contents } of songFixtures) {
-    await t.step(`${title} should parse`, () => assertValidSong(contents));
+  for (const { title, contents, expected } of songFixtures) {
+    await t.step(
+      `${title} should parse as valid`,
+      () => assertValidSong(contents),
+    );
+    await t.step(
+      `${title} should parse to the expected song`,
+      () => assertEquals(expected, parserResultOrFail(ParseSong(contents))),
+    );
   }
 
   for (const { name, contents } of rawSongs) {
