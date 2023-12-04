@@ -1,0 +1,30 @@
+title: Take The A Train
+artist: Billy Strayhorn
+year: 1939
+
+[A]
+|: C  |     %      |  D7b5  |  %  |
+| gW  | g* e5. g c | e5* g# | g#W |
+| Dm7 |               G7              |    C     | % :1| % C9 :2||
+| a   | *(a a#) *(b e5) *(g gb f db5) | (c5* eW) | eW  | eW     ||
+[B]
+||  F     |     %       |  %      | % |
+|| *(a c) | e5* f. a c  | e a     | a |
+| D7      |     %       | Dm7     | G7 G7b9 |
+| *(a c)  | e5* f#. a c | *(e5 a) | aH abH  |
+[A]
+|: C  |     %      |  D7b5  |  %  |
+| gW  | g* e5. g c | e5* g# | g#W |
+| Dm7 |               G7              |    C     | % :1| % C9 :2||
+| a   | *(a a#) *(b e5) *(g gb f db5) | (c5* eW) | eW  | eW     ||
+
+// W: Whole
+// H: Half
+// Q: Quarter [implicit]
+// T: Triplet
+// *: eighth [i.e. shift-8]
+// S: Sixteenth
+// H.: dotted half
+// Q.: dotted quarter [or just `.`]
+// *.: dotted eighth
+// S.: dotted sixteenth

@@ -23,10 +23,12 @@ const songsDir = "./songs";
 const rawSongs: Array<{ name: string; contents: string }> = [];
 
 for await (const songFile of Deno.readDir(`${songsDir}/`)) {
-  rawSongs.push({
-    name: songFile.name,
-    contents: Deno.readTextFileSync(`${songsDir}/${songFile.name}`),
-  });
+  if (songFile.name.endsWith(".leadsheet")) {
+    rawSongs.push({
+      name: songFile.name,
+      contents: Deno.readTextFileSync(`${songsDir}/${songFile.name}`),
+    });
+  }
 }
 
 const emptyString = ``;
