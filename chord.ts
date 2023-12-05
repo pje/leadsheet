@@ -50,6 +50,14 @@ function flavor(this: Readonly<Chord>): string {
 
 function printQuality<T extends Chord>(this: T): string {
   switch (this.quality) {
+    case QualityAugmented:
+      return "+";
+    case QualityDiminished:
+      return "o";
+    case QualityDominant:
+      return ""; // "dom" is implicit, `extent` defines the dominant type
+    case QualityHalfDiminished:
+      return "ø";
     case QualityMajor:
       if (this.extent == "6") {
         return ""; // we want "C6" instead of "CM6"
@@ -58,23 +66,14 @@ function printQuality<T extends Chord>(this: T): string {
       } else {
         return "M"; // we want CM9
       }
-
     case QualityMinor:
       return "m";
     case QualityMinorMajor:
       return "minMaj";
-    case QualityDominant:
-      return ""; // "dom" is implicit, `extent` defines the dominant type
     case QualityPower:
       return "5";
     case QualitySuspended:
       return "sus"; // `extent` defines the suspension type
-    case QualityAugmented:
-      return "+";
-    case QualityDiminished:
-      return "o";
-    case QualityHalfDiminished:
-      return "ø";
     default:
       nonexhaustiveSwitchGuard(this.quality);
   }
@@ -107,22 +106,22 @@ export const AllLetters = [
 export type Letter = (typeof AllLetters)[number];
 
 export type ChordQuality =
+  | typeof QualityAugmented
+  | typeof QualityDiminished
+  | typeof QualityDominant
+  | typeof QualityHalfDiminished
   | typeof QualityMajor
   | typeof QualityMinor
   | typeof QualityMinorMajor
-  | typeof QualityDominant
   | typeof QualityPower
-  | typeof QualitySuspended
-  | typeof QualityAugmented
-  | typeof QualityDiminished
-  | typeof QualityHalfDiminished;
+  | typeof QualitySuspended;
 
-export const QualityMajor = "maj" as const;
-export const QualityMinorMajor = "minmaj" as const;
-export const QualityMinor = "min" as const;
-export const QualityDominant = "dom" as const;
-export const QualityPower = "pow" as const;
-export const QualitySuspended = "sus" as const;
 export const QualityAugmented = "aug" as const;
 export const QualityDiminished = "dim" as const;
+export const QualityDominant = "dom" as const;
 export const QualityHalfDiminished = "hdim" as const;
+export const QualityMajor = "maj" as const;
+export const QualityMinor = "min" as const;
+export const QualityMinorMajor = "minmaj" as const;
+export const QualityPower = "pow" as const;
+export const QualitySuspended = "sus" as const;
