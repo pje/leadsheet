@@ -183,6 +183,7 @@ function ChordActions(c: Chord): SongActionDict<Chord> {
       _arg0: NonterminalNode | TerminalNode,
     ) {
       c.quality = QualityMinorMajor;
+      c.extent ||= 7;
       return c;
     },
     minor_major_with_parens(
@@ -193,6 +194,7 @@ function ChordActions(c: Chord): SongActionDict<Chord> {
       _arg4: TerminalNode,
     ) {
       c.quality = QualityMinorMajor;
+      c.extent ||= 7;
       return c;
     },
     augmented(
@@ -209,6 +211,7 @@ function ChordActions(c: Chord): SongActionDict<Chord> {
     },
     dominant(_arg0: NonterminalNode) {
       c.quality = QualityDominant;
+      c.extent ||= 7;
       return c;
     },
     half_diminished(_arg0: NonterminalNode) {
