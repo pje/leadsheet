@@ -154,6 +154,12 @@ html {
         text-align: center;
         flex-basis: 0;
 
+        &.aug {
+          color: var(--bright-yellow);
+        }
+        &.dim {
+          color: var(--bright-purple);
+        }
         &.dom {
           color: var(--neutral-red);
         }
@@ -163,20 +169,17 @@ html {
         &.min {
           color: var(--bright-blue);
         }
-        &.sus {
-          color: var(--bright-orange);
+        &.minmaj {
+          color: var(--neutral-aqua);
         }
-        &.aug {
-          color: var(--bright-yellow);
-        }
-        &.dim {
-          color: var(--bright-purple);
+        &.no-chord {
+          color: inherit;
         }
         &.pow {
           color: var(--light-gray-4);
         }
-        &.no-chord {
-          color: inherit;
+        &.sus {
+          color: var(--bright-orange);
         }
       }
     }
