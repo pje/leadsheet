@@ -2,7 +2,7 @@ import {
   assert,
   assertFalse,
   fail,
-} from "https://deno.land/std@0.202.0/assert/mod.ts";
+} from "https://deno.land/std@0.208.0/assert/mod.ts";
 import { ParseChord, ParseSong } from "./parser.ts";
 import { Bar, Result, Song } from "../types.ts";
 import {

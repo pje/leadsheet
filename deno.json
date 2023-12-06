@@ -1,7 +1,0 @@
-{
-  "imports": {
-    "./grammar.ohm-bundle": "./grammar.ohm-bundle.js",
-    "path": "node:path",
-    "fs": "node:fs"
-  }
-}

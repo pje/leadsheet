@@ -1,4 +1,4 @@
-import { assertNotEquals } from "https://deno.land/std@0.202.0/assert/assert_not_equals.ts";
+import { assertNotEquals } from "https://deno.land/std@0.208.0/assert/assert_not_equals.ts";
 import { assertEquals } from "./test_utils.ts";
 import { Chord, FlatOrSharpSymbol, SharpSymbol } from "./types.ts";
 

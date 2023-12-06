@@ -1,0 +1,10 @@
+{
+  "imports": {
+    "./grammar.ohm-bundle": "./grammar.ohm-bundle.js",
+    "path": "node:path",
+    "fs": "node:fs"
+  },
+  "tasks": {
+    "upgrade-dependencies": "deno run --allow-read=./ --allow-net --allow-write=./ https://deno.land/x/deno_outdated@0.2.5/cli.ts"
+  }
+}

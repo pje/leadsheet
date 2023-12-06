@@ -1,11 +1,11 @@
-import * as log from "https://deno.land/std@0.207.0/log/mod.ts";
-import { assertEquals } from "https://deno.land/std@0.202.0/assert/assert_equals.ts";
+import * as log from "https://deno.land/std@0.208.0/log/mod.ts";
+import { assertEquals } from "https://deno.land/std@0.208.0/assert/assert_equals.ts";
 import { time } from "https://deno.land/x/time.ts@v2.0.1/mod.ts";
 import puppeteer, {
   Browser,
   Page,
 } from "https://deno.land/x/puppeteer@16.2.0/mod.ts";
-import * as path from "https://deno.land/std@0.204.0/path/mod.ts";
+import * as path from "https://deno.land/std@0.208.0/path/mod.ts";
 
 const indexAbsolutePath = path.resolve("./index.html");
 const songFilePath = path.resolve("./songs/chelsea_bridge.leadsheet");
