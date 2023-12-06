@@ -3,9 +3,9 @@ import { assertEquals } from "./test_utils.ts";
 import { Chord, FlatOrSharpSymbol, SharpSymbol } from "./types.ts";
 
 Deno.test("===", async (t) => {
-  const a1 = new Chord("A", "maj", "7", "#11");
-  const a2 = new Chord("A", "maj", "7", "#11");
-  const b = new Chord("B", "maj", "7", "#11");
+  const a1 = new Chord("A", "maj", 7, "#11");
+  const a2 = new Chord("A", "maj", 7, "#11");
+  const b = new Chord("B", "maj", 7, "#11");
 
   await t.step(
     `"${JSON.stringify(a1)}" should === itself`,
@@ -31,8 +31,8 @@ Deno.test("===", async (t) => {
 Deno.test(Chord.prototype.transpose.name, async (t) => {
   const cases = new Map<[Chord, number, FlatOrSharpSymbol], Chord>([
     [
-      [new Chord("A", "maj", "7", "/G"), 1, SharpSymbol],
-      new Chord("A#", "maj", "7", "/G#"),
+      [new Chord("A", "maj", 7, "/G"), 1, SharpSymbol],
+      new Chord("A#", "maj", 7, "/G#"),
     ],
   ]);
 
@@ -56,17 +56,17 @@ Deno.test(Chord.prototype.transpose.name, async (t) => {
 Deno.test(Chord.prototype.print.name, async (t) => {
   const cases = new Map<Chord, string>([
     [new Chord("A", "maj"), "A"],
-    [new Chord("A", "maj", "6"), "A6"],
-    [new Chord("A", "maj", "7"), "AM7"],
-    [new Chord("A", "maj", "9"), "AM9"],
-    [new Chord("A", "maj", "11"), "AM11"],
-    [new Chord("A", "maj", "13"), "AM13"],
+    [new Chord("A", "maj", 6), "A6"],
+    [new Chord("A", "maj", 7), "AM7"],
+    [new Chord("A", "maj", 9), "AM9"],
+    [new Chord("A", "maj", 11), "AM11"],
+    [new Chord("A", "maj", 13), "AM13"],
     [new Chord("A", "min"), "Am"],
     [new Chord("A", "dim"), "Ao"],
-    [new Chord("A", "dom", "7"), "A7"],
-    [new Chord("A", "sus", "2"), "Asus2"],
-    [new Chord("A", "sus", "4"), "Asus4"],
-    [new Chord("A", "aug", "7"), "A+7"],
+    [new Chord("A", "dom", 7), "A7"],
+    [new Chord("A", "sus", 2), "Asus2"],
+    [new Chord("A", "sus", 4), "Asus4"],
+    [new Chord("A", "aug", 7), "A+7"],
   ]);
 
   for (const [k, v] of cases) {

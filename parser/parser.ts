@@ -7,6 +7,7 @@ import {
   Barline,
   Chord,
   Chordish,
+  Extent,
   Letter,
   NoChord,
   QualityAugmented,
@@ -112,27 +113,64 @@ function ChordActions(c: Chord): SongActionDict<Chord> {
         extent.children[0]?.eval();
       }
 
-      c.alterations = alterations.children.map((alterationNode) =>
-        alterationNode.sourceString
+      if (!c.alterations || c.alterations.length === 0) {
+        c.alterations = [];
+      }
+
+      c.alterations.push(
+        ...alterations.children.map((alterationNode) =>
+          alterationNode.sourceString
+        ),
       );
 
       return c;
     },
-    // noteLetter(
-    //   _arg0: NonterminalNode | TerminalNode,
-    // ) {
-    //   return c;
-    // },
-    // accidental(_arg0: TerminalNode) {
-    //   return c;
-    // },
-    // alteration_symbol(
-    //   _arg0: NonterminalNode | TerminalNode,
-    // ) {
-    //   return c;
-    // },
     extent(arg0: NonterminalNode) {
-      c.extent = arg0.sourceString;
+      arg0.eval();
+      return c;
+    },
+    thirteen(_arg0: NonterminalNode) {
+      c.extent = 13;
+      return c;
+    },
+    eleven(_arg0: NonterminalNode) {
+      c.extent = 11;
+      return c;
+    },
+    nine(_arg0: NonterminalNode) {
+      c.extent = 9;
+      return c;
+    },
+    seven(_arg0: NonterminalNode) {
+      c.extent = 7;
+      return c;
+    },
+    six_and_nine(
+      _arg0: NonterminalNode,
+      _arg1: IterationNode,
+      _arg2: NonterminalNode,
+    ) {
+      c.extent = 6;
+      if (!c.alterations || c.alterations.length === 0) {
+        c.alterations = [];
+      }
+      c.alterations.push("/9");
+      return c;
+    },
+    six(_arg0: NonterminalNode) {
+      c.extent = 6;
+      return c;
+    },
+    five(_arg0: NonterminalNode) {
+      c.extent = 5;
+      return c;
+    },
+    four(_arg0: NonterminalNode) {
+      c.extent = 4;
+      return c;
+    },
+    two(_arg0: NonterminalNode) {
+      c.extent = 2;
       return c;
     },
     quality(arg0: NonterminalNode) {
@@ -187,31 +225,6 @@ function ChordActions(c: Chord): SongActionDict<Chord> {
       c.quality = QualityMinor;
       return c;
     },
-    // alteration(_arg0: NonterminalNode) {
-    //   return c;
-    // },
-    // alteration_no_parens(
-    //   _arg0: Node,
-    //   _arg1: IterationNode | NonterminalNode,
-    // ) {
-    //   return c;
-    // },
-    // alteration_in_parens(
-    //   _arg0: TerminalNode,
-    //   _arg1: IterationNode,
-    //   _arg2: NonterminalNode,
-    //   _arg3: IterationNode,
-    //   _arg4: TerminalNode,
-    // ) {
-    //   return c;
-    // },
-    // alteration_add_no_omit(
-    //   _arg0: IterationNode,
-    //   _arg1: NonterminalNode,
-    //   _arg2: IterationNode,
-    // ) {
-    //   return c;
-    // },
   };
 
   return _Actions;

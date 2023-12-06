@@ -172,44 +172,48 @@ Deno.test("empty string: should not parse", () => {
 
 Deno.test(`chord symbols`, async (t) => {
   const positiveCases = new Map<string, Chord>([
-    [`C5`, new Chord("C", QualityPower)],
+    [`C5`, new Chord("C", QualityPower, 5)],
     [`C`, new Chord("C", QualityMajor)],
     [`CM`, new Chord("C", QualityMajor)],
     [`Cmaj`, new Chord("C", QualityMajor)],
-    [`C6`, new Chord("C", QualityMajor)],
-    [`C6/9`, new Chord("C", QualityMajor)],
-    [`CM7`, new Chord("C", QualityMajor, "7")],
-    [`Cᴹ⁷`, new Chord("C", QualityMajor, "7")],
-    [`CM11`, new Chord("C", QualityMajor)],
-    [`CM13`, new Chord("C", QualityMajor)],
+    [`C6`, new Chord("C", QualityMajor, 6)],
+    [`C6/9`, new Chord("C", QualityMajor, 6, "/9")],
+    [`C69`, new Chord("C", QualityMajor, 6, "/9")],
+    [`CM7`, new Chord("C", QualityMajor, 2)],
+    [`Cᴹ⁷`, new Chord("C", QualityMajor, 7)],
+    [`CM11`, new Chord("C", QualityMajor, 11)],
+    [`CM13`, new Chord("C", QualityMajor, 13)],
     [`Cm`, new Chord("C", QualityMinor)],
     [`Cmin`, new Chord("C", QualityMinor)],
     [`Csus`, new Chord("C", QualitySuspended)],
-    [`Csus2`, new Chord("C", QualitySuspended)],
-    [`Csus4`, new Chord("C", QualitySuspended)],
-    [`C7`, new Chord("C", QualityDominant)],
-    [`C9`, new Chord("C", QualityDominant)],
-    [`C11`, new Chord("C", QualityDominant)],
-    [`C13`, new Chord("C", QualityDominant)],
-    [`CM7`, new Chord("C", QualityMajor)],
-    [`CΔ7`, new Chord("C", QualityMajor)],
-    [`Cm7`, new Chord("C", QualityMinor)],
-    [`Cm9`, new Chord("C", QualityMinor)],
-    [`Cm11`, new Chord("C", QualityMinor)],
-    [`Cm13`, new Chord("C", QualityMinor)],
-    [`C-7`, new Chord("C", QualityMinor)],
+    [`Csus2`, new Chord("C", QualitySuspended, 2)],
+    [`Csus4`, new Chord("C", QualitySuspended, 4)],
+    [`C7`, new Chord("C", QualityDominant, 7)],
+    [`C9`, new Chord("C", QualityDominant, 9)],
+    [`C11`, new Chord("C", QualityDominant, 11)],
+    [`C13`, new Chord("C", QualityDominant, 13)],
+    [`CM7`, new Chord("C", QualityMajor, 7)],
+    [`CΔ7`, new Chord("C", QualityMajor, 7)],
+    [`Cm7`, new Chord("C", QualityMinor, 7)],
+    [`Cm9`, new Chord("C", QualityMinor, 9)],
+    [`Cm11`, new Chord("C", QualityMinor, 11)],
+    [`Cᵐ¹¹`, new Chord("C", QualityMinor, 11)],
+    [`Cm13`, new Chord("C", QualityMinor, 13)],
+    [`C-7`, new Chord("C", QualityMinor, 7)],
     [`Caug`, new Chord("C", QualityAugmented)],
     [`C⁺`, new Chord("C", QualityAugmented)],
     [`C+`, new Chord("C", QualityAugmented)],
+    [`C⁺7`, new Chord("C", QualityAugmented, 7)],
+    [`C+7#9`, new Chord("C", QualityAugmented, 7, "#9")],
     [`C/D`, new Chord("C", QualityMajor, undefined, "/D")],
     [`Cm/D`, new Chord("C", QualityMinor, undefined, "/D")],
-    [`Cm11#13(no5)`, new Chord("C", QualityMinor, undefined, "#13", "(no5)")],
+    [`Cm11#13(no5)`, new Chord("C", QualityMinor, 11, "#13", "(no5)")],
     [
       `F𝄫minMaj9#11(sus4)(no13)(no 5)(omit 5)(♯¹¹)/E`,
       new Chord(
         <Letter> "F𝄫", // TODO: this should be canonicalized to Eb
         QualityMinorMajor,
-        "9",
+        9,
         "#11",
         "(sus4)",
         "(no13)",
@@ -227,24 +231,7 @@ Deno.test(`chord symbols`, async (t) => {
       `"${str}" should parse as ${JSON.stringify(expectedChord)}`,
       () => {
         const chord = parserResultOrFail(ParseChord(str));
-
-        assertEquals(
-          expectedChord.tonic!,
-          chord.tonic,
-          "unexpected chord tonic",
-        );
-
-        assertEquals(
-          expectedChord.quality!,
-          chord.quality,
-          "unexpected chord quality",
-        );
-
-        assertEquals(
-          expectedChord.alterations!,
-          chord.alterations,
-          "unexpected chord alterations",
-        );
+        assertEquals(expectedChord, chord);
       },
     );
   }

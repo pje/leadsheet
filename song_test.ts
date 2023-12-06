@@ -7,7 +7,7 @@ const songFixture = new Song(
       openBarline: "|",
       closeBarline: "|",
       chords: [
-        new Chord("C", QualityMinor, "7"),
+        new Chord("C", QualityMinor, 7),
       ],
     },
   ],

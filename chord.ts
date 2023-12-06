@@ -4,13 +4,13 @@ import { nonexhaustiveSwitchGuard, transposeLetter } from "./utils.ts";
 export class Chord {
   public tonic: Letter;
   public quality: ChordQuality;
-  public extent?: string;
+  public extent?: Extent;
   public alterations?: Array<string>;
 
   constructor(
     tonic: Letter,
     quality: ChordQuality,
-    extent?: string,
+    extent?: Extent,
     ...alterations: Array<string>
   ) {
     this.tonic = tonic;
@@ -80,7 +80,7 @@ export class Chord {
       case QualityHalfDiminished:
         return "ø";
       case QualityMajor:
-        if (this.extent == "6") {
+        if (this.extent == 6) {
           return ""; // we want "C6" instead of "CM6"
         } else if (this.extent == undefined) {
           return ""; // we want "C" instead of "CM"
@@ -147,3 +147,5 @@ export const QualityMinor = "min" as const;
 export const QualityMinorMajor = "minmaj" as const;
 export const QualityPower = "pow" as const;
 export const QualitySuspended = "sus" as const;
+
+export type Extent = 2 | 4 | 5 | 6 | 7 | 8 | 9 | 11 | 13;
