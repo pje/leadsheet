@@ -154,7 +154,7 @@ function ChordActions(c: Chord): SongActionDict<Chord> {
       if (!c.alterations || c.alterations.length === 0) {
         c.alterations = [];
       }
-      c.alterations.push("/9");
+      c.alterations.push("(add 9)");
       return c;
     },
     six(_arg0: NonterminalNode) {
