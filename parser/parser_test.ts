@@ -207,6 +207,8 @@ Deno.test(`chord symbols`, async (t) => {
     [`C°`, new Chord("C", QualityDiminished)],
     [`Co7`, new Chord("C", QualityDiminished, 7)],
     [`C°⁷`, new Chord("C", QualityDiminished, 7)],
+    [`Cø`, new Chord("C", QualityMinor, 7, "b5")],
+    [`Cø7`, new Chord("C", QualityMinor, 7, "b5")],
     [`Caug`, new Chord("C", QualityAugmented)],
     [`C⁺`, new Chord("C", QualityAugmented)],
     [`C+`, new Chord("C", QualityAugmented)],

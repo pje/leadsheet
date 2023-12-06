@@ -7,13 +7,11 @@ import {
   Barline,
   Chord,
   Chordish,
-  Extent,
   Letter,
   NoChord,
   QualityAugmented,
   QualityDiminished,
   QualityDominant,
-  QualityHalfDiminished,
   QualityMajor,
   QualityMinor,
   QualityMinorMajor,
@@ -214,7 +212,12 @@ function ChordActions(c: Chord): SongActionDict<Chord> {
       return c;
     },
     half_diminished(_arg0: NonterminalNode) {
-      c.quality = QualityHalfDiminished;
+      c.quality = QualityMinor;
+      if (!c.alterations || c.alterations.length === 0) {
+        c.alterations = [];
+      }
+      c.alterations.push("b5");
+      c.extent ||= 7;
       return c;
     },
     major(_arg0: NonterminalNode | TerminalNode) {

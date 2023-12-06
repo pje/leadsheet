@@ -77,8 +77,6 @@ export class Chord {
         return "o";
       case QualityDominant:
         return ""; // "dom" is implicit, `extent` defines the dominant type
-      case QualityHalfDiminished:
-        return "ø";
       case QualityMajor:
         if (this.extent == 6) {
           return ""; // we want "C6" instead of "CM6"
@@ -131,7 +129,6 @@ export type ChordQuality =
   | typeof QualityAugmented
   | typeof QualityDiminished
   | typeof QualityDominant
-  | typeof QualityHalfDiminished
   | typeof QualityMajor
   | typeof QualityMinor
   | typeof QualityMinorMajor
@@ -141,7 +138,6 @@ export type ChordQuality =
 export const QualityAugmented = "aug" as const;
 export const QualityDiminished = "dim" as const;
 export const QualityDominant = "dom" as const;
-export const QualityHalfDiminished = "hdim" as const;
 export const QualityMajor = "maj" as const;
 export const QualityMinor = "min" as const;
 export const QualityMinorMajor = "minmaj" as const;
