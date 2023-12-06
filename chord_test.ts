@@ -22,7 +22,9 @@ Deno.test(transposeChord.name, async (t) => {
   for (const [k, v] of cases) {
     const [input, halfSteps, preferredAccidental] = k;
     await t.step(
-      `"${input}" up ${halfSteps} halfSteps (prefer ${preferredAccidental}) should be "${v}"`,
+      `"${
+        JSON.stringify(input)
+      }" up ${halfSteps} halfSteps (prefer ${preferredAccidental}) should transpose to "${v}"`,
       () =>
         assertEquals(
           v,
@@ -45,12 +47,13 @@ Deno.test(printChord.name, async (t) => {
     [{ tonic: "A", quality: "dom", extent: "7" }, "A7"],
     [{ tonic: "A", quality: "sus", extent: "2" }, "Asus2"],
     [{ tonic: "A", quality: "sus", extent: "4" }, "Asus4"],
+    [{ tonic: "A", quality: "aug", extent: "7" }, "A+7"],
   ]);
 
   for (const [k, v] of cases) {
     const input = k;
     await t.step(
-      `"${input}" should be "${v}"`,
+      `"${JSON.stringify(input)}" should print as "${v}"`,
       () => assertEquals(v, printChord.bind(input)()),
     );
   }
