@@ -31,15 +31,6 @@ for await (const songFile of Deno.readDir(`${songsDir}/`)) {
 }
 
 const emptyString = ``;
-const emptySong: Song = {
-  title: undefined,
-  artist: undefined,
-  year: undefined,
-  sig: undefined,
-  key: "?",
-  bars: [],
-};
-
 const _emptyBar: Bar = {
   chords: [],
   openBarline: "|",
@@ -63,25 +54,23 @@ const songFixtures: Array<{
   {
     title: "noChord",
     contents: `| N.C. |`,
-    expected: { ...emptySong, key: "?", bars: [bar("N.C.")] },
+    expected: new Song([bar("N.C.")], { key: "?" }),
   },
   {
     title: "oneChord",
     contents: `| C |`,
-    expected: { ...emptySong, key: "C", bars: [bar("C")] },
+    expected: new Song([bar("C")], { key: "C" }),
   },
   {
     title: "oneChordNoSpaces",
     contents: `|C|`,
-    expected: { ...emptySong, key: "C", bars: [bar("C")] },
+    expected: new Song([bar("C")], { key: "C" }),
   },
   {
     title: "simpleSong",
     contents: `| CM7 | FM7 | Am7 | Dm7 | G7 | C6 |`,
-    expected: {
-      ...emptySong,
-      key: "C",
-      bars: [
+    expected: new Song(
+      [
         bar("CM7"),
         bar("FM7"),
         bar("Am7"),
@@ -89,38 +78,35 @@ const songFixtures: Array<{
         bar("G7"),
         bar("C6"),
       ],
-    },
+      { key: "C" },
+    ),
   },
   {
     title: "repetition",
     contents: `| C | % | D | % |`,
-    expected: {
-      ...emptySong,
-      key: "C",
-      bars: [bar("C"), bar("C"), bar("D"), bar("D")],
-    },
+    expected: new Song(
+      [bar("C"), bar("C"), bar("D"), bar("D")],
+      { key: "C" },
+    ),
   },
   {
     title: "barlineRepetition",
     contents: `||: C :| D |2x: C | D :||`,
-    expected: {
-      ...emptySong,
-      key: "C",
-      bars: [
+    expected: new Song(
+      [
         { ...bar("C"), openBarline: "||:", closeBarline: ":|" },
         { ...bar("D"), openBarline: ":|", closeBarline: "|2x:" },
         { ...bar("C"), openBarline: "|2x:", closeBarline: "|" },
         { ...bar("D"), openBarline: "|", closeBarline: ":||" },
       ],
-    },
+      { key: "C" },
+    ),
   },
   {
     title: "allLetters",
     contents: `| A | B | C | D | E | F | G | a | c | d | e | f | g |`,
-    expected: {
-      ...emptySong,
-      key: "A",
-      bars: [
+    expected: new Song(
+      [
         bar("A"),
         bar("B"),
         bar("C"),
@@ -135,7 +121,8 @@ const songFixtures: Array<{
         bar("F"),
         bar("G"),
       ],
-    },
+      { key: "A" },
+    ),
   },
   {
     title: "songWithMetadata",
@@ -145,18 +132,14 @@ year: 2023
 
 | A | B | C |
 `,
-    expected: {
-      ...emptySong,
-      key: "A",
-      title: "my song",
-      artist: "some guy",
-      year: "2023",
-      bars: [
+    expected: new Song(
+      [
         bar("A"),
         bar("B"),
         bar("C"),
       ],
-    },
+      { key: "A", title: "my song", artist: "some guy", year: "2023" },
+    ),
   },
   {
     title: "songWithComments",
@@ -169,16 +152,15 @@ year: 2023
 // comment
 | D |
 `,
-    expected: {
-      ...emptySong,
-      key: "A",
-      bars: [
+    expected: new Song(
+      [
         bar("A"),
         bar("B"),
         bar("C"),
         bar("D"),
       ],
-    },
+      { key: "A" },
+    ),
   },
 ];
 

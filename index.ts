@@ -28,12 +28,10 @@ import {
   ChordQuality,
   DoubleBarline,
   NoChord,
-  parseSig,
   printChordish,
   RepeatedChordSymbol,
   SingleBarline,
   Song,
-  transposeSong,
 } from "./types.ts";
 import {
   nonexhaustiveSwitchGuard,
@@ -161,7 +159,7 @@ function renderClefAndSignatures(
   song: Readonly<Song>,
   rootElement: HTMLElement = document.getElementById("root")!,
 ) {
-  const { numerator, denominator } = parseSig.bind(song)();
+  const { numerator, denominator } = song.parseSig();
 
   const staffElements = `
   <div class="clef treble">𝄞</div>
@@ -250,7 +248,7 @@ function fetchLoadedSongFromLocalStorage(): Song | undefined {
 
 // TODO: Action
 function handleTransposeSong(halfSteps: number): void {
-  const transposedSong: Song = transposeSong.bind(state.song!)(halfSteps);
+  const transposedSong: Song = state.song!.transpose(halfSteps);
   state.song = transposedSong;
   renderSong(transposedSong);
   addTransposedAmount(halfSteps);

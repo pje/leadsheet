@@ -7,7 +7,6 @@ import {
   Barline,
   Chord,
   Chordish,
-  guessKey,
   Letter,
   NoChord,
   QualityAugmented,
@@ -245,21 +244,14 @@ export function ParseSong(rawSong: string): Result<Song> {
     return Err(matchResult.message || "failed to parse song: empty error");
   }
 
-  const song: Song = {
-    bars: [],
-    title: undefined,
-    artist: undefined,
-    year: undefined,
-    sig: undefined,
-    key: undefined,
-  };
+  const song = new Song();
 
   const semantics = grammar.Song.createSemantics();
 
   semantics.addOperation("eval", Actions(song));
   semantics(matchResult).eval();
 
-  song.key ||= guessKey.bind(song)();
+  song.key ||= song.guessKey();
 
   return Ok(song);
 }
