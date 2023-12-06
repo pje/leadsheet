@@ -1,17 +1,18 @@
 import { ParseChord } from "./parser/parser.ts";
 import {
   ChordQuality,
-  ConventionallyFlatKeyDegrees,
-  DegreesToKeys,
+  ConventionallyFlatMajorKeys,
   FlatOrSharpSymbol,
   FlatSymbol,
   KeyQualifier,
   KeySignatureMajorLetter,
   KeySignatureToAccidentalList,
-  KeysToDegrees,
   Letter,
+  LetterToPitchClass,
   Major,
   Minor,
+  PitchClass,
+  PitchClassToKey,
   SharpSymbol,
   SigAccidental,
 } from "./types.ts";
@@ -60,11 +61,11 @@ export function transposeLetter(
 ): Letter {
   if (halfSteps == 0) return noteName;
 
-  const currentDegree = KeysToDegrees(noteName)!;
-  let newDegree = (currentDegree + halfSteps) % DegreesToKeys.length;
-  if (newDegree < 0) newDegree = DegreesToKeys.length + newDegree;
+  const currentDegree = LetterToPitchClass(noteName)!;
+  let newDegree = (currentDegree + halfSteps) % PitchClassToKey.length;
+  if (newDegree < 0) newDegree = PitchClassToKey.length + newDegree;
 
-  const result = DegreesToKeys[newDegree]!;
+  const result = PitchClassToKey[newDegree]!;
 
   if (result.natural) return result.natural;
 
@@ -74,11 +75,11 @@ export function transposeLetter(
 }
 
 export function conventionalizeKey(key: Letter): Letter {
-  const degree = KeysToDegrees(key);
+  const degree = LetterToPitchClass(key);
 
-  const result = DegreesToKeys[degree];
+  const result = PitchClassToKey[degree];
 
-  if (ConventionallyFlatKeyDegrees.includes(degree)) {
+  if ((ConventionallyFlatMajorKeys as Array<PitchClass>).includes(degree)) {
     return result.natural || result.spelledWithOneFlat;
   } else if (result.natural) {
     return result.natural;
@@ -88,8 +89,8 @@ export function conventionalizeKey(key: Letter): Letter {
 }
 
 export function accidentalPreferenceForKey(key: Letter) {
-  const degree = KeysToDegrees(key);
-  return ConventionallyFlatKeyDegrees.includes(degree)
+  const degree = LetterToPitchClass(key);
+  return (ConventionallyFlatMajorKeys as Array<PitchClass>).includes(degree)
     ? FlatSymbol
     : SharpSymbol;
 }

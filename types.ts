@@ -17,43 +17,44 @@ export const Err = (e: string | Error): Result<never> => {
   return { error, value: undefined };
 };
 
-export const AllDegrees = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] as const;
-export type Degree = (typeof AllDegrees)[number];
+// https://en.wikipedia.org/wiki/Pitch_class
+export const AllPitchClasses = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] as const;
+export type PitchClass = (typeof AllPitchClasses)[number];
 
-export function KeysToDegrees(key: Letter): Degree {
+export function LetterToPitchClass(key: Letter): PitchClass {
   switch (key) {
-    case "A":
-      return 0;
-    case "A#":
-    case "Bb":
-      return 1;
-    case "B":
-    case "Cb":
-      return 2;
     case "B#":
     case "C":
-      return 3;
-    case "C#":
+      return 0;
     case "Db":
-      return 4;
+    case "C#":
+      return 1;
     case "D":
-      return 5;
-    case "D#":
+      return 2;
     case "Eb":
-      return 6;
+    case "D#":
+      return 3;
     case "E":
     case "Fb":
-      return 7;
+      return 4;
     case "E#":
     case "F":
-      return 8;
-    case "F#":
+      return 5;
     case "Gb":
-      return 9;
+    case "F#":
+      return 6;
     case "G":
-      return 10;
-    case "G#":
+      return 7;
     case "Ab":
+    case "G#":
+      return 8;
+    case "A":
+      return 9;
+    case "Bb":
+    case "A#":
+      return 10;
+    case "Cb":
+    case "B":
       return 11;
     default:
       // just here to get static exhaustiveness checking (TS 5.x)
@@ -102,7 +103,7 @@ export type KeyDescription =
     spelledWithOneSharp?: undefined;
   };
 
-export const DegreesToKeys: [
+export const PitchClassToKey: [
   KeyDescription,
   KeyDescription,
   KeyDescription,
@@ -116,18 +117,18 @@ export const DegreesToKeys: [
   KeyDescription,
   KeyDescription,
 ] = [
-  { natural: "A" }, // 0
-  { spelledWithOneSharp: "A#", spelledWithOneFlat: "Bb" }, // 1
-  { natural: "B", spelledWithOneFlat: "Cb" }, // 2
-  { natural: "C", spelledWithOneSharp: "B#" }, // 3
-  { spelledWithOneSharp: "C#", spelledWithOneFlat: "Db" }, // 4
-  { natural: "D" }, // 5
-  { spelledWithOneSharp: "D#", spelledWithOneFlat: "Eb" }, // 6
-  { natural: "E", spelledWithOneFlat: "Fb" }, // 7
-  { natural: "F", spelledWithOneSharp: "E#" }, // 8
-  { spelledWithOneSharp: "F#", spelledWithOneFlat: "Gb" }, // 9
-  { natural: "G" }, // 10
-  { spelledWithOneSharp: "G#", spelledWithOneFlat: "Ab" }, // 11
+  { natural: "C", spelledWithOneSharp: "B#" }, // 0
+  { spelledWithOneSharp: "C#", spelledWithOneFlat: "Db" }, // 1
+  { natural: "D" }, // 2
+  { spelledWithOneSharp: "D#", spelledWithOneFlat: "Eb" }, // 3
+  { natural: "E", spelledWithOneFlat: "Fb" }, // 4
+  { natural: "F", spelledWithOneSharp: "E#" }, // 5
+  { spelledWithOneSharp: "F#", spelledWithOneFlat: "Gb" }, // 6
+  { natural: "G" }, // 7
+  { spelledWithOneSharp: "G#", spelledWithOneFlat: "Ab" }, // 8
+  { natural: "A" }, // 9
+  { spelledWithOneSharp: "A#", spelledWithOneFlat: "Bb" }, // 10
+  { natural: "B", spelledWithOneFlat: "Cb" }, // 11
 ];
 
 export type KeySignatureMajorLetter = Extract<
@@ -242,19 +243,12 @@ export const Minor = "m";
 
 export type KeyQualifier = typeof Major | typeof Minor;
 
-export const ConventionallyFlatKeyDegrees = [
-  // 0, // A
-  1, // Bb
-  // 2, // "B"
-  // 3, // "C"
-  4, // Db
-  // 5, // "D"
-  6, // Eb
-  // 7, // "E"
-  8, // "F"
-  // 9, // "Gb"
-  // 10, // "G"
-  11, // Ab
+export const ConventionallyFlatMajorKeys = [
+  <1> LetterToPitchClass("Db"),
+  <3> LetterToPitchClass("Eb"),
+  <5> LetterToPitchClass("F"),
+  <8> LetterToPitchClass("Ab"),
+  <10> LetterToPitchClass("Bb"),
 ];
 
 export const RepeatedChordSymbol = "%";

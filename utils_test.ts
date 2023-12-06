@@ -25,7 +25,7 @@ import {
   transposeLetter,
 } from "./utils.ts";
 import { assertEquals } from "./test_utils.ts";
-import { DegreesToKeys, KeysToDegrees } from "./types.ts";
+import { LetterToPitchClass, PitchClassToKey } from "./types.ts";
 import { assertArrayIncludes } from "https://deno.land/std@0.208.0/assert/assert_array_includes.ts";
 
 Deno.test(replaceDupesWithRepeats.name, () => {
@@ -54,10 +54,10 @@ Deno.test(canonicalizeKeyQualifier.name, async (t) => {
   }
 });
 
-Deno.test(`Degree Maps sanity checks`, async (t) => {
+Deno.test(`${LetterToPitchClass.name} sanity checks`, async (t) => {
   for (const l of AllLetters) {
     await t.step(`${l} maps to itself`, () => {
-      const result = DegreesToKeys[KeysToDegrees(l)];
+      const result = PitchClassToKey[LetterToPitchClass(l)];
       assertArrayIncludes<string>(Object.values(result), [l]);
     });
   }
