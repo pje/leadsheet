@@ -1,81 +1,103 @@
 import { FlatOrSharpSymbol } from "./types.ts";
 import { nonexhaustiveSwitchGuard, transposeLetter } from "./utils.ts";
 
-export type Chord = {
-  tonic: Letter;
-  quality: ChordQuality;
-  extent?: string;
-  alterations?: Array<string>;
-};
+export class Chord {
+  public tonic: Letter;
+  public quality: ChordQuality;
+  public extent?: string;
+  public alterations?: Array<string>;
 
-export function transposeChord<T extends Chord>(
-  this: Readonly<T>,
-  halfSteps: number,
-  flatsOrSharps: FlatOrSharpSymbol,
-): T {
-  const chord: T = { ...this };
+  constructor(
+    tonic: Letter,
+    quality: ChordQuality,
+    extent?: string,
+    ...alterations: Array<string>
+  ) {
+    this.tonic = tonic;
+    this.quality = quality;
+    this.extent = extent;
+    this.alterations = alterations;
+  }
 
-  const newRoot = transposeLetter(chord.tonic, halfSteps, flatsOrSharps);
-  chord.tonic = newRoot;
+  // return a new Chord that's been transposed up (or down) by `halfSteps`.
+  //
+  // `flatsOrSharps` will be used to choose between equivalent enharmonic
+  // spellings. (if `♭`, you'll get "Ab", not "G#")
+  transpose(halfSteps: number, flatsOrSharps: FlatOrSharpSymbol): Chord {
+    const chord = this.dup();
 
-  chord.alterations = this.alterations?.map((alt) => {
-    // hack: we have to transpose slash chords (the `/G` part will be the alteration)
-    if (alt.startsWith("/")) {
-      const slashRoot = <Letter> alt.split("/")[1];
-      const transposedSlashRoot = transposeLetter(
-        slashRoot,
-        halfSteps,
-        flatsOrSharps,
-      );
-      return "/" + transposedSlashRoot;
-    } else {
-      return alt;
-    }
-  });
+    const newRoot = transposeLetter(chord.tonic, halfSteps, flatsOrSharps);
+    chord.tonic = newRoot;
 
-  return chord;
-}
-
-export function printChord<T extends Chord>(this: Readonly<T>): string {
-  return `${this.tonic}${flavor.bind(this)()}`;
-}
-
-function flavor(this: Readonly<Chord>): string {
-  return [
-    printQuality.bind(this)(),
-    this.extent,
-    this.alterations?.join("") || "",
-  ].join("");
-}
-
-function printQuality<T extends Chord>(this: T): string {
-  switch (this.quality) {
-    case QualityAugmented:
-      return "+";
-    case QualityDiminished:
-      return "o";
-    case QualityDominant:
-      return ""; // "dom" is implicit, `extent` defines the dominant type
-    case QualityHalfDiminished:
-      return "ø";
-    case QualityMajor:
-      if (this.extent == "6") {
-        return ""; // we want "C6" instead of "CM6"
-      } else if (this.extent == undefined) {
-        return ""; // we want "C" instead of "CM"
+    chord.alterations = this.alterations?.map((alt) => {
+      // hack: we have to transpose slash chords (the `/G` part will be the alteration)
+      if (alt.startsWith("/")) {
+        const slashRoot = <Letter> alt.split("/")[1];
+        const transposedSlashRoot = transposeLetter(
+          slashRoot,
+          halfSteps,
+          flatsOrSharps,
+        );
+        return "/" + transposedSlashRoot;
       } else {
-        return "M"; // we want CM9
+        return alt;
       }
-    case QualityMinor:
-      return "m";
-    case QualityMinorMajor:
-      return "minMaj";
-    case QualityPower:
-      return "5";
-    case QualitySuspended:
-      return "sus"; // `extent` defines the suspension type
-    default:
-      nonexhaustiveSwitchGuard(this.quality);
+    });
+
+    return chord;
+  }
+
+  // returns a new Chord, value-identical to this one
+  dup(): Chord {
+    return new Chord(
+      this.tonic,
+      this.quality,
+      this.extent,
+      ...(this.alterations || []),
+    );
+  }
+
+  print(): string {
+    return `${this.tonic}${this.flavor()}`;
+  }
+
+  private flavor(): string {
+    return [
+      this.printQuality(),
+      this.extent,
+      this.alterations?.join("") || "",
+    ].join("");
+  }
+
+  private printQuality(): string {
+    switch (this.quality) {
+      case QualityAugmented:
+        return "+";
+      case QualityDiminished:
+        return "o";
+      case QualityDominant:
+        return ""; // "dom" is implicit, `extent` defines the dominant type
+      case QualityHalfDiminished:
+        return "ø";
+      case QualityMajor:
+        if (this.extent == "6") {
+          return ""; // we want "C6" instead of "CM6"
+        } else if (this.extent == undefined) {
+          return ""; // we want "C" instead of "CM"
+        } else {
+          return "M"; // we want CM9
+        }
+      case QualityMinor:
+        return "m";
+      case QualityMinorMajor:
+        return "minMaj";
+      case QualityPower:
+        return "5";
+      case QualitySuspended:
+        return "sus"; // `extent` defines the suspension type
+      default:
+        nonexhaustiveSwitchGuard(this.quality);
+    }
   }
 }
 

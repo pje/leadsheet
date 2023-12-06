@@ -4,12 +4,11 @@ import {
   fail,
 } from "https://deno.land/std@0.202.0/assert/mod.ts";
 import { ParseChord, ParseSong } from "./parser.ts";
-import { Bar, Chordish, Result, Song } from "../types.ts";
+import { Bar, Result, Song } from "../types.ts";
 import {
   Chord,
   Letter,
   QualityAugmented,
-  QualityDiminished,
   QualityDominant,
   QualityMajor,
   QualityMinor,
@@ -190,50 +189,45 @@ Deno.test("empty string: should not parse", () => {
 });
 
 Deno.test(`chord symbols`, async (t) => {
-  const positiveCases = new Map<
-    string,
-    Pick<Chord, "tonic" | "quality" | "alterations">
-  >([
-    [`C5`, { tonic: "C", quality: QualityPower, alterations: [] }],
-    [`C`, { tonic: "C", quality: QualityMajor, alterations: [] }],
-    [`CM`, { tonic: "C", quality: QualityMajor, alterations: [] }],
-    [`Cmaj`, { tonic: "C", quality: QualityMajor, alterations: [] }],
-    [`C6`, { tonic: "C", quality: QualityMajor, alterations: [] }],
-    [`C6/9`, { tonic: "C", quality: QualityMajor, alterations: [] }],
-    [`CM7`, { tonic: "C", quality: QualityMajor, alterations: [] }],
-    [`CM11`, { tonic: "C", quality: QualityMajor, alterations: [] }],
-    [`CM13`, { tonic: "C", quality: QualityMajor, alterations: [] }],
-    [`Cm`, { tonic: "C", quality: QualityMinor, alterations: [] }],
-    [`Cmin`, { tonic: "C", quality: QualityMinor, alterations: [] }],
-    [`Csus`, { tonic: "C", quality: QualitySuspended, alterations: [] }],
-    [`Csus2`, { tonic: "C", quality: QualitySuspended, alterations: [] }],
-    [`Csus4`, { tonic: "C", quality: QualitySuspended, alterations: [] }],
-    [`C7`, { tonic: "C", quality: QualityDominant, alterations: [] }],
-    [`C9`, { tonic: "C", quality: QualityDominant, alterations: [] }],
-    [`C11`, { tonic: "C", quality: QualityDominant, alterations: [] }],
-    [`C13`, { tonic: "C", quality: QualityDominant, alterations: [] }],
-    [`CM7`, { tonic: "C", quality: QualityMajor, alterations: [] }],
-    [`CΔ7`, { tonic: "C", quality: QualityMajor, alterations: [] }],
-    [`Cm7`, { tonic: "C", quality: QualityMinor, alterations: [] }],
-    [`Cm9`, { tonic: "C", quality: QualityMinor, alterations: [] }],
-    [`Cm11`, { tonic: "C", quality: QualityMinor, alterations: [] }],
-    [`Cm13`, { tonic: "C", quality: QualityMinor, alterations: [] }],
-    [`C-7`, { tonic: "C", quality: QualityMinor, alterations: [] }],
-    [`Cdim7`, { tonic: "C", quality: QualityDiminished, alterations: [] }],
-    [`Caug`, { tonic: "C", quality: QualityAugmented, alterations: [] }],
-    [`C⁺`, { tonic: "C", quality: QualityAugmented, alterations: [] }],
-    [`C+`, { tonic: "C", quality: QualityAugmented, alterations: [] }],
-    [`C/D`, { tonic: "C", quality: QualityMajor, alterations: ["/D"] }],
-    [`Cm/D`, { tonic: "C", quality: QualityMinor, alterations: ["/D"] }],
-    [`Cm11#13(no5)`, {
-      tonic: "C",
-      quality: QualityMinor,
-      alterations: ["#13", "(no5)"],
-    }],
-    [`F𝄫minMaj9#11(sus4)(no13)(no 5)(omit 5)(♯¹¹)/E`, {
-      tonic: "F𝄫" as Letter, // TODO: this should be canonicalized to Eb
-      quality: QualityMinorMajor,
-      alterations: [
+  const positiveCases = new Map<string, Chord>([
+    [`C5`, new Chord("C", QualityPower)],
+    [`C`, new Chord("C", QualityMajor)],
+    [`CM`, new Chord("C", QualityMajor)],
+    [`Cmaj`, new Chord("C", QualityMajor)],
+    [`C6`, new Chord("C", QualityMajor)],
+    [`C6/9`, new Chord("C", QualityMajor)],
+    [`CM7`, new Chord("C", QualityMajor, "7")],
+    [`Cᴹ⁷`, new Chord("C", QualityMajor, "7")],
+    [`CM11`, new Chord("C", QualityMajor)],
+    [`CM13`, new Chord("C", QualityMajor)],
+    [`Cm`, new Chord("C", QualityMinor)],
+    [`Cmin`, new Chord("C", QualityMinor)],
+    [`Csus`, new Chord("C", QualitySuspended)],
+    [`Csus2`, new Chord("C", QualitySuspended)],
+    [`Csus4`, new Chord("C", QualitySuspended)],
+    [`C7`, new Chord("C", QualityDominant)],
+    [`C9`, new Chord("C", QualityDominant)],
+    [`C11`, new Chord("C", QualityDominant)],
+    [`C13`, new Chord("C", QualityDominant)],
+    [`CM7`, new Chord("C", QualityMajor)],
+    [`CΔ7`, new Chord("C", QualityMajor)],
+    [`Cm7`, new Chord("C", QualityMinor)],
+    [`Cm9`, new Chord("C", QualityMinor)],
+    [`Cm11`, new Chord("C", QualityMinor)],
+    [`Cm13`, new Chord("C", QualityMinor)],
+    [`C-7`, new Chord("C", QualityMinor)],
+    [`Caug`, new Chord("C", QualityAugmented)],
+    [`C⁺`, new Chord("C", QualityAugmented)],
+    [`C+`, new Chord("C", QualityAugmented)],
+    [`C/D`, new Chord("C", QualityMajor, undefined, "/D")],
+    [`Cm/D`, new Chord("C", QualityMinor, undefined, "/D")],
+    [`Cm11#13(no5)`, new Chord("C", QualityMinor, undefined, "#13", "(no5)")],
+    [
+      `F𝄫minMaj9#11(sus4)(no13)(no 5)(omit 5)(♯¹¹)/E`,
+      new Chord(
+        <Letter> "F𝄫", // TODO: this should be canonicalized to Eb
+        QualityMinorMajor,
+        "9",
         "#11",
         "(sus4)",
         "(no13)",
@@ -241,8 +235,8 @@ Deno.test(`chord symbols`, async (t) => {
         "(omit 5)",
         "(♯¹¹)",
         "/E",
-      ],
-    }],
+      ),
+    ],
   ]);
   for (
     const [str, expectedChord] of positiveCases

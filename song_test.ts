@@ -1,6 +1,6 @@
 import { guessKey, parseSig } from "./song.ts";
 import { assertEquals } from "./test_utils.ts";
-import { QualityMinor, Song } from "./types.ts";
+import { Chord, QualityMinor, Song } from "./types.ts";
 
 const songFixture: Song = {
   title: "foo",
@@ -13,11 +13,7 @@ const songFixture: Song = {
       openBarline: "|",
       closeBarline: "|",
       chords: [
-        {
-          tonic: "C",
-          quality: QualityMinor,
-          extent: "7",
-        },
+        new Chord("C", QualityMinor, "7"),
       ],
     },
   ],

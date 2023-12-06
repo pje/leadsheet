@@ -109,6 +109,7 @@ Chord {
     | caseInsensitive<"major">
     | caseInsensitive<"maj">
     | "M"
+    | "ᴹ"
     | "Δ"
 
   minor =
@@ -117,6 +118,7 @@ Chord {
     | "-"
     | "⁻"
     | "m"
+    | "ᵐ"
 
   alteration =
     | alteration_in_parens

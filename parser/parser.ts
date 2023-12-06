@@ -225,12 +225,10 @@ export function ParseChord(rawChord: string): Result<Chord> {
     return Err(matchResult.message || "failed to parse chord: empty error");
   }
 
-  const chord: Chord = {
-    tonic: <Letter> "C",
-    quality: QualityMajor,
-    extent: undefined,
-    alterations: [],
-  };
+  const chord = new Chord(
+    <Letter> "C",
+    QualityMajor,
+  );
 
   const semantics = grammar.Chord.createSemantics();
 
@@ -312,7 +310,7 @@ function Actions(s: Song): SongActionDict<Song> {
                 previousChord = (ParseChord(chordString).value)!;
               }
 
-              return ({ ...previousChord });
+              return previousChord.dup();
             }
           },
         );

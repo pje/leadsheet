@@ -1,4 +1,4 @@
-import { Minor, printChord } from "./types.ts";
+import { Minor } from "./types.ts";
 import {
   accidentalPreferenceForKey,
   canonicalizeKeyQualifier,
@@ -6,13 +6,7 @@ import {
   NoteRegex,
   transposeLetter,
 } from "./utils.ts";
-import {
-  Chord,
-  Letter,
-  QualityMajor,
-  QualityMinor,
-  transposeChord,
-} from "./chord.ts";
+import { Chord, Letter, QualityMajor, QualityMinor } from "./chord.ts";
 
 export type Song = {
   title: string | undefined;
@@ -82,12 +76,12 @@ export const BarlineRepeatCloseDouble2x = ":2x||" as const;
 export const DoubleBarline = "||";
 export const SingleBarline = "|";
 
-export function printChordish(this: Chordish): string {
+export function printChordish(this: Readonly<Chordish>): string {
   switch (this) {
     case NoChord:
       return NoChord;
     default:
-      return printChord.bind(this)();
+      return this.print();
   }
 }
 
@@ -124,7 +118,7 @@ export function transposeSong(this: Readonly<Song>, halfSteps: number): Song {
         case NoChord:
           return chordish;
         default:
-          return transposeChord.bind(chordish)(halfSteps, flatsOrSharps);
+          return chordish.transpose(halfSteps, flatsOrSharps);
       }
     });
 
