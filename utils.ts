@@ -117,24 +117,6 @@ export function unicodeifyMusicalSymbols(s: string) {
   );
 }
 
-const superscriptChars: { [K in string]: string } = {
-  "0": "⁰",
-  "1": "¹",
-  "2": "²",
-  "3": "³",
-  "4": "⁴",
-  "5": "⁵",
-  "6": "⁶",
-  "7": "⁷",
-  "8": "⁸",
-  "9": "⁹",
-  "o": "°",
-} as const;
-
-export function superscriptize(s: string) {
-  return s.split("").map((c) => superscriptChars[c] || c).join("");
-}
-
 export function titleize(s: string): string {
   return s.split(/(?=[A-Z][a-z])|[\-_]/).map((str) => {
     if (str === "") {

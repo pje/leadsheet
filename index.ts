@@ -35,7 +35,6 @@ import {
 } from "./types.ts";
 import {
   nonexhaustiveSwitchGuard,
-  superscriptize,
   titleize,
   unicodeifyMusicalSymbols,
 } from "./utils.ts";
