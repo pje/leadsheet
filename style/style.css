@@ -161,7 +161,7 @@ html {
       .chord {
         min-height: 26px;
         white-space: nowrap; /* this prevents long chord names from breaking into multiple lines*/
-        font-size: 20pt;
+        font-size: 1.75rem;
         text-align: center;
         flex-basis: 0;
 
