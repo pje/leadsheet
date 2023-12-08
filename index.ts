@@ -235,22 +235,24 @@ async function renderSettings(
 </label>`,
   );
 
-  const devices = await state.midiEventListener?.getDevices() || [];
+  if (settings.featureFlags.followMidiClockMessages.enabled) {
+    const devices = await state.midiEventListener?.getDevices() || [];
 
-  const deviceOptions = devices.map((d) => {
-    return `<option value="${d.id}">${d.name}</option>`;
-  });
+    const deviceOptions = devices.map((d) => {
+      return `<option value="${d.id}">${d.name}</option>`;
+    });
 
-  const midiSelector = `
-<div class="flex-row">
-  <label for="midiDevice" class="mr-8">MIDI Device (for clock input)</label>
-  <select name="midiDevice" id="midiDevice">
-    ${deviceOptions.join("\n")}
-  </select>
-</div>
-`;
+    const midiSelector = `
+  <div class="flex-row">
+    <label for="midiDevice" class="mr-8">MIDI Device (for clock input)</label>
+    <select name="midiDevice" id="midiDevice">
+      ${deviceOptions.join("\n")}
+    </select>
+  </div>
+  `;
 
-  inputs.push(midiSelector);
+    inputs.push(midiSelector);
+  }
 
   const html = inputs.join("\n");
 
