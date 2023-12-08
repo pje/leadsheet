@@ -9,12 +9,7 @@ import puppeteer, {
   Page,
 } from "https://deno.land/x/puppeteer@16.2.0/mod.ts";
 import * as path from "https://deno.land/std@0.208.0/path/mod.ts";
-import {
-  colorChords,
-  FeatureFlagKeys,
-  FeatureFlagKeysType,
-  FeatureFlags,
-} from "./settings.ts";
+import { colorChords, FeatureFlagKeysType } from "./settings.ts";
 import { HTMLInputElement } from "./node_modules/typescript/lib/lib.dom.d.ts";
 import { assertArrayIncludes } from "https://deno.land/std@0.208.0/assert/assert_array_includes.ts";
 

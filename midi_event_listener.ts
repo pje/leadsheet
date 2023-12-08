@@ -6,7 +6,7 @@ import {
   Start,
   Stop,
   TimingClock,
-} from "./midi";
+} from "./midi.ts";
 
 export type Clock = {
   bars: number;
@@ -19,11 +19,11 @@ export type Clock = {
 };
 
 export class MidiEventListener {
-  private onBarAdvanced: Function;
+  private onBarAdvanced: (c: Readonly<Clock>) => void;
   private clock: Clock;
-  private midiAccess: WebMidi.MIDIAccess | undefined;
+  private midiAccess: MIDIAccess | undefined;
 
-  constructor(onBarAdvanced: Function) {
+  constructor(onBarAdvanced: (c: Readonly<Clock>) => void) {
     this.onBarAdvanced = (c: Readonly<Clock>) => {
       console.log(
         `${onBarAdvanced.name}: ${this.printClockWithAbletonFormatting()}`,
@@ -49,21 +49,24 @@ export class MidiEventListener {
       console.log(
         `MIDI Event Listener installed on "${entry.id} (${entry.name})"`,
       );
-      entry.onmidimessage = this.onMIDIMessage;
+      entry.onmidimessage = <EventListener> this.onMIDIMessage;
     });
   };
 
   uninstall = async () => {
     this.midiAccess ||= await navigator.requestMIDIAccess();
     this.midiAccess.inputs.forEach((entry) => {
-      entry.removeEventListener("onmidimessage", <any> this.onMIDIMessage);
+      entry.removeEventListener(
+        "onmidimessage",
+        <EventListener> this.onMIDIMessage,
+      );
       entry.close();
     });
   };
 
   getDevices = async () => {
     this.midiAccess ||= await navigator.requestMIDIAccess();
-    let devices: Array<WebMidi.MIDIInput> = [];
+    const devices: Array<MIDIInput> = [];
     this.midiAccess.inputs.forEach((device) => devices.push(device));
     return devices;
   };
@@ -117,7 +120,7 @@ export class MidiEventListener {
     console.log(`clockContinue: ${this.printClockWithAbletonFormatting()}`);
   };
 
-  private onMIDIMessage = (event: WebMidi.MIDIMessageEvent) => {
+  private onMIDIMessage = (event: MIDIMessageEvent) => {
     const m = event.data.reduce((memo, value) => memo + value.toString(2), "");
     const rawStatusByte = m.slice(0, 8);
     const messageType = MidiMessages.get(rawStatusByte);
@@ -139,11 +142,12 @@ export class MidiEventListener {
       case Continue:
         this.clockContinue();
         break;
-      case SongPositionPointer:
-        let lsb = event.data[1]!;
-        let msb = event.data[2]!;
+      case SongPositionPointer: {
+        const lsb = event.data[1]!;
+        const msb = event.data[2]!;
         this.setClock((msb << 7) + lsb);
         break;
+      }
       default:
         break;
     }

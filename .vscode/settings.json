@@ -12,6 +12,7 @@
     "./browser_test.ts",
     "./chord_test.ts",
     "./chord.ts",
+    "./midi_event_listener.ts",
     "./parser/parser_test.ts",
     "./parser/parser.ts",
     "./settings.ts",
