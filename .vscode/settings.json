@@ -14,6 +14,7 @@
     "./chord.ts",
     "./parser/parser_test.ts",
     "./parser/parser.ts",
+    "./settings.ts",
     "./song_test.ts",
     "./song.ts",
     "./test_utils.ts",
