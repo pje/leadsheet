@@ -1,18 +1,39 @@
-export const SettingsKeys = ["colorChords", "unicodeChordSymbols"] as const;
-export type Settings = {
-  [K in typeof SettingsKeys[number]]: {
+import type { MIDIInput } from "./node_modules/@types/webmidi/index.d.ts";
+
+export const colorChords = "colorChords" as const;
+export const unicodeChordSymbols = "unicodeChordSymbols" as const;
+export const followMidiClockMessages = "followMidiClockMessages" as const;
+
+export type FeatureFlagKeysType = typeof FeatureFlagKeys[number];
+export const FeatureFlagKeys = [
+  colorChords,
+  unicodeChordSymbols,
+  followMidiClockMessages,
+] as const;
+
+export type FeatureFlags = {
+  [K in FeatureFlagKeysType]: {
     enabled: boolean;
     description: string;
   };
 };
 
-export const defaultSettings: Settings = {
-  colorChords: {
+export const defaultFeatureFlags: FeatureFlags = {
+  [colorChords]: {
     enabled: true,
     description: "Color chord symbols by type (maj, min, dom, etc)",
   },
-  unicodeChordSymbols: {
+  [unicodeChordSymbols]: {
     enabled: false,
     description: `Spell chords using unicode symbols (e.g. D♭⁷ vs Db7)`,
   },
+  [followMidiClockMessages]: {
+    enabled: false,
+    description: `Listen for MIDI clock messages to highlight the active bar`,
+  },
 } as const;
+
+export type Settings = {
+  featureFlags: FeatureFlags;
+  midiInputDeviceID: string | undefined;
+};

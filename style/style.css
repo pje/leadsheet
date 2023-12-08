@@ -133,11 +133,21 @@ html {
     }
 
     /* &:nth-child(4n) {
-            .staff {
-                border-right-style: solid;
-                border-right-width: 1.5px;
-            }
-        } */
+      .staff {
+        border-right-style: solid;
+        border-right-width: 1.5px;
+      }
+    } */
+
+    &.active {
+      .staff {
+        animation-name: pulse;
+        animation-duration: 1500ms;
+        animation-fill-mode: both;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+      }
+    }
 
     .chords {
       display: flex;
@@ -315,4 +325,13 @@ html {
 #transposed-steps {
   min-width: 25px;
   text-align: center;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: #007cff80 0 0 0 0;
+  }
+  75% {
+    box-shadow: #ff69b400 0 0 0 16px;
+  }
 }

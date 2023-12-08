@@ -40,20 +40,32 @@ import {
   unicodeifyMusicalSymbols,
 } from "./utils.ts";
 import { ParseSong } from "./parser/parser.ts";
-import { defaultSettings, Settings, SettingsKeys } from "./settings.ts";
+import {
+  defaultFeatureFlags,
+  FeatureFlagKeys,
+  FeatureFlagKeysType,
+  Settings,
+} from "./settings.ts";
+import { Clock, MidiEventListener } from "./midi_event_listener";
 
 const state: {
   song: Song | undefined;
   transposedSteps: number;
   settings: Settings;
+  midiEventListener?: MidiEventListener;
 } = {
   song: undefined,
   transposedSteps: 0,
-  settings: defaultSettings,
+  settings: {
+    featureFlags: defaultFeatureFlags,
+    midiInputDeviceID: undefined,
+  },
 };
 
-function bootstrap(): void {
-  renderSettings(state.settings);
+async function bootstrap() {
+  state.midiEventListener ||= new MidiEventListener(onBarAdvanced);
+
+  await renderSettings(state.settings);
 
   const lastLoadedSong = fetchLoadedSongFromLocalStorage();
   loadSong(lastLoadedSong || _loadDefaultSong()!);
@@ -61,10 +73,19 @@ function bootstrap(): void {
   document.querySelectorAll("#settings input")!.forEach((el) => {
     el.addEventListener("change", async (e: Event) => {
       const inputElement = <HTMLInputElement> e?.currentTarget;
-      const settingKey = <typeof SettingsKeys[number]> inputElement.name;
+      const ffKey = <FeatureFlagKeysType> inputElement.name;
+      const enable = !!inputElement.checked;
 
-      if (inputElement.name !== "" && SettingsKeys.includes(settingKey)) {
-        state.settings[settingKey].enabled = !!inputElement.checked;
+      if (inputElement.name !== "" && FeatureFlagKeys.includes(ffKey)) {
+        state.settings.featureFlags[ffKey].enabled = enable;
+      }
+
+      if (ffKey === "followMidiClockMessages") {
+        if (enable) {
+          state.midiEventListener!.install();
+        } else {
+          state.midiEventListener!.uninstall();
+        }
       }
 
       renderSong(state.song!);
@@ -138,7 +159,7 @@ function renderBars(
       previousChord = chordish;
       previousChordColorClass = colorClass;
       return `<div class="chord ${
-        state.settings.colorChords.enabled && colorClass
+        state.settings.featureFlags.colorChords.enabled && colorClass
       }">${result}</div>`;
     });
 
@@ -199,20 +220,39 @@ function renderMetadata(
   metadataElement.querySelector(".date")!.textContent = song.year || "";
 }
 
-function renderSettings(
+async function renderSettings(
   settings: Readonly<typeof state.settings>,
   rootElement: HTMLElement = document.getElementById("root")!,
 ) {
   const settingsElement = rootElement.querySelector("#settings")!;
   settingsElement.innerHTML = "";
 
-  const html = Object.entries(settings).map(
+  const inputs = Object.entries(settings.featureFlags).map(
     ([identifier, { enabled, description }]) =>
       `<label title="${description}">
   ${titleize(identifier)}
   <input type="checkbox" name="${identifier}" ${enabled ? "checked" : ""}/>
 </label>`,
-  ).join("\n");
+  );
+
+  const devices = await state.midiEventListener?.getDevices() || [];
+
+  const deviceOptions = devices.map((d) => {
+    return `<option value="${d.id}">${d.name}</option>`;
+  });
+
+  const midiSelector = `
+<div class="flex-row">
+  <label for="midiDevice" class="mr-8">MIDI Device (for clock input)</label>
+  <select name="midiDevice" id="midiDevice">
+    ${deviceOptions.join("\n")}
+  </select>
+</div>
+`;
+
+  inputs.push(midiSelector);
+
+  const html = inputs.join("\n");
 
   settingsElement.insertAdjacentHTML(
     "beforeend",
@@ -269,14 +309,28 @@ function addTransposedAmount(halfSteps: number) {
   setTransposedAmount(newTransposedBy, transposedAmountEl);
 }
 
+function onBarAdvanced(c: Readonly<Clock>) {
+  const songLength = state.song?.bars.length;
+  const activeBar = songLength ? c.bars % songLength : c.bars;
+
+  document.querySelectorAll(`#song .bar.active`)?.forEach((node) =>
+    node.classList.remove("active")
+  );
+
+  document.querySelector(`#song .bar:nth-child(${activeBar + 1})`) // nth-child starts at 1, not 0
+    ?.classList?.add(
+      "active",
+    );
+}
+
 function _getTransposedAmountEl() {
   return document.getElementById("transposed-steps")!;
 }
 
 function _formatChordName(c: Readonly<Chordish>): string {
   const printed = printChordish.bind(c)();
-  return state.settings.unicodeChordSymbols.enabled
-    ? unicodeifyMusicalSymbols(superscriptize(printed))
+  return state.settings.featureFlags.unicodeChordSymbols.enabled
+    ? unicodeifyMusicalSymbols(printed)
     : printed;
 }
 
@@ -321,8 +375,8 @@ function _getBarlineClass(c: Barline, sfx: "open" | "close"): BarlineClass {
 }
 
 function _formatKeyName(str: string): string {
-  return state.settings.unicodeChordSymbols.enabled
-    ? unicodeifyMusicalSymbols(superscriptize(str))
+  return state.settings.featureFlags.unicodeChordSymbols.enabled
+    ? unicodeifyMusicalSymbols(str)
     : str;
 }
 
