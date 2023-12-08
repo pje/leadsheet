@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "@ohm-js/cli": "^2.0.0",
+    "@types/webmidi": "^2.0.10",
     "esbuild-plugin-tsc": "^0.4.0",
     "esbuild": "^0.19.7",
     "ohm-js": "^17.1.0",
