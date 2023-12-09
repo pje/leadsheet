@@ -62,29 +62,6 @@ html {
       display: none;
     }
 
-    #toolbar {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-    }
-
-    #settings {
-      cursor: default;
-    }
-
-    #settings[open] {
-      display: flex;
-      text-align: end;
-    }
-
-    #metadata {
-      display: flex;
-      gap: 10px;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
     .key-selector {
       align-items: center;
       display: flex;
@@ -107,16 +84,44 @@ html {
       width: 24px;
       font-size: 12px;
     }
+
+    .unicode-flat,
+    .unicode-sharp {
+      position: relative;
+      font-size: 15pt;
+      left: -5px;
+      bottom: 2px;
+      margin-right: -8px;
+    }
   }
 }
 
-.unicode-flat,
-.unicode-sharp {
-  position: relative;
-  font-size: 15pt;
-  left: -5px;
-  bottom: 2px;
-  margin-right: -8px;
+#transposed-steps {
+  min-width: 25px;
+  text-align: center;
+}
+
+#toolbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+#settings {
+  cursor: default;
+}
+
+#settings[open] {
+  display: flex;
+  text-align: end;
+}
+
+#metadata {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 #song {
@@ -342,11 +347,6 @@ html {
       }
     }
   }
-}
-
-#transposed-steps {
-  min-width: 25px;
-  text-align: center;
 }
 
 @keyframes pulse {
