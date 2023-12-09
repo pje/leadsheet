@@ -145,39 +145,18 @@ export type Barline =
   | OpenBarlineWithRepeats
   | CloseBarlineWithRepeats;
 
-export type OpenBarlineWithRepeats =
-  `${singleOrDoubleBarline}${maybeDigit}${maybeX}:`;
-export type CloseBarlineWithRepeats =
-  `:${maybeDigit}${maybeX}${singleOrDoubleBarline}`;
+type OpenBarlineWithRepeats = `${singleOrDoubleBarline}${howMany | ""}:`;
+type CloseBarlineWithRepeats = `:${howMany | ""}${singleOrDoubleBarline}`;
 
-export const BarlineRepeatOpenDouble = "||:" as const;
-export const BarlineRepeatCloseDouble = ":||" as const;
-export const BarlineRepeatOpenSingle = "|:" as const;
-export const BarlineRepeatOpenSingle1 = "|1:" as const;
-export const BarlineRepeatOpenSingle2 = "|2:" as const;
-export const BarlineRepeatOpenSingle2x = "|2x:" as const;
-export const BarlineRepeatCloseSingle = ":|" as const;
-export const BarlineRepeatCloseSingle1 = ":1|" as const;
-export const BarlineRepeatCloseSingle2 = ":2|" as const;
-export const BarlineRepeatCloseSingle2x = ":2x|" as const;
-export const BarlineRepeatOpenDouble1 = "||1:" as const;
-export const BarlineRepeatOpenDouble1x = "||1x:" as const;
-export const BarlineRepeatOpenDouble2 = "||2:" as const;
-export const BarlineRepeatOpenDouble2x = "||2x:" as const;
-export const BarlineRepeatCloseDouble1 = ":1||" as const;
-export const BarlineRepeatCloseDouble1x = ":1x||" as const;
-export const BarlineRepeatCloseDouble2 = ":2||" as const;
-export const BarlineRepeatCloseDouble2x = ":2x||" as const;
-
-export const DoubleBarline = "||";
-export const SingleBarline = "|";
+const DoubleBarline = "||";
+const SingleBarline = "|";
 
 type singleOrDoubleBarline =
   | typeof DoubleBarline
   | typeof SingleBarline;
-type maybeX = "x" | "";
-type maybeDigit =
-  | ""
+
+type howMany = `${digit}${"x" | ""}`;
+type digit =
   | 1
   | 2
   | 3
