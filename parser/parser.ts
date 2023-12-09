@@ -36,7 +36,7 @@ function normalizeAccidentals(str: string): string {
   return str.replace("♯", "#").replace("♭", "b");
 }
 
-class ChordActions implements ChordActionDict<Chord> {
+class ChordActions implements ChordActionDict<void> {
   #c: Chord;
 
   constructor(c: Chord) {
@@ -49,14 +49,11 @@ class ChordActions implements ChordActionDict<Chord> {
     return this.#c;
   };
 
-  root = (root: NNode, accidentals: INode) => {
+  root = (root: NNode, accidentals: INode) =>
     this.#c.tonic = <Letter> [
       normalizeLetter(root.sourceString),
       normalizeAccidentals(accidentals.sourceString),
     ].join("");
-
-    return this.#c;
-  };
 
   flavor = (quality: INode, extent: INode, alterations: INode) => {
     isImplicitPower(quality, extent)
@@ -72,27 +69,16 @@ class ChordActions implements ChordActionDict<Chord> {
     this.#c.alterations.push(
       ...alterations.children.map((alteration) => alteration.sourceString),
     );
-
-    return this.#c;
   };
 
-  #evalPassthrough = (n: NNode) => {
-    n.eval();
-    return (this.#c);
-  };
+  #evalPassthrough = (n: NNode) => n.eval();
 
   #qualityPassthrough = (quality: ChordQuality) => {
-    return (_: NNode) => {
-      this.#c.quality = quality;
-      return this.#c;
-    };
+    return (_: NNode) => this.#c.quality = quality;
   };
 
   #extentPassthrough = (extent: Extent) => {
-    return (_: NNode) => {
-      this.#c.extent = extent;
-      return this.#c;
-    };
+    return (_: NNode) => this.#c.extent = extent;
   };
 
   extent = this.#evalPassthrough;
@@ -107,7 +93,6 @@ class ChordActions implements ChordActionDict<Chord> {
   six_and_nine = (_0: NNode, _1: INode, _2: NNode) => {
     this.#c.extent = 6;
     this.#c.alterations.push("(add 9)");
-    return this.#c;
   };
 
   quality = this.#evalPassthrough;
@@ -119,18 +104,15 @@ class ChordActions implements ChordActionDict<Chord> {
   dominant = (_0: NNode) => {
     this.#c.quality = QualityDominant;
     this.#c.extent ||= 7;
-    return this.#c;
   };
   half_diminished = (_0: NNode) => {
     this.#c.quality = QualityMinor;
     this.#c.alterations.push("b5");
     this.#c.extent ||= 7;
-    return this.#c;
   };
   minor_major = (_0: NNode) => {
     this.#c.quality = QualityMinorMajor;
     this.#c.extent ||= 7;
-    return this.#c;
   };
   minor_major_with_parens = (
     _0: NNode,
@@ -141,7 +123,7 @@ class ChordActions implements ChordActionDict<Chord> {
   ) => this.minor_major(_0);
 }
 
-class SongActions implements SongActionDict<Song> {
+class SongActions implements SongActionDict<void> {
   #s: Song;
   #currentSection: string | undefined;
 
@@ -161,13 +143,11 @@ class SongActions implements SongActionDict<Song> {
       section.children.forEach((c2) => c2.eval());
       bars2.eval();
     });
-    return this.#s;
   };
 
   Section = (sectionName: INode, _1: INode) => {
     // TODO: get rid of the statefulness here
     this.#currentSection = sectionName.sourceString;
-    return this.#s;
   };
 
   Bars = (barline: NNode, barChords: INode, closingBarlines: INode) => {
@@ -212,18 +192,14 @@ class SongActions implements SongActionDict<Song> {
       previousBarline = thisBarline;
       this.#s.bars.push(bar);
     });
-
-    return this.#s;
   };
 
   Chordish = (_0: NNode) => this.#s;
 
   Chord = (_0: NNode, _1: NNode) => this.#s;
 
-  #metaPassthrough = (_0: NNode, _2: NNode, value: INode, _arg3: NNode) => {
+  #metaPassthrough = (_0: NNode, _2: NNode, value: INode, _arg3: NNode) =>
     value.eval();
-    return this.#s;
-  };
 
   metaTitle = this.#metaPassthrough;
   metaArtist = this.#metaPassthrough;
@@ -234,10 +210,7 @@ class SongActions implements SongActionDict<Song> {
   #metaValuePassthrough = (
     property: "title" | "artist" | "year" | "sig" | "key",
   ) => {
-    return (arg0: INode) => {
-      this.#s[property] = arg0.sourceString;
-      return this.#s;
-    };
+    return (arg0: INode) => this.#s[property] = arg0.sourceString;
   };
 
   metaTitleValue = this.#metaValuePassthrough("title");
@@ -251,8 +224,8 @@ export function ParseChord(rawChord: string): Result<Chord> {
   const matchResult = grammar.Chord.match(rawChord, "Chord");
   if (matchResult.failed()) return Err(matchResult.message!);
   const semantics = grammar.Chord.createSemantics();
-  semantics.addOperation("eval", new ChordActions(new Chord()));
-  const chord = semantics(matchResult).eval();
+  semantics.addOperation<void>("eval", new ChordActions(new Chord()));
+  const chord: Chord = semantics(matchResult).eval();
   return Ok(chord);
 }
 
@@ -261,7 +234,7 @@ export function ParseSong(rawSong: string): Result<Song> {
   if (matchResult.failed()) return Err(matchResult.message!);
   const semantics = grammar.Song.createSemantics();
   semantics.addOperation("eval", new SongActions(new Song()));
-  const song = semantics(matchResult).eval();
+  const song: Song = semantics(matchResult).eval();
   song.key ||= song.guessKey();
   return Ok(song);
 }
