@@ -147,6 +147,7 @@ export type Barline =
 
 type OpenBarlineWithRepeats = `${singleOrDoubleBarline}${howMany | ""}:`;
 type CloseBarlineWithRepeats = `:${howMany | ""}${singleOrDoubleBarline}`;
+type howMany = `${number}${"x" | ""}`;
 
 const DoubleBarline = "||";
 const SingleBarline = "|";
@@ -154,18 +155,6 @@ const SingleBarline = "|";
 type singleOrDoubleBarline =
   | typeof DoubleBarline
   | typeof SingleBarline;
-
-type howMany = `${digit}${"x" | ""}`;
-type digit =
-  | 1
-  | 2
-  | 3
-  | 4
-  | 5
-  | 6
-  | 7
-  | 8
-  | 9;
 
 export function printChordish(this: Readonly<Chordish>): string {
   switch (this) {
