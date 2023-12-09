@@ -143,6 +143,8 @@ function renderBars(
 ) {
   let previousChord: Chordish | undefined = undefined;
   let previousChordColorClass: ChordishQuality | undefined = undefined;
+  let previousSection: string | undefined = undefined;
+
   const songElement = rootElement.querySelector("#song")!;
   songElement.innerHTML = "";
 
@@ -162,16 +164,27 @@ function renderBars(
       }">${result}</div>`;
     });
 
+    const staffClasses = [
+      "staff",
+      _getBarlineClass(bar.openBarline, "open"),
+      _getBarlineClass(bar.closeBarline, "close"),
+    ];
+
+    const sectionNameElement = bar.name && previousSection !== bar.name
+      ? `<div class="section-name">${bar.name}</div>`
+      : "";
     const html = `<div class="bar flex-col">
-      <div class="chords">
-        ${chords.join("")}
-      </div>
-      <div class="staff ${_getBarlineClass(bar.openBarline, "open")} ${
-      _getBarlineClass(bar.closeBarline, "close")
-    }">
-    </div>`;
+  ${sectionNameElement}
+  <div class="chords">
+    ${chords.join("")}
+  </div>
+  <div class="${staffClasses.join(" ")}">
+  </div>
+</div>`;
 
     songElement.insertAdjacentHTML("beforeend", html);
+
+    previousSection = bar.name;
   });
 }
 

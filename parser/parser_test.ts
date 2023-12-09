@@ -36,6 +36,7 @@ const _emptyBar: Bar = {
   chords: [],
   openBarline: "|",
   closeBarline: "|",
+  name: undefined,
 };
 
 function bar(...chords: string[]): Bar {
@@ -45,6 +46,10 @@ function bar(...chords: string[]): Bar {
       str === "N.C." ? str : ParseChord(str).value!
     ),
   };
+}
+
+function barWithSection(section: string, ...chords: string[]): Bar {
+  return { ...bar(...chords), name: section };
 }
 
 const songFixtures: Array<{
@@ -61,6 +66,20 @@ const songFixtures: Array<{
     title: "oneChord",
     contents: `| C |`,
     expected: new Song([bar("C")], { key: "C" }),
+  },
+  {
+    title: "Sectional",
+    contents: `Verse:
+| C | D |
+
+Chorus:
+| Am | Bm| `,
+    expected: new Song([
+      barWithSection("Verse", "C"),
+      barWithSection("Verse", "D"),
+      barWithSection("Chorus", "Am"),
+      barWithSection("Chorus", "Bm"),
+    ], { key: "C" }),
   },
   {
     title: "oneChordNoSpaces",

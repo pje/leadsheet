@@ -9,6 +9,7 @@ const songFixture = new Song(
       chords: [
         new Chord("C", QualityMinor, 7),
       ],
+      name: undefined,
     },
   ],
   {

@@ -129,6 +129,7 @@ export type Bar = {
   chords: Array<Chordish>;
   openBarline: Barline;
   closeBarline: Barline;
+  name: string | undefined;
 };
 
 export type Barline =

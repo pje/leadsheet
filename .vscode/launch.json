@@ -14,7 +14,7 @@
         "test",
         "--inspect-brk",
         "--allow-read",
-        "${fileBasename}"
+        "${file}"
       ],
       "attachSimplePort": 9229
     },
@@ -24,7 +24,7 @@
       "request": "launch",
       "args": [
         "--extensionDevelopmentPath=${workspaceFolder}/vscode_extension",
-        "${workspaceFolder}/vscode_extension/example.leadsheet"
+        "${file}"
       ]
     }
   ]

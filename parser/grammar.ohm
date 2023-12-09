@@ -145,11 +145,16 @@ Chord {
 // Defines a grammar for a simple, markdown-like format for writing leadsheets
 // (actually just chord charts, no melody supported yet)
 Song <: Chord {
-  Song = metadata* Bars
+  Song = metadata* Sections
+
+  Sections = (Section? Bars)+
 
   Bars = Barline (Chordish+ Barline+)+
 
   Chordish = Chord | NoChord | RepeatPreviousChord
+
+  Section = SectionName colon
+  SectionName = (~colon ~"|" any)+
 
   lineComment = "//"(~newline any)+newline
   space += lineComment // this overrides ohmjs's built-in definition of spaces to include our comments. This seems to be the easiest way to get ohmjs to handle comments (e.g. https://github.com/ohmjs/ohm/blob/39ccead882a/examples/simple-lisp/src/simple-lisp.mjs#L35)
@@ -197,4 +202,6 @@ Song <: Chord {
   NoChord =
   	| "NC"
   	| "N.C."
+
+  colon = ":"
 }

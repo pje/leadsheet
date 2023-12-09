@@ -125,6 +125,11 @@ export interface SongActionDict<T> extends ChordActionDict<T> {
     arg0: IterationNode,
     arg1: NonterminalNode,
   ) => T;
+  Sections?: (
+    this: NonterminalNode,
+    arg0: IterationNode,
+    arg1: IterationNode,
+  ) => T;
   Bars?: (
     this: NonterminalNode,
     arg0: NonterminalNode,
@@ -132,6 +137,12 @@ export interface SongActionDict<T> extends ChordActionDict<T> {
     arg2: IterationNode,
   ) => T;
   Chordish?: (this: NonterminalNode, arg0: NonterminalNode) => T;
+  Section?: (
+    this: NonterminalNode,
+    arg0: NonterminalNode,
+    arg1: NonterminalNode,
+  ) => T;
+  SectionName?: (this: NonterminalNode, arg0: IterationNode) => T;
   lineComment?: (
     this: NonterminalNode,
     arg0: TerminalNode,
@@ -202,6 +213,7 @@ export interface SongActionDict<T> extends ChordActionDict<T> {
   SingleBarline?: (this: NonterminalNode, arg0: TerminalNode) => T;
   RepeatPreviousChord?: (this: NonterminalNode, arg0: TerminalNode) => T;
   NoChord?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  colon?: (this: NonterminalNode, arg0: TerminalNode) => T;
 }
 
 export interface SongSemantics extends Semantics {
