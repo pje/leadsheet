@@ -24,7 +24,7 @@
       "request": "launch",
       "args": [
         "--extensionDevelopmentPath=${workspaceFolder}/vscode_extension",
-        "${file}"
+        "${workspaceFolder}"
       ]
     }
   ]
