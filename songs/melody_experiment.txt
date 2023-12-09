@@ -2,29 +2,61 @@ title: Take The A Train
 artist: Billy Strayhorn
 year: 1939
 
-[A]
-|: C  |     %      |  D7b5  |  %  |
-| gW  | g* e5. g c | e5* g# | g#W |
-| Dm7 |               G7              |    C     | % :1| % C9 :2||
-| a   | *(a a#) *(b e5) *(g gb f db5) | (c5* eW) | eW  | eW     ||
-[B]
-||  F     |     %       |  %      | % |
-|| *(a c) | e5* f. a c  | e a     | a |
-| D7      |     %       | Dm7     | G7 G7b9 |
-| *(a c)  | e5* f#. a c | *(e5 a) | aH abH  |
-[A]
+// This is an example of what it would have to look like for the Song grammar to support simple melodies.
+//
+// The grammar would have to be something like this:
+// ```ohm
+// Note {
+//   note = pitch duration
+//   pitch = [a-g]octave?          // note names would have to be lowercase to visually distinguish from chords
+//   octave = digit                // e.g. so `c` would be assumed to mean `c4`
+//   duration =
+//     | whole
+//     | half
+//     | quarter
+//     | triplet
+//     | eighth
+//     | sixteenth
+//     | dot
+//     | dottedHalf
+//     | dottedQuarter
+//     | dottedEighth
+//     | dottedSixteenth
+//
+//   whole           = "W"
+//   half            = "H"
+//   quarter         = "Q" // [implicit]
+//   triplet         = "T"
+//   eighth          = "*" // [i.e. shift-8]
+//   sixteenth       = "S"
+//   dot             = "."
+//   dottedHalf      = half dot
+//   dottedQuarter   = quarter dot
+//   dottedEighth    = eighth dot
+//   dottedSixteenth = sixteenth dot
+// }
+//
+// // open questions:
+// // - haven't thought about rests
+// // - bar association logic?
+// ```
+//
+// So...extremely useful result but in practice the language becomes human-non-readable 👇
+
+A:
 |: C  |     %      |  D7b5  |  %  |
 | gW  | g* e5. g c | e5* g# | g#W |
 | Dm7 |               G7              |    C     | % :1| % C9 :2||
 | a   | *(a a#) *(b e5) *(g gb f db5) | (c5* eW) | eW  | eW     ||
 
-// W: Whole
-// H: Half
-// Q: Quarter [implicit]
-// T: Triplet
-// *: eighth [i.e. shift-8]
-// S: Sixteenth
-// H.: dotted half
-// Q.: dotted quarter [or just `.`]
-// *.: dotted eighth
-// S.: dotted sixteenth
+B:
+|  F     |     %       |  %       | % |
+| *(a c) | e5* f. a c  | e a     | a |
+| D7      |     %       | Dm7     | G7 G7b9 |
+| *(a c)  | e5* f#. a c | *(e5 a) | aH abH  |
+
+A:
+|: C  |     %      |  D7b5  |  %  |
+| gW  | g* e5. g c | e5* g# | g#W |
+| Dm7 |               G7              |    C     | % :1| % C9 :2||
+| a   | *(a a#) *(b e5) *(g gb f db5) | (c5* eW) | eW  | eW     ||
