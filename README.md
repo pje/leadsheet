@@ -1,4 +1,4 @@
-# leadsheet.js
+# leadsheet
 
 <img width="408" alt="index_html_screenshot" src="https://github.com/pje/leadsheet.js/assets/319655/3fd8b4c6-5971-49a5-9f62-e00b275f4163">
 
