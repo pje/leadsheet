@@ -1,12 +1,18 @@
 // @deno-types="./grammar.ohm-bundle.d.ts"
 import grammar from "./grammar.ohm-bundle.js";
-import type { IterationNode, NonterminalNode, TerminalNode } from "ohm-js";
-import type { SongActionDict } from "./grammar.ohm-bundle.js";
+import type {
+  IterationNode as INode,
+  NonterminalNode as NNode,
+  TerminalNode as TNode,
+} from "ohm-js";
+import type { ChordActionDict, SongActionDict } from "./grammar.ohm-bundle.js";
 import {
   Bar,
   Barline,
   Chord,
   Chordish,
+  ChordQuality,
+  Extent,
   Letter,
   NoChord,
   QualityAugmented,
@@ -22,259 +28,120 @@ import {
 import { AllRepeatedChordSymbols, Err, Ok, Result } from "../types.ts";
 import { zip } from "../utils.ts";
 
-function isImplicitMajor(
-  quality: IterationNode,
-  extent: IterationNode,
-  _alterations: IterationNode,
-): boolean {
-  return (
-    quality.sourceString.trim() === "" &&
-    (extent.sourceString.trim() === "" || extent.sourceString.startsWith("6"))
-  );
+function normalizeLetter(str: string): string {
+  return str.toUpperCase();
 }
 
-function isImplicitDominant(
-  quality: IterationNode,
-  extent: IterationNode,
-  _alterations: IterationNode,
-): boolean {
-  return (
-    quality.sourceString.trim() === "" &&
-    ["7", "9", "11", "13", "alt"].some((s) => extent.sourceString.startsWith(s))
-  );
+function normalizeAccidentals(str: string): string {
+  return str.replace("♯", "#").replace("♭", "b");
 }
 
-function isImplicitPower(
-  quality: IterationNode,
-  extent: IterationNode,
-  _alterations: IterationNode,
-): boolean {
-  return (
-    quality.sourceString.trim() === "" && extent.sourceString.startsWith("5")
-  );
-}
-
-class ChordActions implements SongActionDict<Chord> {
+class ChordActions implements ChordActionDict<Chord> {
   #c: Chord;
 
   constructor(c: Chord) {
     this.#c = c;
   }
 
-  Chord = (root: NonterminalNode, flavor: NonterminalNode) => {
+  Chord = (root: NNode, flavor: NNode) => {
     root.eval();
+    flavor.eval();
+    return this.#c;
+  };
 
-    if (flavor.sourceString === "") {
-      this.#c.quality = QualityMajor;
-      // this.#c.flavor = QualityMajor;
-    } else {
-      flavor.eval();
-    }
+  root = (root: NNode, accidentals: INode) => {
+    this.#c.tonic = <Letter> [
+      normalizeLetter(root.sourceString),
+      normalizeAccidentals(accidentals.sourceString),
+    ].join("");
 
     return this.#c;
   };
 
-  root = (root: NonterminalNode, accidentals: IterationNode) => {
-    this.#c.tonic = <Letter> `${root.sourceString}${accidentals.sourceString}`
-      .replace(
-        /(^[A-Ga-g])/g,
-        function (t) {
-          return t.toUpperCase();
-        },
-      );
+  flavor = (quality: INode, extent: INode, alterations: INode) => {
+    isImplicitPower(quality, extent)
+      ? this.#c.quality = QualityPower
+      : isImplicitMajor(quality, extent)
+      ? this.#c.quality = QualityMajor
+      : isImplicitDominant(quality, extent)
+      ? this.#c.quality = QualityDominant
+      : quality.child(0)?.eval();
 
-    return this.#c;
-  };
-
-  flavor = (
-    quality: IterationNode,
-    extent: IterationNode,
-    alterations: IterationNode,
-  ) => {
-    if (isImplicitPower(quality, extent, alterations)) {
-      this.#c.quality = QualityPower;
-    } else if (isImplicitMajor(quality, extent, alterations)) {
-      this.#c.quality = QualityMajor;
-    } else if (isImplicitDominant(quality, extent, alterations)) {
-      this.#c.quality = QualityDominant;
-    } else if (quality.sourceString !== "") {
-      if (quality.numChildren > 1) {
-        throw new Error(
-          `expected Node to only have 0 or 1 children, but it has ${quality.numChildren}`,
-        );
-      }
-      quality.children[0]?.eval();
-    }
-
-    if (extent.sourceString !== "") {
-      if (extent.numChildren > 1) {
-        throw new Error(
-          `expected Node to only have 0 or 1 children, but it has ${extent.numChildren}`,
-        );
-      }
-      extent.children[0]?.eval();
-    }
-
-    if (!this.#c.alterations || this.#c.alterations.length === 0) {
-      this.#c.alterations = [];
-    }
+    extent.child(0)?.eval();
 
     this.#c.alterations.push(
-      ...alterations.children.map((alterationNode) =>
-        alterationNode.sourceString
-      ),
+      ...alterations.children.map((alteration) => alteration.sourceString),
     );
 
     return this.#c;
   };
-  extent = (arg0: NonterminalNode) => {
-    arg0.eval();
-    return this.#c;
+
+  #evalPassthrough = (n: NNode) => {
+    n.eval();
+    return (this.#c);
   };
-  thirteen = (_arg0: NonterminalNode) => {
-    this.#c.extent = 13;
-    return this.#c;
+
+  #qualityPassthrough = (quality: ChordQuality) => {
+    return (_: NNode) => {
+      this.#c.quality = quality;
+      return this.#c;
+    };
   };
-  eleven = (_arg0: NonterminalNode) => {
-    this.#c.extent = 11;
-    return this.#c;
+
+  #extentPassthrough = (extent: Extent) => {
+    return (_: NNode) => {
+      this.#c.extent = extent;
+      return this.#c;
+    };
   };
-  nine = (_arg0: NonterminalNode) => {
-    this.#c.extent = 9;
-    return this.#c;
-  };
-  seven = (_arg0: NonterminalNode) => {
-    this.#c.extent = 7;
-    return this.#c;
-  };
-  six_and_nine = (
-    _arg0: NonterminalNode,
-    _arg1: IterationNode,
-    _arg2: NonterminalNode,
-  ) => {
+
+  extent = this.#evalPassthrough;
+  thirteen = this.#extentPassthrough(13);
+  eleven = this.#extentPassthrough(11);
+  nine = this.#extentPassthrough(9);
+  seven = this.#extentPassthrough(7);
+  six = this.#extentPassthrough(6);
+  five = this.#extentPassthrough(5);
+  four = this.#extentPassthrough(4);
+  two = this.#extentPassthrough(2);
+  six_and_nine = (_0: NNode, _1: INode, _2: NNode) => {
     this.#c.extent = 6;
-    if (!this.#c.alterations || this.#c.alterations.length === 0) {
-      this.#c.alterations = [];
-    }
     this.#c.alterations.push("(add 9)");
     return this.#c;
   };
-  six = (_arg0: NonterminalNode) => {
-    this.#c.extent = 6;
+
+  quality = this.#evalPassthrough;
+  augmented = this.#qualityPassthrough(QualityAugmented);
+  diminished = this.#qualityPassthrough(QualityDiminished);
+  major = this.#qualityPassthrough(QualityMajor);
+  minor = this.#qualityPassthrough(QualityMinor);
+  sus = this.#qualityPassthrough(QualitySuspended);
+  dominant = (_0: NNode) => {
+    this.#c.quality = QualityDominant;
+    this.#c.extent ||= 7;
     return this.#c;
   };
-  five = (_arg0: NonterminalNode) => {
-    this.#c.extent = 5;
+  half_diminished = (_0: NNode) => {
+    this.#c.quality = QualityMinor;
+    this.#c.alterations.push("b5");
+    this.#c.extent ||= 7;
     return this.#c;
   };
-  four = (_arg0: NonterminalNode) => {
-    this.#c.extent = 4;
-    return this.#c;
-  };
-  two = (_arg0: NonterminalNode) => {
-    this.#c.extent = 2;
-    return this.#c;
-  };
-  quality = (arg0: NonterminalNode) => {
-    arg0.eval();
-    return this.#c;
-  };
-  sus = (_arg0: NonterminalNode) => {
-    this.#c.quality = QualitySuspended;
-    return this.#c;
-  };
-  minor_major = (_arg0: NonterminalNode) => {
+  minor_major = (_0: NNode) => {
     this.#c.quality = QualityMinorMajor;
     this.#c.extent ||= 7;
     return this.#c;
   };
   minor_major_with_parens = (
-    _arg0: NonterminalNode,
-    _arg1: TerminalNode,
-    _arg2: NonterminalNode,
-    _arg3: NonterminalNode,
-    _arg4: TerminalNode,
-  ) => {
-    this.#c.quality = QualityMinorMajor;
-    this.#c.extent ||= 7;
-    return this.#c;
-  };
-  augmented = (_arg0: NonterminalNode) => {
-    this.#c.quality = QualityAugmented;
-    return this.#c;
-  };
-  diminished = (_arg0: NonterminalNode) => {
-    this.#c.quality = QualityDiminished;
-    return this.#c;
-  };
-  dominant = (_arg0: NonterminalNode) => {
-    this.#c.quality = QualityDominant;
-    this.#c.extent ||= 7;
-    return this.#c;
-  };
-  half_diminished = (_arg0: NonterminalNode) => {
-    this.#c.quality = QualityMinor;
-    if (!this.#c.alterations || this.#c.alterations.length === 0) {
-      this.#c.alterations = [];
-    }
-    this.#c.alterations.push("b5");
-    this.#c.extent ||= 7;
-    return this.#c;
-  };
-  major = (_arg0: NonterminalNode) => {
-    this.#c.quality = QualityMajor;
-    return this.#c;
-  };
-  minor = (_arg0: NonterminalNode) => {
-    this.#c.quality = QualityMinor;
-    return this.#c;
-  };
+    _0: NNode,
+    _1: TNode,
+    _2: NNode,
+    _3: NNode,
+    _4: NNode,
+  ) => this.minor_major(_0);
 }
 
-export function ParseChord(rawChord: string): Result<Chord> {
-  const matchResult = grammar.Chord.match(rawChord, "Chord");
-
-  if (matchResult.failed()) {
-    return Err(matchResult.message || "failed to parse chord: empty error");
-  }
-
-  const chord = new Chord(
-    <Letter> "C",
-    QualityMajor,
-  );
-
-  const semantics = grammar.Chord.createSemantics();
-
-  semantics.addOperation("eval", new ChordActions(chord));
-  semantics(matchResult).eval();
-
-  return Ok(chord);
-}
-
-export function ParseSong(rawSong: string): Result<Song> {
-  const matchResult = grammar.Song.match(rawSong, "Song");
-
-  if (matchResult.failed()) {
-    return Err(matchResult.message || "failed to parse song: empty error");
-  }
-
-  const song = new Song();
-
-  const semantics = grammar.Song.createSemantics();
-
-  semantics.addOperation("eval", new Actions(song));
-  semantics(matchResult).eval();
-
-  song.key ||= song.guessKey();
-
-  return Ok(song);
-}
-
-function isRepeat(s: string): boolean {
-  return AllRepeatedChordSymbols.includes(s);
-}
-
-class Actions implements SongActionDict<Song> {
+class SongActions implements SongActionDict<Song> {
   #s: Song;
   #currentSection: string | undefined;
 
@@ -283,13 +150,13 @@ class Actions implements SongActionDict<Song> {
     this.#currentSection = undefined;
   }
 
-  Song = (metadata: IterationNode, bars: NonterminalNode) => {
+  Song = (metadata: INode, bars: NNode) => {
     metadata.children.forEach((e) => e.eval());
     bars.eval();
     return this.#s;
   };
 
-  Sections = (maybeSection: IterationNode, bars: IterationNode) => {
+  Sections = (maybeSection: INode, bars: INode) => {
     zip(maybeSection.children, bars.children).forEach(([section, bars2]) => {
       section.children.forEach((c2) => c2.eval());
       bars2.eval();
@@ -297,17 +164,13 @@ class Actions implements SongActionDict<Song> {
     return this.#s;
   };
 
-  // TODO: what an ugly hack. we can do better
-  Section = (sectionName: IterationNode, _arg1: IterationNode) => {
+  Section = (sectionName: INode, _1: INode) => {
+    // TODO: get rid of the statefulness here
     this.#currentSection = sectionName.sourceString;
     return this.#s;
   };
 
-  Bars = (
-    barline: NonterminalNode,
-    barChords: IterationNode,
-    closingBarlines: IterationNode,
-  ) => {
+  Bars = (barline: NNode, barChords: INode, closingBarlines: INode) => {
     let previousChord: Chordish | undefined = undefined;
     let previousBarline = barline.sourceString;
 
@@ -353,48 +216,70 @@ class Actions implements SongActionDict<Song> {
     return this.#s;
   };
 
-  Chordish = (_arg0: NonterminalNode) => {
-    return this.#s;
-  };
+  Chordish = (_0: NNode) => this.#s;
 
-  Chord = (_arg0: NonterminalNode, _arg1: NonterminalNode) => {
-    return this.#s;
-  };
+  Chord = (_0: NNode, _1: NNode) => this.#s;
 
-  #passthroughMetaFunc = (
-    _arg0: NonterminalNode,
-    _arg2: NonterminalNode,
-    value: IterationNode,
-    _arg3: NonterminalNode,
-  ) => {
+  #metaPassthrough = (_0: NNode, _2: NNode, value: INode, _arg3: NNode) => {
     value.eval();
     return this.#s;
   };
 
-  metaTitle = this.#passthroughMetaFunc;
-  metaArtist = this.#passthroughMetaFunc;
-  metaYear = this.#passthroughMetaFunc;
-  metaSig = this.#passthroughMetaFunc;
-  metaKey = this.#passthroughMetaFunc;
+  metaTitle = this.#metaPassthrough;
+  metaArtist = this.#metaPassthrough;
+  metaYear = this.#metaPassthrough;
+  metaSig = this.#metaPassthrough;
+  metaKey = this.#metaPassthrough;
 
-  metaTitleValue = (arg0: IterationNode) => {
-    this.#s.title = arg0.sourceString;
-    return this.#s;
+  #metaValuePassthrough = (
+    property: "title" | "artist" | "year" | "sig" | "key",
+  ) => {
+    return (arg0: INode) => {
+      this.#s[property] = arg0.sourceString;
+      return this.#s;
+    };
   };
-  metaArtistValue = (arg0: IterationNode) => {
-    this.#s.artist = arg0.sourceString;
-    return this.#s;
-  };
-  metaYearValue = (arg0: IterationNode) => {
-    this.#s.year = arg0.sourceString;
-    return this.#s;
-  };
-  metaSigValue = (arg0: IterationNode) => {
-    this.#s.sig = arg0.sourceString;
-    return this.#s;
-  };
-  metaKeyValue = (arg0: IterationNode) => {
-    this.#s.key = arg0.sourceString;
-    return this.#s;
-  };
+
+  metaTitleValue = this.#metaValuePassthrough("title");
+  metaArtistValue = this.#metaValuePassthrough("artist");
+  metaYearValue = this.#metaValuePassthrough("year");
+  metaSigValue = this.#metaValuePassthrough("sig");
+  metaKeyValue = this.#metaValuePassthrough("key");
 }
+
+export function ParseChord(rawChord: string): Result<Chord> {
+  const matchResult = grammar.Chord.match(rawChord, "Chord");
+  if (matchResult.failed()) return Err(matchResult.message!);
+  const semantics = grammar.Chord.createSemantics();
+  semantics.addOperation("eval", new ChordActions(new Chord()));
+  const chord = semantics(matchResult).eval();
+  return Ok(chord);
+}
+
+export function ParseSong(rawSong: string): Result<Song> {
+  const matchResult = grammar.Song.match(rawSong, "Song");
+  if (matchResult.failed()) return Err(matchResult.message!);
+  const semantics = grammar.Song.createSemantics();
+  semantics.addOperation("eval", new SongActions(new Song()));
+  const song = semantics(matchResult).eval();
+  song.key ||= song.guessKey();
+  return Ok(song);
+}
+
+const isRepeat = (s: string) => {
+  return AllRepeatedChordSymbols.includes(s);
+};
+
+const isImplicitMajor = (quality: INode, extent: INode) => (
+  !quality.sourceString &&
+  (extent.sourceString.trim() === "" || extent.sourceString.startsWith("6"))
+);
+
+const isImplicitDominant = (quality: INode, extent: INode) => (
+  !quality.sourceString &&
+  ["7", "9", "11", "13", "alt"].some((s) => extent.sourceString.startsWith(s))
+);
+
+const isImplicitPower = (quality: INode, extent: INode) => (
+  !quality.sourceString && extent.sourceString.startsWith("5")
+);

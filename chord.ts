@@ -5,16 +5,16 @@ export class Chord {
   public tonic: Letter;
   public quality: ChordQuality;
   public extent?: Extent;
-  public alterations?: Array<string>;
+  public alterations: Array<string>;
 
   constructor(
-    tonic: Letter,
-    quality: ChordQuality,
+    tonic?: Letter,
+    quality?: ChordQuality,
     extent?: Extent,
     ...alterations: Array<string>
   ) {
-    this.tonic = tonic;
-    this.quality = quality;
+    this.tonic = tonic || "C";
+    this.quality = quality || QualityMajor;
     this.extent = extent;
     this.alterations = alterations;
   }
