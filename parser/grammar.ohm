@@ -149,7 +149,7 @@ Song <: Chord {
 
   Sections = (Section? Bars)+
 
-  Bars = Barline (Chordish+ Barline+)+
+  Bars = barline (Chordish+ barline)+
 
   Chordish = Chord | NoChord | RepeatPreviousChord
 
@@ -178,20 +178,20 @@ Song <: Chord {
   metaSigValue    = (~newline any)+
   metaKeyValue    = (~newline any)+
 
-  Barline =
-    | BarlineWithRepeats
-    | DoubleBarline
-    | SingleBarline
+  barline =
+    | barlineWithRepeats
+    | doubleBarline
+    | singleBarline
 
-  BarlineWithRepeats =
-    | BarRepeatSignifierClose (DoubleBarline | SingleBarline)
-    | (DoubleBarline | SingleBarline) BarRepeatSignifierOpen
+  barlineWithRepeats =
+    | barRepeatSignifierClose (doubleBarline | singleBarline)
+    | (doubleBarline | singleBarline) barRepeatSignifierOpen
 
-  BarRepeatSignifierOpen = (digit caseInsensitive<"x">?)? ":"
-  BarRepeatSignifierClose = ":" (digit caseInsensitive<"x">?)?
+  barRepeatSignifierOpen = (digit caseInsensitive<"x">?)? ":"
+  barRepeatSignifierClose = ":" (digit caseInsensitive<"x">?)?
 
-  DoubleBarline = "||"
-  SingleBarline = "|"
+  doubleBarline = "||"
+  singleBarline = "|"
 
   RepeatPreviousChord =
     | "-"

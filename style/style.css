@@ -138,13 +138,6 @@ html {
       }
     }
 
-    /* &:nth-child(4n) {
-      .staff {
-        border-right-style: solid;
-        border-right-width: 1.5px;
-      }
-    } */
-
     &.active {
       .staff {
         animation-name: pulse;

@@ -6,38 +6,14 @@ import defaultSongRaw from "./songs/chelsea_bridge.leadsheet";
 import {
   Barline,
   BarlineClass,
-  BarlineRepeatCloseDouble,
-  BarlineRepeatCloseDouble1,
-  BarlineRepeatCloseDouble1x,
-  BarlineRepeatCloseDouble2,
-  BarlineRepeatCloseDouble2x,
-  BarlineRepeatCloseSingle,
-  BarlineRepeatCloseSingle1,
-  BarlineRepeatCloseSingle2,
-  BarlineRepeatCloseSingle2x,
-  BarlineRepeatOpenDouble,
-  BarlineRepeatOpenDouble1,
-  BarlineRepeatOpenDouble1x,
-  BarlineRepeatOpenDouble2,
-  BarlineRepeatOpenDouble2x,
-  BarlineRepeatOpenSingle,
-  BarlineRepeatOpenSingle1,
-  BarlineRepeatOpenSingle2,
-  BarlineRepeatOpenSingle2x,
   Chordish,
-  ChordQuality,
-  DoubleBarline,
+  ChordishQuality,
   NoChord,
   printChordish,
   RepeatedChordSymbol,
-  SingleBarline,
   Song,
 } from "./types.ts";
-import {
-  nonexhaustiveSwitchGuard,
-  titleize,
-  unicodeifyMusicalSymbols,
-} from "./utils.ts";
+import { titleize, unicodeifyMusicalSymbols } from "./utils.ts";
 import { ParseSong } from "./parser/parser.ts";
 import {
   defaultFeatureFlags,
@@ -358,34 +334,17 @@ function _getColorClass(c: Readonly<Chordish>): ChordishQuality {
 }
 
 function _getBarlineClass(c: Barline, sfx: "open" | "close"): BarlineClass {
-  switch (c) {
-    case SingleBarline:
-      return `barline-single-${sfx}`;
-    case DoubleBarline:
-      return `barline-double-${sfx}`;
-    case BarlineRepeatOpenSingle:
-    case BarlineRepeatOpenSingle1:
-    case BarlineRepeatOpenSingle2:
-    case BarlineRepeatOpenSingle2x:
-    case BarlineRepeatOpenDouble:
-    case BarlineRepeatOpenDouble1:
-    case BarlineRepeatOpenDouble1x:
-    case BarlineRepeatOpenDouble2:
-    case BarlineRepeatOpenDouble2x:
-      return "barline-repeat-open";
-    case BarlineRepeatCloseSingle:
-    case BarlineRepeatCloseSingle1:
-    case BarlineRepeatCloseSingle2:
-    case BarlineRepeatCloseSingle2x:
-    case BarlineRepeatCloseDouble:
-    case BarlineRepeatCloseDouble1:
-    case BarlineRepeatCloseDouble1x:
-    case BarlineRepeatCloseDouble2:
-    case BarlineRepeatCloseDouble2x:
-      return "barline-repeat-close";
-    default:
-      return nonexhaustiveSwitchGuard(c);
-  }
+  const result = (c === "|")
+    ? `barline-single-${sfx}`
+    : (c === "||")
+    ? `barline-double-${sfx}`
+    : (c.match(/\|\d*x?:/))
+    ? "barline-repeat-open"
+    : (c.match(/:\d*x?\|/))
+    ? "barline-repeat-close"
+    : `barline-single-${sfx}`;
+
+  return <BarlineClass> result;
 }
 
 function _formatKeyName(str: string): string {
@@ -403,8 +362,6 @@ function _loadDefaultSong(): Song | undefined {
     return result.value;
   }
 }
-
-export type ChordishQuality = ChordQuality | "no-chord";
 
 window.onload = bootstrap;
 

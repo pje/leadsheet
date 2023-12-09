@@ -154,44 +154,48 @@ class SongActions implements SongActionDict<void> {
     let previousChord: Chordish | undefined = undefined;
     let previousBarline = barline.sourceString;
 
-    barChords.children.forEach((barNode, i) => {
-      const chords = barNode.children.map(
-        (chordishNode) => {
-          const chordString = chordishNode.sourceString.trim();
+    zip(barChords.children, closingBarlines.children).forEach(
+      ([barNode, closingBarlineNode]) => {
+        const chords = barNode.children.map(
+          (chordishNode) => {
+            const chordString = chordishNode.sourceString.trim();
 
-          if (
-            chordString === NoChord ||
-            (previousChord === NoChord && isRepeat(chordString))
-          ) {
-            previousChord = NoChord;
-            return NoChord;
-          } else {
-            previousChord = <Chord | undefined> previousChord;
+            if (
+              chordString === NoChord ||
+              (previousChord === NoChord && isRepeat(chordString))
+            ) {
+              previousChord = NoChord;
+              return NoChord;
+            } else {
+              previousChord = <Chord | undefined> previousChord;
 
-            if (!previousChord) {
-              // first chord in song
-              previousChord = (ParseChord(chordString).value)!;
-            } else if (!isRepeat(chordString)) {
-              // i.e. not a repetition
-              previousChord = (ParseChord(chordString).value)!;
+              if (!previousChord) {
+                // first chord in song
+                previousChord = (ParseChord(chordString).value)!;
+              } else if (!isRepeat(chordString)) {
+                // i.e. not a repetition
+                previousChord = (ParseChord(chordString).value)!;
+              }
+
+              return previousChord.dup();
             }
+          },
+        );
 
-            return previousChord.dup();
-          }
-        },
-      );
-      const thisBarline = closingBarlines.children[i]?.sourceString?.split(
-        /\s/,
-      ).filter((s) => s.includes("|"))[0]; // TODO: hack
-      const bar: Bar = {
-        openBarline: <Barline> previousBarline,
-        closeBarline: <Barline> thisBarline,
-        name: this.#currentSection,
-        chords,
-      };
-      previousBarline = thisBarline;
-      this.#s.bars.push(bar);
-    });
+        const thisBarline = closingBarlineNode.children.map((c) =>
+          c.sourceString
+        ).join("");
+
+        const bar: Bar = {
+          openBarline: <Barline> previousBarline,
+          closeBarline: <Barline> thisBarline,
+          name: this.#currentSection,
+          chords,
+        };
+        previousBarline = thisBarline;
+        this.#s.bars.push(bar);
+      },
+    );
   };
 
   Chordish = (_0: NNode) => this.#s;

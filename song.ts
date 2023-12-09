@@ -6,7 +6,13 @@ import {
   NoteRegex,
   transposeLetter,
 } from "./utils.ts";
-import { Chord, Letter, QualityMajor, QualityMinor } from "./chord.ts";
+import {
+  Chord,
+  ChordQuality,
+  Letter,
+  QualityMajor,
+  QualityMinor,
+} from "./chord.ts";
 
 export class Song {
   public title: string | undefined;
@@ -124,6 +130,7 @@ export class Song {
 
 export const NoChord = "N.C." as const;
 export type Chordish = Chord | typeof NoChord;
+export type ChordishQuality = ChordQuality | "no-chord";
 
 export type Bar = {
   chords: Array<Chordish>;
@@ -135,27 +142,13 @@ export type Bar = {
 export type Barline =
   | typeof SingleBarline
   | typeof DoubleBarline
-  | BarlineWithRepeats;
+  | OpenBarlineWithRepeats
+  | CloseBarlineWithRepeats;
 
-export type BarlineWithRepeats =
-  | typeof BarlineRepeatOpenDouble
-  | typeof BarlineRepeatCloseDouble
-  | typeof BarlineRepeatOpenSingle
-  | typeof BarlineRepeatOpenSingle1
-  | typeof BarlineRepeatOpenSingle2
-  | typeof BarlineRepeatOpenSingle2x
-  | typeof BarlineRepeatCloseSingle
-  | typeof BarlineRepeatCloseSingle1
-  | typeof BarlineRepeatCloseSingle2
-  | typeof BarlineRepeatCloseSingle2x
-  | typeof BarlineRepeatOpenDouble1
-  | typeof BarlineRepeatOpenDouble1x
-  | typeof BarlineRepeatOpenDouble2
-  | typeof BarlineRepeatOpenDouble2x
-  | typeof BarlineRepeatCloseDouble1
-  | typeof BarlineRepeatCloseDouble1x
-  | typeof BarlineRepeatCloseDouble2
-  | typeof BarlineRepeatCloseDouble2x;
+export type OpenBarlineWithRepeats =
+  `${singleOrDoubleBarline}${maybeDigit}${maybeX}:`;
+export type CloseBarlineWithRepeats =
+  `:${maybeDigit}${maybeX}${singleOrDoubleBarline}`;
 
 export const BarlineRepeatOpenDouble = "||:" as const;
 export const BarlineRepeatCloseDouble = ":||" as const;
@@ -176,11 +169,24 @@ export const BarlineRepeatCloseDouble1x = ":1x||" as const;
 export const BarlineRepeatCloseDouble2 = ":2||" as const;
 export const BarlineRepeatCloseDouble2x = ":2x||" as const;
 
-// BarRepeatSignifierOpen = (digit caseInsensitive<"x">?)? ":"
-// BarRepeatSignifierClose = ":" (digit caseInsensitive<"x">?)?
-
 export const DoubleBarline = "||";
 export const SingleBarline = "|";
+
+type singleOrDoubleBarline =
+  | typeof DoubleBarline
+  | typeof SingleBarline;
+type maybeX = "x" | "";
+type maybeDigit =
+  | ""
+  | 1
+  | 2
+  | 3
+  | 4
+  | 5
+  | 6
+  | 7
+  | 8
+  | 9;
 
 export function printChordish(this: Readonly<Chordish>): string {
   switch (this) {
