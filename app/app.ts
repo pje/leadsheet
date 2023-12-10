@@ -5,7 +5,6 @@ import {
   defaultFeatureFlags,
   FeatureFlagKeys,
   FeatureFlagKeysType,
-  Settings,
 } from "./settings.ts";
 import { Clock, TimeEventListener } from "../lib/midi/time_event_listener.ts";
 import {
@@ -17,13 +16,9 @@ import {
   RepeatedChordSymbol,
   Song,
 } from "../parser/song.ts";
+import { type State } from "./state.ts";
 
-const state: {
-  song: Song | undefined;
-  transposedSteps: number;
-  settings: Settings;
-  midiEventListener?: TimeEventListener;
-} = {
+const state: State = {
   song: undefined,
   transposedSteps: 0,
   settings: {
