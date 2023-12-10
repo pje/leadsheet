@@ -67,7 +67,7 @@ export class Clock {
   );
 }
 
-export class MidiEventListener {
+export class TimeEventListener {
   clock: Clock;
   private midiAccess: MIDIAccess | undefined;
 

@@ -7,7 +7,7 @@ import {
   FeatureFlagKeysType,
   Settings,
 } from "./settings.ts";
-import { Clock, MidiEventListener } from "../lib/midi/event_listener.ts";
+import { Clock, TimeEventListener } from "../lib/midi/time_event_listener.ts";
 import {
   Barline,
   Chordish,
@@ -22,7 +22,7 @@ const state: {
   song: Song | undefined;
   transposedSteps: number;
   settings: Settings;
-  midiEventListener?: MidiEventListener;
+  midiEventListener?: TimeEventListener;
 } = {
   song: undefined,
   transposedSteps: 0,
@@ -33,7 +33,7 @@ const state: {
 };
 
 export async function bootstrap() {
-  state.midiEventListener ||= new MidiEventListener(onBarAdvanced);
+  state.midiEventListener ||= new TimeEventListener(onBarAdvanced);
 
   await renderSettings(state.settings);
 

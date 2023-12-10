@@ -1,5 +1,5 @@
 import { assertEquals } from "../../test_utils.ts";
-import { Clock, MidiEventListener } from "./event_listener.ts";
+import { Clock, TimeEventListener } from "./time_event_listener.ts";
 import {
   assertSpyCalls,
   spy,
@@ -11,7 +11,7 @@ type OnMIDIMessage = (
   ev: Pick<MIDIMessageEvent, "data">,
 ) => unknown; // deno's lib.dom version is incorrect
 
-Deno.test(MidiEventListener.name, async (t) => {
+Deno.test(TimeEventListener.name, async (t) => {
   const fakeInput = <MIDIInput> <unknown> {
     id: "fake-midi-input-device",
     name: "Fake MIDI Input Device",
@@ -26,8 +26,8 @@ Deno.test(MidiEventListener.name, async (t) => {
 
   stub(navigator, "requestMIDIAccess", () => Promise.resolve(fakeMIDIAccess));
 
-  await t.step(MidiEventListener.prototype.getDevices.name, async () => {
-    const mel = new MidiEventListener((_c: Readonly<Clock>) => {});
+  await t.step(TimeEventListener.prototype.getDevices.name, async () => {
+    const mel = new TimeEventListener((_c: Readonly<Clock>) => {});
     const result = await mel.getDevices();
 
     assertEquals([fakeInput], result);
@@ -39,7 +39,7 @@ Deno.test(MidiEventListener.name, async (t) => {
       const onBarAdvanced = (_c: Readonly<Clock>) => {};
       const onBarAdvancedSpy = spy(onBarAdvanced);
 
-      const mel = new MidiEventListener(onBarAdvancedSpy);
+      const mel = new TimeEventListener(onBarAdvancedSpy);
       await mel.install();
 
       const data = Uint8Array.from([parseInt("11111010", 2)]); // START Message Status Code
@@ -54,7 +54,7 @@ Deno.test(MidiEventListener.name, async (t) => {
       const onBarAdvanced = (_c: Readonly<Clock>) => {};
       const onBarAdvancedSpy = spy(onBarAdvanced);
 
-      const mel = new MidiEventListener(onBarAdvancedSpy);
+      const mel = new TimeEventListener(onBarAdvancedSpy);
       await mel.install();
 
       // send 192 TimingClock messages (just enough to advance by two bars)
