@@ -1,6 +1,10 @@
-import { type FlatOrSharpSymbol, FlatSymbol, SharpSymbol } from "./types.ts";
+import {
+  type FlatOrSharpSymbol,
+  FlatSymbol,
+  NoteRegex,
+  SharpSymbol,
+} from "./notation.ts";
 import { type PitchClass } from "./pitch_class.ts";
-import { NoteRegex } from "./utils.ts";
 import {
   GetLettersForPitchClass,
   type Letter,

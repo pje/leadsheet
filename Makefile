@@ -1,7 +1,7 @@
 .PHONY: build deps test unit_test browser_test ohm_bundle watch
 
-test_files=$(wildcard *test.ts **/*test.ts)
-browser_test_files=browser_test.ts
+test_files=$(shell find . -type f -name '*test.ts')
+browser_test_files=./browser_test.ts
 unit_test_files=$(filter-out $(browser_test_files),$(test_files))
 
 build: deps ohm_bundle

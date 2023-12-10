@@ -6,8 +6,8 @@ import {
   LetterToPitchClass,
   transposeLetter,
 } from "./letter.ts";
-import { assertEquals } from "./test_utils.ts";
-import { type FlatOrSharpSymbol, FlatSymbol, SharpSymbol } from "./types.ts";
+import { assertEquals } from "../test_utils.ts";
+import { type FlatOrSharpSymbol, FlatSymbol, SharpSymbol } from "./notation.ts";
 
 Deno.test(transposeLetter.name, async (t) => {
   const cases = new Map<[Letter, number, FlatOrSharpSymbol], Letter>([

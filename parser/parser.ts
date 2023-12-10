@@ -6,8 +6,7 @@ import type {
   TerminalNode as TNode,
 } from "ohm-js";
 import type { ChordActionDict, SongActionDict } from "./grammar.ohm-bundle.js";
-import type { Letter } from "../letter.ts";
-import { AllRepeatedChordSymbols } from "../types.ts";
+import type { Letter } from "../theory/letter.ts";
 import { zip } from "../lib/array.ts";
 import {
   Chord,
@@ -21,8 +20,15 @@ import {
   QualityMinorMajor,
   QualityPower,
   QualitySuspended,
-} from "../chord.ts";
-import { Bar, Barline, Chordish, NoChord, Song } from "../song.ts";
+} from "../theory/chord.ts";
+import {
+  AllRepeatedChordSymbols,
+  Bar,
+  Barline,
+  Chordish,
+  NoChord,
+  Song,
+} from "./song.ts";
 import { Err, Ok, type Result } from "../lib/result.ts";
 
 function normalizeLetter(str: string): string {

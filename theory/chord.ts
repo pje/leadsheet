@@ -1,6 +1,6 @@
 import { type Letter, transposeLetter } from "./letter.ts";
-import { nonexhaustiveSwitchGuard } from "./lib/switch.ts";
-import { type FlatOrSharpSymbol } from "./types.ts";
+import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
+import { type FlatOrSharpSymbol } from "./notation.ts";
 
 export class Chord {
   public tonic: Letter;

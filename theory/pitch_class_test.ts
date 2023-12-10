@@ -1,5 +1,5 @@
 import { type PitchClass, transposePitchClass } from "./pitch_class.ts";
-import { assertEquals } from "./test_utils.ts";
+import { assertEquals } from "../test_utils.ts";
 
 Deno.test(transposePitchClass.name, async (t) => {
   const cases = new Map<[PitchClass, number], PitchClass>([

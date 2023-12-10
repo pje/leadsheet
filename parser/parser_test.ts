@@ -4,7 +4,7 @@ import {
   fail,
 } from "https://deno.land/std@0.208.0/assert/mod.ts";
 import { ParseChord, ParseSong } from "./parser.ts";
-import { type Letter } from "../letter.ts";
+import { type Letter } from "../theory/letter.ts";
 import { type Result } from "../lib/result.ts";
 import {
   Chord,
@@ -16,9 +16,9 @@ import {
   QualityMinorMajor,
   QualityPower,
   QualitySuspended,
-} from "../chord.ts";
+} from "../theory/chord.ts";
 import { assertEquals } from "../test_utils.ts";
-import { Bar, Song } from "../song.ts";
+import { Bar, Song } from "./song.ts";
 
 const songsDir = "./leadsheets";
 const rawSongs: Array<{ name: string; contents: string }> = [];

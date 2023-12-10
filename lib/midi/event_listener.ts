@@ -6,7 +6,7 @@ import {
   Start,
   Stop,
   TimingClock,
-} from "./midi.ts";
+} from "./protocol.ts";
 
 // Keeps track of elapsed time (in bars/beats/sixteenths) in response to tick
 // events from the MIDIInput device we're synced to

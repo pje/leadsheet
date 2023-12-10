@@ -1,17 +1,17 @@
-import { NoteRegex } from "./utils.ts";
 import {
   Chord,
   type ChordQuality,
   QualityMajor,
   QualityMinor,
-} from "./chord.ts";
+} from "../theory/chord.ts";
 import {
   accidentalPreferenceForKey,
   canonicalizeKeyQualifier,
   conventionalizeKey,
   Minor,
-} from "./key.ts";
-import { type Letter, transposeLetter } from "./letter.ts";
+} from "../theory/key.ts";
+import { type Letter, transposeLetter } from "../theory/letter.ts";
+import { NoteRegex } from "../theory/notation.ts";
 
 export class Song {
   public title: string | undefined;
@@ -131,6 +131,13 @@ export class Song {
 export const NoChord = "N.C." as const;
 export type Chordish = Chord | typeof NoChord;
 export type ChordishQuality = ChordQuality | "no-chord";
+export const RepeatedChordSymbol = "%";
+export const AllRepeatedChordSymbols = [
+  RepeatedChordSymbol,
+  "/",
+  "-",
+  "𝄎",
+];
 
 export type Bar = {
   chords: Array<Chordish>;

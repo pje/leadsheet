@@ -1,6 +1,6 @@
-import { nonexhaustiveSwitchGuard } from "./lib/switch.ts";
+import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
 import { type PitchClass, transposePitchClass } from "./pitch_class.ts";
-import { type FlatOrSharpSymbol, FlatSymbol, SharpSymbol } from "./types.ts";
+import { type FlatOrSharpSymbol, FlatSymbol, SharpSymbol } from "./notation.ts";
 
 export const AllLetters = [
   "A",

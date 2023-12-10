@@ -1,12 +1,12 @@
 import {
   canonicalizeKeyQualifier,
   conventionalizeKey,
-  KeyQualifier,
+  type KeyQualifier,
   Major,
   Minor,
 } from "./key.ts";
-import { Letter } from "./letter.ts";
-import { assertEquals } from "./test_utils.ts";
+import { type Letter } from "./letter.ts";
+import { assertEquals } from "../test_utils.ts";
 
 Deno.test(canonicalizeKeyQualifier.name, async (t) => {
   const cases = new Map<string, KeyQualifier>([

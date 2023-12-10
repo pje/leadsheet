@@ -1,5 +1,5 @@
-import { assertEquals } from "./test_utils.ts";
-import { Clock, MidiEventListener } from "./midi_event_listener.ts";
+import { assertEquals } from "../../test_utils.ts";
+import { Clock, MidiEventListener } from "./event_listener.ts";
 import {
   assertSpyCalls,
   spy,
