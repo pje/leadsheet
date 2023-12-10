@@ -1,4 +1,4 @@
-.PHONY: build deps test unit_test browser_test ohm_bundle watch
+.PHONY: build clean deps lint test unit_test browser_test ohm_bundle watch
 
 test_files=$(shell find . -type f -name '*test.ts')
 browser_test_files=./browser_test.ts
