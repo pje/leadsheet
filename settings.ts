@@ -1,5 +1,3 @@
-import type { MIDIInput } from "./node_modules/@types/webmidi/index.d.ts";
-
 export const colorChords = "colorChords" as const;
 export const unicodeChordSymbols = "unicodeChordSymbols" as const;
 export const followMidiClockMessages = "followMidiClockMessages" as const;
