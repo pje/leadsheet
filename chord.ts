@@ -64,6 +64,7 @@ export class Chord {
   private printFlavor(): string {
     let extent = this.extent || "";
     let quality = "";
+    const alterations = [...this.alterations];
 
     switch (this.quality) {
       case QualityAugmented:
@@ -77,9 +78,9 @@ export class Chord {
         break;
       case QualityMajor:
         if (this.extent == 6) {
-          const i = this.alterations.indexOf(Add9);
+          const i = alterations.indexOf(Add9);
           if (i >= 0) {
-            this.alterations.splice(i, 1);
+            alterations.splice(i, 1);
             quality = "";
             extent = "6/9"; // we want "C6/9" instead of "C6(add 9)"
           } else {
@@ -107,8 +108,7 @@ export class Chord {
         nonexhaustiveSwitchGuard(this.quality);
     }
 
-    const alterations = this.alterations?.join("") || "";
-    return `${quality}${extent}${alterations}`;
+    return `${quality}${extent}${alterations.join("")}`;
   }
 }
 

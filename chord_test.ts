@@ -34,6 +34,10 @@ Deno.test(Chord.prototype.transpose.name, async (t) => {
       [new Chord("A", "maj", 7, "/G"), 1, SharpSymbol],
       new Chord("A#", "maj", 7, "/G#"),
     ],
+    [
+      [new Chord("A", "maj", 6, "(add 9)"), 1, SharpSymbol],
+      new Chord("A#", "maj", 6, "(add 9)"),
+    ],
   ]);
 
   for (const [k, expected] of cases) {
