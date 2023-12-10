@@ -182,6 +182,21 @@ year: 2023
       { key: "A" },
     ),
   },
+  {
+    title: "songWithRepeatBarlines",
+    contents: `
+||: A | B  :2x||
+|: Cm | Dm :3x||`,
+    expected: new Song(
+      [
+        { ...bar("A"), openBarline: "||:", closeBarline: "|" },
+        { ...bar("B"), openBarline: "|", closeBarline: ":2x||" },
+        { ...bar("Cm"), openBarline: "|:", closeBarline: "|" },
+        { ...bar("Dm"), openBarline: "|", closeBarline: ":3x||" },
+      ],
+      { key: "A" },
+    ),
+  },
 ];
 
 Deno.test("empty string: should not parse", () => {
