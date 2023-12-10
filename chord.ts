@@ -58,44 +58,57 @@ export class Chord {
   }
 
   print(): string {
-    return `${this.tonic}${this.flavor()}`;
+    return `${this.tonic}${this.printFlavor()}`;
   }
 
-  private flavor(): string {
-    return [
-      this.printQuality(),
-      this.extent,
-      this.alterations?.join("") || "",
-    ].join("");
-  }
+  private printFlavor(): string {
+    let extent = this.extent || "";
+    let quality = "";
 
-  private printQuality(): string {
     switch (this.quality) {
       case QualityAugmented:
-        return "+";
+        quality = "+";
+        break;
       case QualityDiminished:
-        return "o";
+        quality = "o";
+        break;
       case QualityDominant:
-        return ""; // "dom" is implicit, `extent` defines the dominant type
+        quality = ""; // "dom" is implicit, `extent` defines the dominant type
+        break;
       case QualityMajor:
         if (this.extent == 6) {
-          return ""; // we want "C6" instead of "CM6"
-        } else if (this.extent == undefined) {
-          return ""; // we want "C" instead of "CM"
+          const i = this.alterations.indexOf(Add9);
+          if (i >= 0) {
+            this.alterations.splice(i, 1);
+            quality = "";
+            extent = "6/9"; // we want "C6/9" instead of "C6(add 9)"
+          } else {
+            quality = ""; // we want "C6" instead of "CM6"
+          }
+        } else if (!this.extent) {
+          quality = ""; // we want "C" instead of "CM"
         } else {
-          return "M"; // we want CM9
+          quality = "M"; // we want CM9
         }
+        break;
       case QualityMinor:
-        return "m";
+        quality = "m";
+        break;
       case QualityMinorMajor:
-        return "minMaj";
+        quality = "minMaj";
+        break;
       case QualityPower:
-        return "5";
+        quality = "5";
+        break;
       case QualitySuspended:
-        return "sus"; // `extent` defines the suspension type
+        quality = "sus"; // `extent` defines the suspension type
+        break;
       default:
         nonexhaustiveSwitchGuard(this.quality);
     }
+
+    const alterations = this.alterations?.join("") || "";
+    return `${quality}${extent}${alterations}`;
   }
 }
 
@@ -145,3 +158,5 @@ export const QualityPower = "pow" as const;
 export const QualitySuspended = "sus" as const;
 
 export type Extent = 2 | 4 | 5 | 6 | 7 | 8 | 9 | 11 | 13;
+
+export const Add9 = "(add 9)" as const;
