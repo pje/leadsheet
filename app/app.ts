@@ -4,13 +4,13 @@ import { ParseSong } from "../parser/parser.ts";
 import {
   defaultFeatureFlags,
   FeatureFlagKeys,
-  FeatureFlagKeysType,
+  type FeatureFlagKeysType,
 } from "./settings.ts";
 import { Clock, TimeEventListener } from "../lib/midi/time_event_listener.ts";
 import {
-  Barline,
-  Chordish,
-  ChordishQuality,
+  type Barline,
+  type Chordish,
+  type ChordishQuality,
   NoChord,
   printChordish,
   RepeatedChordSymbol,
