@@ -28,7 +28,7 @@ ohm_bundle: deps
 	npx prettier --write parser/grammar.ohm-bundle.d.ts parser/grammar.ohm-bundle.js
 
 clean:
-	rm -rf index.css index.css.map index.js index.js.map node_modules
+	rm -rf index.css index.css.map index.js index.js.map node_modules test-failure*.png
 
 deps:
 	npm install --save-exact --save-dev --prefix=.
