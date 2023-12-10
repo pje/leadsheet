@@ -10,8 +10,8 @@ import type { Letter } from "../theory/letter.ts";
 import { zip } from "../lib/array.ts";
 import {
   Chord,
-  ChordQuality,
   Extent,
+  Quality,
   QualityAugmented,
   QualityDiminished,
   QualityDominant,
@@ -76,7 +76,7 @@ class ChordActions implements ChordActionDict<void> {
 
   #evalPassthrough = (n: NNode) => n.eval();
 
-  #qualityPassthrough = (quality: ChordQuality) => {
+  #qualityPassthrough = (quality: Quality) => {
     return (_: NNode) => this.#c.quality = quality;
   };
 

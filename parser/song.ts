@@ -1,6 +1,6 @@
 import {
   Chord,
-  type ChordQuality,
+  type Quality,
   QualityMajor,
   QualityMinor,
 } from "../theory/chord.ts";
@@ -130,7 +130,7 @@ export class Song {
 
 export const NoChord = "N.C." as const;
 export type Chordish = Chord | typeof NoChord;
-export type ChordishQuality = ChordQuality | "no-chord";
+export type ChordishQuality = Quality | "no-chord";
 export const RepeatedChordSymbol = "%";
 export const AllRepeatedChordSymbols = [
   RepeatedChordSymbol,

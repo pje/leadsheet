@@ -4,13 +4,13 @@ import { type FlatOrSharpSymbol } from "./notation.ts";
 
 export class Chord {
   public tonic: Letter;
-  public quality: ChordQuality;
+  public quality: Quality;
   public extent?: Extent;
   public alterations: Array<string>;
 
   constructor(
     tonic?: Letter,
-    quality?: ChordQuality,
+    quality?: Quality,
     extent?: Extent,
     ...alterations: Array<string>
   ) {
@@ -113,7 +113,7 @@ export class Chord {
   }
 }
 
-export type ChordQuality =
+export type Quality =
   | typeof QualityAugmented
   | typeof QualityDiminished
   | typeof QualityDominant
