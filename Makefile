@@ -27,5 +27,8 @@ ohm_bundle: deps
 	npx ohm generateBundles --esm --withTypes parser/*.ohm
 	npx prettier --write parser/grammar.ohm-bundle.d.ts parser/grammar.ohm-bundle.js
 
+clean:
+	rm -rf index.css index.css.map index.js index.js.map node_modules
+
 deps:
 	npm install --save-exact --save-dev --prefix=.
