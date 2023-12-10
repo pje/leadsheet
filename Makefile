@@ -11,7 +11,7 @@ watch: deps ohm_bundle
 	npx esbuild --target=chrome58 index.ts --outfile=index.js --bundle --sourcemap --loader:.leadsheet=text --watch
 
 lint:
-	deno lint *test.ts
+	deno lint "**/*.ts" --ignore=node_modules,parser/grammar.ohm-bundle.d.ts
 	deno task detect-cyclic-imports
 
 test: unit_test browser_test
