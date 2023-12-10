@@ -1,4 +1,4 @@
-import { Chord, QualityMinor } from "../theory/chord.ts";
+import { Chord, Minor } from "../theory/chord.ts";
 import { Song } from "./song.ts";
 import { assertEquals } from "../test_utils.ts";
 
@@ -8,7 +8,7 @@ const songFixture = new Song(
       openBarline: "|",
       closeBarline: "|",
       chords: [
-        new Chord("C", QualityMinor, 7),
+        new Chord("C", Minor, 7),
       ],
       name: undefined,
     },

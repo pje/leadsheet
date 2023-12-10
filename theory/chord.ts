@@ -15,7 +15,7 @@ export class Chord {
     ...alterations: Array<string>
   ) {
     this.tonic = tonic || "C";
-    this.quality = quality || QualityMajor;
+    this.quality = quality || Major;
     if (extent) this.extent = extent;
     this.alterations = alterations;
   }
@@ -68,16 +68,16 @@ export class Chord {
     const alterations = [...this.alterations];
 
     switch (this.quality) {
-      case QualityAugmented:
+      case Augmented:
         quality = "+";
         break;
-      case QualityDiminished:
+      case Diminished:
         quality = "o";
         break;
-      case QualityDominant:
+      case Dominant:
         quality = ""; // "dom" is implicit, `extent` defines the dominant type
         break;
-      case QualityMajor:
+      case Major:
         if (this.extent == 6) {
           const i = alterations.indexOf(Add9);
           if (i >= 0) {
@@ -93,16 +93,16 @@ export class Chord {
           quality = "M"; // we want CM9
         }
         break;
-      case QualityMinor:
+      case Minor:
         quality = "m";
         break;
-      case QualityMinorMajor:
+      case MinorMajor:
         quality = "minMaj";
         break;
-      case QualityPower:
+      case Power:
         quality = "5";
         break;
-      case QualitySuspended:
+      case Suspended:
         quality = "sus"; // `extent` defines the suspension type
         break;
       default:
@@ -114,23 +114,23 @@ export class Chord {
 }
 
 export type Quality =
-  | typeof QualityAugmented
-  | typeof QualityDiminished
-  | typeof QualityDominant
-  | typeof QualityMajor
-  | typeof QualityMinor
-  | typeof QualityMinorMajor
-  | typeof QualityPower
-  | typeof QualitySuspended;
+  | typeof Augmented
+  | typeof Diminished
+  | typeof Dominant
+  | typeof Major
+  | typeof Minor
+  | typeof MinorMajor
+  | typeof Power
+  | typeof Suspended;
 
-export const QualityAugmented = "aug" as const;
-export const QualityDiminished = "dim" as const;
-export const QualityDominant = "dom" as const;
-export const QualityMajor = "maj" as const;
-export const QualityMinor = "min" as const;
-export const QualityMinorMajor = "minmaj" as const;
-export const QualityPower = "pow" as const;
-export const QualitySuspended = "sus" as const;
+export const Augmented = "aug" as const;
+export const Diminished = "dim" as const;
+export const Dominant = "dom" as const;
+export const Major = "maj" as const;
+export const Minor = "min" as const;
+export const MinorMajor = "minmaj" as const;
+export const Power = "pow" as const;
+export const Suspended = "sus" as const;
 
 export type Extent = 2 | 4 | 5 | 6 | 7 | 8 | 9 | 11 | 13;
 

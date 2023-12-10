@@ -9,17 +9,17 @@ import type { ChordActionDict, SongActionDict } from "./grammar.ohm-bundle.js";
 import type { Letter } from "../theory/letter.ts";
 import { zip } from "../lib/array.ts";
 import {
+  Augmented,
   Chord,
+  Diminished,
+  Dominant,
   Extent,
+  Major,
+  Minor,
+  MinorMajor,
+  Power,
   Quality,
-  QualityAugmented,
-  QualityDiminished,
-  QualityDominant,
-  QualityMajor,
-  QualityMinor,
-  QualityMinorMajor,
-  QualityPower,
-  QualitySuspended,
+  Suspended,
 } from "../theory/chord.ts";
 import {
   AllRepeatedChordSymbols,
@@ -60,11 +60,11 @@ class ChordActions implements ChordActionDict<void> {
 
   flavor = (quality: INode, extent: INode, alterations: INode) => {
     isImplicitPower(quality, extent)
-      ? this.#c.quality = QualityPower
+      ? this.#c.quality = Power
       : isImplicitMajor(quality, extent)
-      ? this.#c.quality = QualityMajor
+      ? this.#c.quality = Major
       : isImplicitDominant(quality, extent)
-      ? this.#c.quality = QualityDominant
+      ? this.#c.quality = Dominant
       : quality.child(0)?.eval();
 
     extent.child(0)?.eval();
@@ -99,22 +99,22 @@ class ChordActions implements ChordActionDict<void> {
   };
 
   quality = this.#evalPassthrough;
-  augmented = this.#qualityPassthrough(QualityAugmented);
-  diminished = this.#qualityPassthrough(QualityDiminished);
-  major = this.#qualityPassthrough(QualityMajor);
-  minor = this.#qualityPassthrough(QualityMinor);
-  sus = this.#qualityPassthrough(QualitySuspended);
+  augmented = this.#qualityPassthrough(Augmented);
+  diminished = this.#qualityPassthrough(Diminished);
+  major = this.#qualityPassthrough(Major);
+  minor = this.#qualityPassthrough(Minor);
+  sus = this.#qualityPassthrough(Suspended);
   dominant = (_0: NNode) => {
-    this.#c.quality = QualityDominant;
+    this.#c.quality = Dominant;
     this.#c.extent ||= 7;
   };
   half_diminished = (_0: NNode) => {
-    this.#c.quality = QualityMinor;
+    this.#c.quality = Minor;
     this.#c.alterations.push("b5");
     this.#c.extent ||= 7;
   };
   minor_major = (_0: NNode) => {
-    this.#c.quality = QualityMinorMajor;
+    this.#c.quality = MinorMajor;
     this.#c.extent ||= 7;
   };
   minor_major_with_parens = (

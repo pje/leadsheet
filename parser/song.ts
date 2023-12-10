@@ -1,14 +1,9 @@
-import {
-  Chord,
-  type Quality,
-  QualityMajor,
-  QualityMinor,
-} from "../theory/chord.ts";
+import { Chord, Major, Minor, type Quality } from "../theory/chord.ts";
 import {
   accidentalPreferenceForKey,
   canonicalizeKeyQualifier,
   conventionalizeKey,
-  Minor,
+  Minor as MinorKey,
 } from "../theory/key.ts";
 import { type Letter, transposeLetter } from "../theory/letter.ts";
 import { NoteRegex } from "../theory/notation.ts";
@@ -57,7 +52,7 @@ export class Song {
     );
 
     const destinationRelativeMajorKey =
-      canonicalizeKeyQualifier(keyQualifier) == Minor
+      canonicalizeKeyQualifier(keyQualifier) == MinorKey
         ? conventionalizeKey(transposeLetter(destinationKey, 3))
         : destinationKey;
 
@@ -100,9 +95,9 @@ export class Song {
   guessKey(): string {
     if (this.key) return this.key;
     const c = this.getFirstChord();
-    if (c && c.quality === QualityMajor) {
+    if (c && c.quality === Major) {
       return c.tonic;
-    } else if (c && c.quality === QualityMinor) {
+    } else if (c && c.quality === Minor) {
       return `${c.tonic}m`;
     } else {
       return `${c?.tonic || "?"}`;
