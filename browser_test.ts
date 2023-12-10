@@ -14,7 +14,7 @@ import { HTMLInputElement } from "./node_modules/typescript/lib/lib.dom.d.ts";
 import { assertArrayIncludes } from "https://deno.land/std@0.208.0/assert/assert_array_includes.ts";
 
 const indexAbsolutePath = path.resolve("./index.html");
-const songFilePath = path.resolve("./songs/chelsea_bridge.leadsheet");
+const songFilePath = path.resolve("./leadsheets/chelsea_bridge.leadsheet");
 const screenshotsPath = Deno.realPathSync(".");
 
 Deno.test("index.html renders via file:// protocol", async () => {

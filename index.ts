@@ -2,7 +2,7 @@ import "./global.d.ts";
 // css imports are just here so esbuild processes the css file
 import "./style/style.css";
 import "./style/atoms.css";
-import defaultSongRaw from "./songs/chelsea_bridge.leadsheet";
+import defaultSongRaw from "./leadsheets/chelsea_bridge.leadsheet";
 import {
   Barline,
   BarlineClass,

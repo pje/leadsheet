@@ -19,7 +19,7 @@ import {
 } from "../chord.ts";
 import { assertEquals } from "../test_utils.ts";
 
-const songsDir = "./songs";
+const songsDir = "./leadsheets";
 const rawSongs: Array<{ name: string; contents: string }> = [];
 
 for await (const songFile of Deno.readDir(`${songsDir}/`)) {
