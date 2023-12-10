@@ -1,31 +1,34 @@
 // @deno-types="./grammar.ohm-bundle.d.ts"
 import grammar from "./grammar.ohm-bundle.js";
-import type {
-  IterationNode as INode,
-  NonterminalNode as NNode,
-  TerminalNode as TNode,
+import {
+  type IterationNode as INode,
+  type NonterminalNode as NNode,
+  type TerminalNode as TNode,
 } from "ohm-js";
-import type { ChordActionDict, SongActionDict } from "./grammar.ohm-bundle.js";
-import type { Letter } from "../theory/letter.ts";
+import {
+  type ChordActionDict,
+  type SongActionDict,
+} from "./grammar.ohm-bundle.js";
+import { type Letter } from "../theory/letter.ts";
 import { zip } from "../lib/array.ts";
 import {
   Augmented,
   Chord,
   Diminished,
   Dominant,
-  Extent,
+  type Extent,
   Major,
   Minor,
   MinorMajor,
   Power,
-  Quality,
+  type Quality,
   Suspended,
 } from "../theory/chord.ts";
 import {
   AllRepeatedChordSymbols,
-  Bar,
-  Barline,
-  Chordish,
+  type Bar,
+  type Barline,
+  type Chordish,
   NoChord,
   Song,
 } from "./song.ts";
