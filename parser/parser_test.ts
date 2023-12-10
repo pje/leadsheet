@@ -4,10 +4,10 @@ import {
   fail,
 } from "https://deno.land/std@0.208.0/assert/mod.ts";
 import { ParseChord, ParseSong } from "./parser.ts";
-import { Bar, Result, Song } from "../types.ts";
+import { type Letter } from "../letter.ts";
+import { type Result } from "../lib/result.ts";
 import {
   Chord,
-  Letter,
   QualityAugmented,
   QualityDiminished,
   QualityDominant,
@@ -18,6 +18,7 @@ import {
   QualitySuspended,
 } from "../chord.ts";
 import { assertEquals } from "../test_utils.ts";
+import { Bar, Song } from "../song.ts";
 
 const songsDir = "./leadsheets";
 const rawSongs: Array<{ name: string; contents: string }> = [];
@@ -327,7 +328,11 @@ Deno.test(`songs`, async (t) => {
 function assertValidSong(str: string) {
   const _song = parserResultOrFail(ParseSong(str));
 
-  assert(true); // Great Job!™
+  if (_song) {
+    assert(true); // Great Job!™
+  } else {
+    assert(false);
+  }
 }
 
 function parserResultOrFail<T>(result: Result<T>): T {

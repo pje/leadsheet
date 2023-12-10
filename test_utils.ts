@@ -1,4 +1,3 @@
-/// <reference lib="deno.ns" />
 import { assertEquals as theirAssertEquals } from "https://deno.land/std@0.208.0/assert/mod.ts";
 
 // because expected should always be the first arg. come on deno

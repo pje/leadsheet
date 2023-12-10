@@ -1,19 +1,9 @@
-import "./global.d.ts";
 // css imports are just here so esbuild processes the css file
 import "./style/style.css";
 import "./style/atoms.css";
-import defaultSongRaw from "./leadsheets/chelsea_bridge.leadsheet";
-import {
-  Barline,
-  BarlineClass,
-  Chordish,
-  ChordishQuality,
-  NoChord,
-  printChordish,
-  RepeatedChordSymbol,
-  Song,
-} from "./types.ts";
-import { titleize, unicodeifyMusicalSymbols } from "./utils.ts";
+import { BarlineClass, RepeatedChordSymbol } from "./types.ts";
+import { unicodeifyMusicalSymbols } from "./utils.ts";
+import { titleCase } from "./lib/string.ts";
 import { ParseSong } from "./parser/parser.ts";
 import {
   defaultFeatureFlags,
@@ -21,7 +11,15 @@ import {
   FeatureFlagKeysType,
   Settings,
 } from "./settings.ts";
-import { Clock, MidiEventListener } from "./midi_event_listener";
+import { Clock, MidiEventListener } from "./midi_event_listener.ts";
+import {
+  Barline,
+  Chordish,
+  ChordishQuality,
+  NoChord,
+  printChordish,
+  Song,
+} from "./song.ts";
 
 const state: {
   song: Song | undefined;
@@ -46,7 +44,7 @@ async function bootstrap() {
   loadSong(lastLoadedSong || _loadDefaultSong()!);
 
   document.querySelectorAll("#settings input")!.forEach((el) => {
-    el.addEventListener("change", async (e: Event) => {
+    el.addEventListener("change", (e: Event) => {
       const inputElement = <HTMLInputElement> e?.currentTarget;
       const ffKey = <FeatureFlagKeysType> inputElement.name;
       const enable = !!inputElement.checked;
@@ -77,7 +75,7 @@ async function bootstrap() {
 
   document
     .getElementById("songfile")!
-    .addEventListener("change", async (e: Event) => {
+    .addEventListener("change", (e: Event) => {
       const f = (e.currentTarget as HTMLInputElement).files![0]!;
       const reader = new FileReader();
 
@@ -218,7 +216,7 @@ async function renderSettings(
   const inputs = Object.entries(settings.featureFlags).map(
     ([identifier, { enabled, description }]) =>
       `<label title="${description}">
-  ${titleize(identifier)}
+  ${titleCase(identifier)}
   <input type="checkbox" name="${identifier}" ${enabled ? "checked" : ""}/>
 </label>`,
   );
@@ -362,6 +360,20 @@ function _loadDefaultSong(): Song | undefined {
     return result.value;
   }
 }
+
+const defaultSongRaw = `title: Chelsea Bridge
+artist: Billy Strayhorn
+year: 1941
+sig: 4/4
+key: Fm
+
+||: Eb7 | Db7 | Eb7 Db7 | Bb7 |
+| Ebm7 | Ab7 | Db6 :1|| Db / / B7 :2||
+|| F#m9 B7 | Dm7 Go7 |  F#m7 F7 | Bm7 E7 |
+| AM7 / Am7 D7 | GM7 | Gm7 | Db7 C7 B7 Bb7 |
+| Eb7 | Db7 | Eb7 Db7 | Bb7 |
+| Ebm7 | Ab7 | Db6 | Db6 |
+`;
 
 window.onload = bootstrap;
 

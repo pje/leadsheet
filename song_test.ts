@@ -1,5 +1,6 @@
+import { Chord, QualityMinor } from "./chord.ts";
+import { Song } from "./song.ts";
 import { assertEquals } from "./test_utils.ts";
-import { Chord, QualityMinor, Song } from "./types.ts";
 
 const songFixture = new Song(
   [

@@ -1,10 +1,43 @@
 {
+  "compilerOptions": {
+    // begin strictness flags
+    // "allowImportingTsExtensions": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "alwaysStrict": true,
+    "exactOptionalPropertyTypes": true,
+    // "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitUseStrict": false,
+    "noStrictGenericChecks": false,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "suppressExcessPropertyErrors": false,
+    "suppressImplicitAnyIndexErrors": false,
+    "useUnknownInCatchVariables": true,
+    // end strictness flags
+    "lib": [
+      "deno.ns",
+      "dom",
+      "dom.iterable"
+    ]
+  },
   "imports": {
     "./grammar.ohm-bundle": "./grammar.ohm-bundle.js",
     "path": "node:path",
     "fs": "node:fs"
   },
   "tasks": {
+    "detect-cyclic-imports": "npx madge --circular --extensions ts ./",
     "upgrade-dependencies": "deno run --allow-read=./ --allow-net --allow-write=./ https://deno.land/x/deno_outdated@0.2.5/cli.ts"
   }
 }

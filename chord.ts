@@ -1,5 +1,6 @@
-import { FlatOrSharpSymbol } from "./types.ts";
-import { nonexhaustiveSwitchGuard, transposeLetter } from "./utils.ts";
+import { type Letter, transposeLetter } from "./letter.ts";
+import { nonexhaustiveSwitchGuard } from "./lib/switch.ts";
+import { type FlatOrSharpSymbol } from "./types.ts";
 
 export class Chord {
   public tonic: Letter;
@@ -15,7 +16,7 @@ export class Chord {
   ) {
     this.tonic = tonic || "C";
     this.quality = quality || QualityMajor;
-    this.extent = extent;
+    if (extent) this.extent = extent;
     this.alterations = alterations;
   }
 
@@ -111,32 +112,6 @@ export class Chord {
     return `${quality}${extent}${alterations.join("")}`;
   }
 }
-
-export const AllLetters = [
-  "A",
-  "A#",
-  "Bb",
-  "B",
-  "B#",
-  "Cb",
-  "C",
-  "C#",
-  "Db",
-  "D",
-  "D#",
-  "Eb",
-  "E",
-  "E#",
-  "Fb",
-  "F",
-  "F#",
-  "Gb",
-  "G",
-  "G#",
-  "Ab",
-] as const;
-
-export type Letter = (typeof AllLetters)[number];
 
 export type ChordQuality =
   | typeof QualityAugmented

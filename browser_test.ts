@@ -10,7 +10,6 @@ import puppeteer, {
 } from "https://deno.land/x/puppeteer@16.2.0/mod.ts";
 import * as path from "https://deno.land/std@0.208.0/path/mod.ts";
 import { colorChords, FeatureFlagKeysType } from "./settings.ts";
-import { HTMLInputElement } from "./node_modules/typescript/lib/lib.dom.d.ts";
 import { assertArrayIncludes } from "https://deno.land/std@0.208.0/assert/assert_array_includes.ts";
 
 const indexAbsolutePath = path.resolve("./index.html");
@@ -55,7 +54,7 @@ Deno.test("index.html renders via file:// protocol", async () => {
 
     await enableFeature(page, colorChords);
 
-    const firstChordsClasses = (await getChordClasses(page))[0];
+    const firstChordsClasses = (await getChordClasses(page))[0]!;
     assertArrayIncludes(firstChordsClasses, ["dom"]);
   } catch (e) {
     log.info(e);

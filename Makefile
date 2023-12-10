@@ -10,6 +10,10 @@ build: deps ohm_bundle
 watch: deps ohm_bundle
 	npx esbuild --target=chrome58 index.ts --outfile=index.js --bundle --sourcemap --loader:.leadsheet=text --watch
 
+lint:
+	deno lint *test.ts
+	deno task detect-cyclic-imports
+
 test: unit_test browser_test
 
 unit_test: $(unit_test_files)

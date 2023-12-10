@@ -5,14 +5,11 @@ import {
   spy,
   stub,
 } from "https://deno.land/std@0.208.0/testing/mock.ts";
-import {
-  Event,
-  MIDIAccess,
-  MIDIInputMap,
-  MIDIMessageEvent,
-} from "./node_modules/typescript/lib/lib.dom.d.ts";
 
-type OnMIDIMessage = (this: MIDIInput, ev: MIDIMessageEvent) => unknown; // deno's lib.dom version is incorrect
+type OnMIDIMessage = (
+  this: MIDIInput,
+  ev: Pick<MIDIMessageEvent, "data">,
+) => unknown; // deno's lib.dom version is incorrect
 
 Deno.test(MidiEventListener.name, async (t) => {
   const fakeInput = <MIDIInput> <unknown> {
@@ -46,7 +43,7 @@ Deno.test(MidiEventListener.name, async (t) => {
       await mel.install();
 
       const data = Uint8Array.from([parseInt("11111010", 2)]); // START Message Status Code
-      (<OnMIDIMessage> fakeInput.onmidimessage)({ data });
+      (<OnMIDIMessage> <unknown> fakeInput.onmidimessage)({ data });
       assertSpyCalls(onBarAdvancedSpy, 1);
     },
   );
@@ -68,7 +65,7 @@ Deno.test(MidiEventListener.name, async (t) => {
       ) * 2; // 2 bars
       for (let i = 0; i < numMsgs; i++) {
         const data = Uint8Array.from([parseInt("11111000", 2)]); // TimingClock Message Status Code
-        (<OnMIDIMessage> fakeInput.onmidimessage)({ data });
+        (<OnMIDIMessage> <unknown> fakeInput.onmidimessage)({ data });
       }
 
       assertEquals(2, mel.clock.bars);
@@ -90,6 +87,8 @@ class FakeMIDIInputMap {
   forEach(
     f: (value: MIDIInput, key: string, parent: MIDIInputMap) => void,
   ): void {
-    this.inputs.forEach((value, index) => f(value, `${index}`, this));
+    this.inputs.forEach((value, index) =>
+      f(value, `${index}`, <MIDIInputMap> <unknown> this)
+    );
   }
 }

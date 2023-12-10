@@ -22,7 +22,7 @@ jobs:
       - name: fmt
         run: deno fmt --check *test.ts
       - name: lint
-        run: deno lint *test.ts
+        run: make lint
       - name: unit_test
         run: make unit_test
       # - name: browser_test

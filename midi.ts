@@ -5,7 +5,7 @@ export const Start = "Start";
 export const Continue = "Continue";
 export const SongPositionPointer = "SongPositionPointer";
 
-export type MidiMessageType =
+type MidiMessageType =
   | typeof TimingClock
   | typeof ActiveSense
   | typeof Stop

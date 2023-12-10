@@ -1,18 +1,17 @@
-import { Minor } from "./types.ts";
+import { NoteRegex } from "./utils.ts";
+import {
+  Chord,
+  type ChordQuality,
+  QualityMajor,
+  QualityMinor,
+} from "./chord.ts";
 import {
   accidentalPreferenceForKey,
   canonicalizeKeyQualifier,
   conventionalizeKey,
-  NoteRegex,
-  transposeLetter,
-} from "./utils.ts";
-import {
-  Chord,
-  ChordQuality,
-  Letter,
-  QualityMajor,
-  QualityMinor,
-} from "./chord.ts";
+  Minor,
+} from "./key.ts";
+import { type Letter, transposeLetter } from "./letter.ts";
 
 export class Song {
   public title: string | undefined;
@@ -125,6 +124,7 @@ export class Song {
       if (chordish === NoChord) continue;
       return chordish;
     }
+    return undefined;
   }
 }
 

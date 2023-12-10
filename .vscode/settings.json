@@ -8,22 +8,6 @@
     "editor.formatOnSave": true,
   },
   "deno.enable": true,
-  "deno.enablePaths": [
-    "./browser_test.ts",
-    "./chord_test.ts",
-    "./chord.ts",
-    "./midi_event_listener_test.ts",
-    "./midi_event_listener.ts",
-    "./parser/parser_test.ts",
-    "./parser/parser.ts",
-    "./settings.ts",
-    "./song_test.ts",
-    "./song.ts",
-    "./test_utils.ts",
-    "./types.ts",
-    "./utils_test.ts",
-    "./utils.ts"
-  ],
   "deno.lint": true,
   "deno.unstable": false,
   "typescript.tsdk": "node_modules/typescript/lib"

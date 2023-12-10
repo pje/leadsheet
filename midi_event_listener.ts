@@ -1,4 +1,3 @@
-import type { Console } from "./node_modules/typescript/lib/lib.dom.d.ts";
 import {
   Continue,
   Ignore,
@@ -8,7 +7,6 @@ import {
   Stop,
   TimingClock,
 } from "./midi.ts";
-declare const console: Console;
 
 // Keeps track of elapsed time (in bars/beats/sixteenths) in response to tick
 // events from the MIDIInput device we're synced to
