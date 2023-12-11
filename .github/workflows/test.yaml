@@ -23,7 +23,5 @@ jobs:
         run: deno fmt --check *test.ts
       - name: lint
         run: make lint
-      - name: unit_test
-        run: make unit_test
-      # - name: browser_test
-      #   run: make browser_test
+      - name: test
+        run: make test
