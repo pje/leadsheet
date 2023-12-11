@@ -4,11 +4,14 @@ year: 1931
 sig: 4/4
 key: CM
 
-| CM7 | % | E7  | %   |
-| A7 | % | Dm  | Dm  |
-| E7 | % | Am  | %   |
-| D7 | % | Dm7 | G7  ||
-|| CM7 | % | E7  | %   |
-| A7 | % | Dm  | %   |
+A:
+| CM7 | % | E7 | % |
+| A7 | % | Dm | Dm |
+| E7 | % | Am | % |
+| D7 | % | Dm7 | G7 |
+
+B:
+|| CM7 | % | E7 | % |
+| A7 | % | Dm | % |
 | F | Fm | CM7 Em7 | A7 |
 | Dm7 | G7 | C6 Ebo | Dm7 G7 ||

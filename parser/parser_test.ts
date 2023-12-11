@@ -70,14 +70,14 @@ const songFixtures: Array<{
   },
   {
     title: "Sectional",
-    contents: `Verse:
+    contents: `A:
 | C | D |
 
 Chorus:
 | Am | Bm| `,
     expected: new Song([
-      barWithSection("Verse", "C"),
-      barWithSection("Verse", "D"),
+      barWithSection("A", "C"),
+      barWithSection("A", "D"),
       barWithSection("Chorus", "Am"),
       barWithSection("Chorus", "Bm"),
     ], { key: "C" }),
