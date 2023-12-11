@@ -17,7 +17,7 @@ lint:
 test: unit_test browser_test
 
 unit_test: $(unit_test_files)
-	deno test --allow-read $^
+	deno test --parallel --allow-read $^
 
 browser_test: $(browser_test_files)
 	PUPPETEER_PRODUCT=chrome deno run -A --unstable https://deno.land/x/puppeteer@16.2.0/install.ts
