@@ -260,6 +260,8 @@ Deno.test(`chord symbols`, async (t) => {
     [`C+7#9`, new Chord("C", Augmented, 7, "#9")],
     [`C/D`, new Chord("C", Major, undefined, "/D")],
     [`Cm/D`, new Chord("C", Minor, undefined, "/D")],
+    [`Calt`, new Chord("C", Dominant, undefined, "alt")],
+    [`C7alt`, new Chord("C", Dominant, 7, "alt")],
     [`Cm11#13(no5)`, new Chord("C", Minor, 11, "#13", "(no5)")],
     [
       `F𝄫minMaj9#11(sus4)(no13)(no 5)(omit 5)(♯¹¹)/E`,

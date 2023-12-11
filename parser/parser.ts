@@ -64,9 +64,9 @@ class ChordActions implements ChordActionDict<void> {
   flavor = (quality: INode, extent: INode, alterations: INode) => {
     isImplicitPower(quality, extent)
       ? this.#c.quality = Power
-      : isImplicitMajor(quality, extent)
+      : isImplicitMajor(quality, extent, alterations)
       ? this.#c.quality = Major
-      : isImplicitDominant(quality, extent)
+      : isImplicitDominant(quality, extent, alterations)
       ? this.#c.quality = Dominant
       : quality.child(0)?.eval();
 
@@ -253,14 +253,22 @@ const isRepeat = (s: string) => {
   return AllRepeatedChordSymbols.includes(s);
 };
 
-const isImplicitMajor = (quality: INode, extent: INode) => (
+const isImplicitMajor = (quality: INode, extent: INode, alterations: INode) => (
   !quality.sourceString &&
-  (extent.sourceString.trim() === "" || extent.sourceString.startsWith("6"))
+  (extent.sourceString.trim() === "" || extent.sourceString.startsWith("6")) &&
+  !alterations.sourceString.includes("alt")
 );
 
-const isImplicitDominant = (quality: INode, extent: INode) => (
+const isImplicitDominant = (
+  quality: INode,
+  extent: INode,
+  alterations: INode,
+) => (
   !quality.sourceString &&
-  ["7", "9", "11", "13", "alt"].some((s) => extent.sourceString.startsWith(s))
+  (
+    ["7", "9", "11", "13"].some((s) => extent.sourceString.startsWith(s)) ||
+    alterations.sourceString.includes("alt")
+  )
 );
 
 const isImplicitPower = (quality: INode, extent: INode) => (
