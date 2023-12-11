@@ -1,3 +1,4 @@
+import { groupsOf } from "../lib/array.ts";
 import { Chord, Major, Minor, type Quality } from "../theory/chord.ts";
 import {
   accidentalPreferenceForKey,
@@ -90,6 +91,62 @@ export class Song {
         key: this.key,
       },
     );
+  }
+
+  // pretty-print the song
+  format(): string {
+    let accumulator = "";
+
+    if (this.title) accumulator += `title: ${this.title}\n`;
+    if (this.artist) accumulator += `artist: ${this.artist}\n`;
+    if (this.year) accumulator += `year: ${this.year}\n`;
+    if (this.sig) accumulator += `sig: ${this.sig}\n`;
+    if (this.key) accumulator += `key: ${this.key}\n`;
+
+    let previousChord: string | undefined = undefined;
+    const barsBySection = Map.groupBy(this.bars, ({ name }) => name || "");
+
+    for (const [section, bars] of barsBySection) {
+      if (section) accumulator += `\n${section}:`;
+      const lines: string[][] = [[""]];
+
+      groupsOf(bars, 4).forEach((barGroup: Bar[]) => {
+        const line = [];
+        let previousBarline: string | undefined = undefined;
+
+        for (const bar of barGroup) {
+          if (previousBarline != bar.openBarline) line.push(bar.openBarline);
+
+          for (const chordish of bar.chords) {
+            switch (chordish) {
+              case NoChord: {
+                line.push(NoChord);
+                break;
+              }
+              default: {
+                const c = chordish.print();
+                line.push(c === previousChord ? "%" : c);
+                previousChord = c;
+                break;
+              }
+            }
+          }
+
+          line.push(bar.closeBarline);
+          previousBarline = bar.closeBarline;
+        }
+
+        lines.push(line);
+      });
+
+      accumulator += lines.map((line) => line.join(" ")).join("\n");
+
+      accumulator += "\n"; // line break between sections
+    }
+
+    if (!accumulator.endsWith("\n")) accumulator += "\n"; // ensure a trailing newline
+
+    return accumulator;
   }
 
   guessKey(): string {
