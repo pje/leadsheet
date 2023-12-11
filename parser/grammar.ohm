@@ -50,6 +50,7 @@ Chord {
     | six
     | five
     | four
+    | three
     | two
 
   thirteen = | "13" | "¹³"
@@ -60,6 +61,7 @@ Chord {
   six = | "6" | "⁶"
   five = | "5" | "⁵"
   four = | "4" | "⁴"
+  three = | "3" | "³"
   two = | "2" | "²"
 
   quality =

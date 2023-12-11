@@ -52,6 +52,7 @@ export interface ChordActionDict<T> extends BaseActionDict<T> {
   six?: (this: NonterminalNode, arg0: TerminalNode) => T;
   five?: (this: NonterminalNode, arg0: TerminalNode) => T;
   four?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  three?: (this: NonterminalNode, arg0: TerminalNode) => T;
   two?: (this: NonterminalNode, arg0: TerminalNode) => T;
   quality?: (this: NonterminalNode, arg0: NonterminalNode) => T;
   sus?: (this: NonterminalNode, arg0: NonterminalNode) => T;
