@@ -49,7 +49,7 @@ class ChordActions implements ChordActionDict<void> {
     this.#c = c;
   }
 
-  Chord = (root: NNode, flavor: NNode) => {
+  chord = (root: NNode, flavor: NNode) => {
     root.eval();
     flavor.eval();
     return this.#c;
@@ -206,7 +206,7 @@ class SongActions implements SongActionDict<void> {
 
   Chordish = (_0: NNode) => this.#s;
 
-  Chord = (_0: NNode, _1: NNode) => this.#s;
+  chord = (_0: NNode, _1: NNode) => this.#s;
 
   #metaPassthrough = (_0: NNode, _2: NNode, value: INode, _arg3: NNode) =>
     value.eval();
@@ -231,7 +231,7 @@ class SongActions implements SongActionDict<void> {
 }
 
 export function ParseChord(rawChord: string): Result<Chord> {
-  const matchResult = grammar.Chord.match(rawChord, "Chord");
+  const matchResult = grammar.Chord.match(rawChord, "chord");
   if (matchResult.failed()) return Err(matchResult.message!);
   const semantics = grammar.Chord.createSemantics();
   semantics.addOperation<void>("eval", new ChordActions(new Chord()));

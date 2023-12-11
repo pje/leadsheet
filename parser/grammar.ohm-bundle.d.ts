@@ -13,7 +13,7 @@ import {
 } from "ohm-js";
 
 export interface ChordActionDict<T> extends BaseActionDict<T> {
-  Chord?: (
+  chord?: (
     this: NonterminalNode,
     arg0: NonterminalNode,
     arg1: NonterminalNode,

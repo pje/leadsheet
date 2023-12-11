@@ -249,6 +249,7 @@ Deno.test(`chord symbols`, async (t) => {
     [`C°`, new Chord("C", Diminished)],
     [`Co7`, new Chord("C", Diminished, 7)],
     [`C°⁷`, new Chord("C", Diminished, 7)],
+    [`CoM7`, new Chord("C", Diminished, undefined, "M7")],
     [`Cø`, new Chord("C", Minor, 7, "b5")],
     [`Cø7`, new Chord("C", Minor, 7, "b5")],
     [`Caug`, new Chord("C", Augmented)],
@@ -289,7 +290,7 @@ Deno.test(`chord symbols`, async (t) => {
   }
 
   const negativeCases = [
-    ``,
+    `C 7`, // can't allow spaces after the tonic
     `wat`,
     `Hm7`,
     `C Minor`, // can't allow spaces after the tonic

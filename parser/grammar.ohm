@@ -9,7 +9,7 @@
 
 // Defines a grammar for Jazz/Pop Chord notation
 Chord {
-  Chord = root flavor
+  chord = root flavor
 
   root = noteLetter accidental?
 
@@ -131,7 +131,7 @@ Chord {
     | "/" root                                   // e.g. C/G
     | caseInsensitive<"alt"> extent?             // e.g. alt, alt7
     | caseInsensitive<"sus"> ("2"|"4")?          // e.g. sus, sus2, sus4
-    | spaceNoNL? extent                          // e.g. `C7`, `C 9`
+    | quality? extent                            // e.g. `CoM7`
 
   alteration_in_parens = "(" spaceNoNL? alteration_no_parens spaceNoNL? ")"
 
@@ -151,7 +151,7 @@ Song <: Chord {
 
   Bars = barline (Chordish+ barline)+
 
-  Chordish = Chord | NoChord | RepeatPreviousChord
+  Chordish = chord | NoChord | RepeatPreviousChord
 
   Section = SectionName colon
   SectionName = (~colon ~"|" any)+
