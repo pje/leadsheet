@@ -342,6 +342,21 @@ html {
   }
 }
 
+#footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 5rem;
+
+  #fine {
+    /* background-image: url("gruppetto.svg"); */
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 100px;
+    width: 10em;
+  }
+}
+
 @keyframes pulse {
   0% {
     box-shadow: #007cff80 0 0 0 0;
