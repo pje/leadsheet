@@ -176,7 +176,7 @@ class SongActions extends ChordActions implements SongActionDict<void> {
     _arg4: NNode,
   ) => {
     const key = <"title" | "artist" | "year" | "sig" | "key"> arg0.sourceString;
-    const val: string = arg3.sourceString;
+    const val = arg3.sourceString;
     this.#s[key] = val;
   };
 }
