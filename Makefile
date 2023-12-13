@@ -1,4 +1,4 @@
-.PHONY: build clean deps lint test unit_test browser_test ohm_bundle watch
+.PHONY: build clean deps lint test unit_test browser_test ohm_bundle watch install_vscode_extension uninstall_vscode_extension
 
 test_files=$(shell find . -type f -name '*test.ts')
 browser_test_files=./browser_test.ts
@@ -32,3 +32,9 @@ clean:
 
 deps:
 	npm install --save-exact --save-dev --prefix=.
+
+install_vscode_extension: uninstall_vscode_extension
+	cp -rv ./vscode_extension ~/.vscode/extensions/pje.leadsheet-0.0.1
+
+uninstall_vscode_extension:
+	rm -rf ~/.vscode/extensions/pje.leadsheet-*
