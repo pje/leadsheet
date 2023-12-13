@@ -35,14 +35,6 @@ import {
 } from "./song.ts";
 import { Err, Ok, type Result } from "../lib/result.ts";
 
-function normalizeLetter(str: string): string {
-  return str.toUpperCase();
-}
-
-function normalizeAccidentals(str: string): string {
-  return str.replace("♯", "#").replace("♭", "b");
-}
-
 class ChordActions implements ChordActionDict<void> {
   chord = (root: NNode, flavor: NNode) =>
     new Chord(root.eval(), ...(flavor.eval()));
@@ -150,22 +142,13 @@ class SongActions extends ChordActions implements SongActionDict<void> {
           (chordishNode) => {
             const chordString = chordishNode.sourceString.trim();
 
-            if (
-              chordString === NoChord ||
-              (previousChord === NoChord && isRepeat(chordString))
-            ) {
+            if (chordString === NoChord) {
               previousChord = NoChord;
-              return NoChord;
-            } else {
-              previousChord = <Chord | undefined> previousChord;
-
-              if (!previousChord || !isRepeat(chordString)) {
-                // first chord in song or not a repetition
-                previousChord = chordishNode.eval()!;
-              }
-
-              return previousChord === NoChord ? NoChord : previousChord!.dup();
+            } else if (!isRepeat(chordString)) {
+              previousChord = chordishNode.eval();
             }
+
+            return previousChord === NoChord ? NoChord : previousChord!.dup();
           },
         );
 
@@ -242,3 +225,11 @@ const isImplicitDominant = (
 const isImplicitPower = (quality: INode, extent: INode) => (
   !quality.sourceString && extent.sourceString.startsWith("5")
 );
+
+function normalizeLetter(str: string): string {
+  return str.toUpperCase();
+}
+
+function normalizeAccidentals(str: string): string {
+  return str.replace("♯", "#").replace("♭", "b");
+}
