@@ -162,23 +162,13 @@ Song <: Chord {
   space += lineComment // this overrides ohmjs's built-in definition of spaces to include our comments. This seems to be the easiest way to get ohmjs to handle comments (e.g. https://github.com/ohmjs/ohm/blob/39ccead882a/examples/simple-lisp/src/simple-lisp.mjs#L35)
 
   metadata =
-    | metaTitle
-    | metaArtist
-    | metaYear
-    | metaKey
-    | metaSig
+    | meta<"title">
+    | meta<"artist">
+    | meta<"year">
+    | meta<"sig">
+    | meta<"key">
 
-  metaTitle  = caseInsensitive<"title:">  spaceNoNL* metaTitleValue  newline
-  metaArtist = caseInsensitive<"artist:"> spaceNoNL* metaArtistValue newline
-  metaYear   = caseInsensitive<"year:">   spaceNoNL* metaYearValue   newline
-  metaSig    = caseInsensitive<"sig:">    spaceNoNL* metaSigValue    newline
-  metaKey    = caseInsensitive<"key:">    spaceNoNL* metaKeyValue    newline
-
-  metaTitleValue  = (~newline any)+
-  metaArtistValue = (~newline any)+
-  metaYearValue   = (~newline any)+
-  metaSigValue    = (~newline any)+
-  metaKeyValue    = (~newline any)+
+  meta<x> = x":" spaceNoNL* (~newline any)+ newline
 
   barline =
     | barlineWithRepeats

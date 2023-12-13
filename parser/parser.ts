@@ -2,6 +2,7 @@
 import grammar from "./grammar.ohm-bundle.js";
 import {
   type IterationNode as INode,
+  type Node,
   type NonterminalNode as NNode,
   type TerminalNode as TNode,
 } from "ohm-js";
@@ -208,26 +209,17 @@ class SongActions implements SongActionDict<void> {
 
   chord = (_0: NNode, _1: NNode) => this.#s;
 
-  #metaPassthrough = (_0: NNode, _2: NNode, value: INode, _arg3: NNode) =>
-    value.eval();
-
-  metaTitle = this.#metaPassthrough;
-  metaArtist = this.#metaPassthrough;
-  metaYear = this.#metaPassthrough;
-  metaSig = this.#metaPassthrough;
-  metaKey = this.#metaPassthrough;
-
-  #metaValuePassthrough = (
-    property: "title" | "artist" | "year" | "sig" | "key",
+  meta = (
+    arg0: Node,
+    _arg1: TNode,
+    _arg2: INode,
+    arg3: NNode,
+    _arg4: NNode,
   ) => {
-    return (arg0: INode) => this.#s[property] = arg0.sourceString;
+    const key = <"title" | "artist" | "year" | "sig" | "key"> arg0.sourceString;
+    const val: string = arg3.sourceString;
+    this.#s[key] = val;
   };
-
-  metaTitleValue = this.#metaValuePassthrough("title");
-  metaArtistValue = this.#metaValuePassthrough("artist");
-  metaYearValue = this.#metaValuePassthrough("year");
-  metaSigValue = this.#metaValuePassthrough("sig");
-  metaKeyValue = this.#metaValuePassthrough("key");
 }
 
 export function ParseChord(rawChord: string): Result<Chord> {

@@ -152,46 +152,14 @@ export interface SongActionDict<T> extends ChordActionDict<T> {
   ) => T;
   space?: (this: NonterminalNode, arg0: NonterminalNode | TerminalNode) => T;
   metadata?: (this: NonterminalNode, arg0: NonterminalNode) => T;
-  metaTitle?: (
+  meta?: (
     this: NonterminalNode,
-    arg0: NonterminalNode,
-    arg1: IterationNode,
-    arg2: NonterminalNode,
-    arg3: NonterminalNode,
+    arg0: Node,
+    arg1: TerminalNode,
+    arg2: IterationNode,
+    arg3: IterationNode,
+    arg4: NonterminalNode,
   ) => T;
-  metaArtist?: (
-    this: NonterminalNode,
-    arg0: NonterminalNode,
-    arg1: IterationNode,
-    arg2: NonterminalNode,
-    arg3: NonterminalNode,
-  ) => T;
-  metaYear?: (
-    this: NonterminalNode,
-    arg0: NonterminalNode,
-    arg1: IterationNode,
-    arg2: NonterminalNode,
-    arg3: NonterminalNode,
-  ) => T;
-  metaSig?: (
-    this: NonterminalNode,
-    arg0: NonterminalNode,
-    arg1: IterationNode,
-    arg2: NonterminalNode,
-    arg3: NonterminalNode,
-  ) => T;
-  metaKey?: (
-    this: NonterminalNode,
-    arg0: NonterminalNode,
-    arg1: IterationNode,
-    arg2: NonterminalNode,
-    arg3: NonterminalNode,
-  ) => T;
-  metaTitleValue?: (this: NonterminalNode, arg0: IterationNode) => T;
-  metaArtistValue?: (this: NonterminalNode, arg0: IterationNode) => T;
-  metaYearValue?: (this: NonterminalNode, arg0: IterationNode) => T;
-  metaSigValue?: (this: NonterminalNode, arg0: IterationNode) => T;
-  metaKeyValue?: (this: NonterminalNode, arg0: IterationNode) => T;
   barline?: (this: NonterminalNode, arg0: NonterminalNode) => T;
   barlineWithRepeats?: (
     this: NonterminalNode,
