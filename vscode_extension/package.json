@@ -1,13 +1,17 @@
 {
   "name": "leadsheet",
+  "publisher": "pje",
   "displayName": "leadsheet",
-  "description": "",
+  "description": "syntax highlighting and formatting for .leadsheet files",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.84.0"
+    "vscode": "^1.20.0"
   },
+  "icon": "icon.png",
   "categories": [
-    "Programming Languages"
+    "Programming Languages",
+    "Language Packs",
+    "Formatters"
   ],
   "contributes": {
     "languages": [
