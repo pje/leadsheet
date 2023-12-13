@@ -243,7 +243,7 @@ export function ParseSong(rawSong: string): Result<Song> {
   const matchResult = grammar.Song.match(rawSong, "Song");
   if (matchResult.failed()) return Err(matchResult.message!);
   const semantics = grammar.Song.createSemantics();
-  semantics.addOperation("eval", new SongActions(new Song()));
+  semantics.addOperation<void>("eval", new SongActions(new Song()));
   const song: Song = semantics(matchResult).eval();
   song.key ||= song.guessKey();
   return Ok(song);
