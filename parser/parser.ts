@@ -10,9 +10,9 @@ import {
   type ChordActionDict,
   type SongActionDict,
 } from "./grammar.ohm-bundle.js";
-import { type Letter } from "../theory/letter.ts";
 import { zip } from "../lib/array.ts";
 import {
+  Add9,
   Augmented,
   Chord,
   Diminished,
@@ -44,49 +44,42 @@ function normalizeAccidentals(str: string): string {
 }
 
 class ChordActions implements ChordActionDict<void> {
-  #c: Chord;
-
-  constructor(c: Chord) {
-    this.#c = c;
-  }
-
-  chord = (root: NNode, flavor: NNode) => {
-    root.eval();
-    flavor.eval();
-    return this.#c;
-  };
+  chord = (root: NNode, flavor: NNode) =>
+    new Chord(root.eval(), ...(flavor.eval()));
 
   root = (root: NNode, accidentals: INode) =>
-    this.#c.tonic = <Letter> [
+    [
       normalizeLetter(root.sourceString),
       normalizeAccidentals(accidentals.sourceString),
     ].join("");
 
-  flavor = (quality: INode, extent: INode, alterations: INode) => {
-    isImplicitPower(quality, extent)
-      ? this.#c.quality = Power
-      : isImplicitMajor(quality, extent, alterations)
-      ? this.#c.quality = Major
-      : isImplicitDominant(quality, extent, alterations)
-      ? this.#c.quality = Dominant
-      : quality.child(0)?.eval();
+  flavor = (qualityNode: INode, extentNode: INode, alterationsNodes: INode) => {
+    const [q, e, a]: [
+      Quality | undefined,
+      Extent | undefined,
+      string[],
+    ] = isImplicitPower(qualityNode, extentNode)
+      ? [Power, undefined, []]
+      : isImplicitMajor(qualityNode, extentNode, alterationsNodes)
+      ? [Major, undefined, []]
+      : isImplicitDominant(qualityNode, extentNode, alterationsNodes)
+      ? [Dominant, undefined, []]
+      : qualityNode.child(0)?.eval();
 
-    extent.child(0)?.eval();
+    const [q2, e2, a2]: [
+      Quality | undefined,
+      Extent | undefined,
+      string[],
+    ] = extentNode.child(0)?.eval() || [undefined, undefined, []];
 
-    this.#c.alterations.push(
-      ...alterations.children.map((alteration) => alteration.sourceString),
-    );
+    const alterations = alterationsNodes.children.map((a) => a.sourceString);
+
+    return [q2 || q, e2 || e, ...a, ...a2, ...alterations];
   };
 
   #evalPassthrough = (n: NNode) => n.eval();
-
-  #qualityPassthrough = (quality: Quality) => {
-    return (_: NNode) => this.#c.quality = quality;
-  };
-
-  #extentPassthrough = (extent: Extent) => {
-    return (_: NNode) => this.#c.extent = extent;
-  };
+  #extentPassthrough =
+    (extent: Extent) => (_: NNode) => [undefined, extent, []];
 
   extent = this.#evalPassthrough;
   thirteen = this.#extentPassthrough(13);
@@ -97,44 +90,34 @@ class ChordActions implements ChordActionDict<void> {
   five = this.#extentPassthrough(5);
   four = this.#extentPassthrough(4);
   two = this.#extentPassthrough(2);
-  six_and_nine = (_0: NNode, _1: INode, _2: NNode) => {
-    this.#c.extent = 6;
-    this.#c.alterations.push("(add 9)");
-  };
+  six_and_nine = (_0: NNode, _1: INode, _2: NNode) => [undefined, 6, [Add9]];
 
+  #qualityPassthrough =
+    (quality: Quality) => (_: NNode) => [quality, undefined, []];
   quality = this.#evalPassthrough;
   augmented = this.#qualityPassthrough(Augmented);
   diminished = this.#qualityPassthrough(Diminished);
   major = this.#qualityPassthrough(Major);
   minor = this.#qualityPassthrough(Minor);
   sus = this.#qualityPassthrough(Suspended);
-  dominant = (_0: NNode) => {
-    this.#c.quality = Dominant;
-    this.#c.extent ||= 7;
-  };
-  half_diminished = (_0: NNode) => {
-    this.#c.quality = Minor;
-    this.#c.alterations.push("b5");
-    this.#c.extent ||= 7;
-  };
-  minor_major = (_0: NNode) => {
-    this.#c.quality = MinorMajor;
-    this.#c.extent ||= 7;
-  };
+  dominant = (_0: NNode) => [Dominant, 7, []];
+  half_diminished = (_0: NNode) => [Minor, 7, ["b5"]];
+  minor_major = (_0: NNode) => [MinorMajor, 7, []];
   minor_major_with_parens = (
-    _0: NNode,
+    arg0: NNode,
     _1: TNode,
     _2: NNode,
     _3: NNode,
     _4: NNode,
-  ) => this.minor_major(_0);
+  ) => this.minor_major(arg0);
 }
 
-class SongActions implements SongActionDict<void> {
+class SongActions extends ChordActions implements SongActionDict<void> {
   #s: Song;
   #currentSection: string | undefined;
 
   constructor(s: Song) {
+    super();
     this.#s = s;
     this.#currentSection = undefined;
   }
@@ -176,15 +159,12 @@ class SongActions implements SongActionDict<void> {
             } else {
               previousChord = <Chord | undefined> previousChord;
 
-              if (!previousChord) {
-                // first chord in song
-                previousChord = (ParseChord(chordString).value)!;
-              } else if (!isRepeat(chordString)) {
-                // i.e. not a repetition
-                previousChord = (ParseChord(chordString).value)!;
+              if (!previousChord || !isRepeat(chordString)) {
+                // first chord in song or not a repetition
+                previousChord = chordishNode.eval()!;
               }
 
-              return previousChord.dup();
+              return previousChord === NoChord ? NoChord : previousChord!.dup();
             }
           },
         );
@@ -205,10 +185,6 @@ class SongActions implements SongActionDict<void> {
     );
   };
 
-  Chordish = (_0: NNode) => this.#s;
-
-  chord = (_0: NNode, _1: NNode) => this.#s;
-
   meta = (
     arg0: Node,
     _arg1: TNode,
@@ -226,7 +202,7 @@ export function ParseChord(rawChord: string): Result<Chord> {
   const matchResult = grammar.Chord.match(rawChord, "chord");
   if (matchResult.failed()) return Err(matchResult.message!);
   const semantics = grammar.Chord.createSemantics();
-  semantics.addOperation<void>("eval", new ChordActions(new Chord()));
+  semantics.addOperation<void>("eval", new ChordActions());
   const chord: Chord = semantics(matchResult).eval();
   return Ok(chord);
 }

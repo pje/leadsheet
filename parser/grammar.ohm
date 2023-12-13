@@ -168,7 +168,7 @@ Song <: Chord {
     | meta<"sig">
     | meta<"key">
 
-  meta<x> = x":" spaceNoNL* (~newline any)+ newline
+  meta<x> = x":" spaceNoNL* (~newline any)+ (newline|lineComment)
 
   barline =
     | barlineWithRepeats
