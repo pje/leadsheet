@@ -20,7 +20,7 @@ jobs:
       - name: build
         run: make build
       - name: fmt
-        run: deno fmt --check *test.ts
+        run: make fmt-check
       - name: lint
         run: make lint
       - name: test

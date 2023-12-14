@@ -14,6 +14,9 @@ lint:
 	deno lint *.ts "**/*.ts" --ignore=node_modules,parser/grammar.ohm-bundle.d.ts
 	deno task detect-cyclic-imports
 
+fmt-check:
+	deno fmt --check *.ts "**/*.ts" --ignore=node_modules
+
 test: unit_test browser_test
 
 unit_test: $(unit_test_files)
@@ -22,10 +25,6 @@ unit_test: $(unit_test_files)
 browser_test: $(browser_test_files)
 	PUPPETEER_PRODUCT=chrome deno run -A --unstable https://deno.land/x/puppeteer@16.2.0/install.ts
 	deno test --allow-env --allow-net --allow-read --allow-run --allow-write $^
-
-ohm_bundle: deps
-	npx ohm generateBundles --esm --withTypes parser/*.ohm
-	npx prettier --write parser/grammar.ohm-bundle.d.ts parser/grammar.ohm-bundle.js
 
 clean:
 	rm -rf index.css index.css.map index.js index.js.map node_modules test-failure*.png
