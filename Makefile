@@ -4,11 +4,11 @@ test_files=$(shell find . -type f -name '*test.ts')
 browser_test_files=./browser_test.ts
 unit_test_files=$(filter-out $(browser_test_files),$(test_files))
 
-build: deps ohm_bundle
-	npx esbuild --target=chrome58 index.ts --outfile=index.js --bundle --sourcemap --loader:.leadsheet=text
+build: deps
+	deno run -A build/build.ts build
 
-watch: deps ohm_bundle
-	npx esbuild --target=chrome58 index.ts --outfile=index.js --bundle --sourcemap --loader:.leadsheet=text --watch
+watch: deps
+	deno run -A build/build.ts watch
 
 lint:
 	deno lint *.ts "**/*.ts" --ignore=node_modules,parser/grammar.ohm-bundle.d.ts

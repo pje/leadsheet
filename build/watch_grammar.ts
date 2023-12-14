@@ -1,0 +1,33 @@
+import { debounce } from "https://deno.land/std@0.207.0/async/debounce.ts";
+import { generateBundles } from "./build_grammar.ts";
+
+export async function watchGrammar(
+  filePath: string,
+  opts?: { customHeader?: string },
+) {
+  let fileContents: string | undefined = undefined;
+
+  const handleFsChange = debounce(
+    ({ paths: [path, ..._rest] }: Deno.FsEvent) => {
+      const thisTime = Deno.readTextFileSync(path!);
+      if (thisTime !== fileContents) {
+        console.log(`[watch] ohm bundle building (change: "${path!}")`);
+        try {
+          generateBundles(filePath, opts);
+          fileContents = thisTime;
+        } catch (e: unknown) {
+          console.error(e);
+          return;
+        }
+        console.log(`[watch] 🧘 ohm bundle complete`);
+      }
+    },
+    300,
+  );
+
+  const watcher = Deno.watchFs(filePath);
+
+  for await (const event of watcher) {
+    handleFsChange(event);
+  }
+}

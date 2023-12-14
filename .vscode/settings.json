@@ -7,6 +7,9 @@
     "editor.defaultFormatter": "denoland.vscode-deno",
     "editor.formatOnSave": true,
   },
+  "[javascript]": {
+    "editor.formatOnSave": false,
+  },
   "deno.enable": true,
   "deno.lint": true,
   "deno.unstable": false,
