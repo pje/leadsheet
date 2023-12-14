@@ -1,10 +1,10 @@
 import { unicodeifyMusicalSymbols } from "../app/utils.ts";
-import { titleCase } from "../lib/string.ts";
 import { ParseSong } from "../parser/parser.ts";
 import {
   defaultFeatureFlags,
   FeatureFlagKeys,
   type FeatureFlagKeysType,
+  render as renderSettings,
 } from "./settings.ts";
 import { Clock, TimeEventListener } from "../lib/midi/time_event_listener.ts";
 import {
@@ -30,7 +30,7 @@ const state: State = {
 export async function bootstrap() {
   state.midiEventListener ||= new TimeEventListener(onBarAdvanced);
 
-  await renderSettings(state.settings);
+  await renderSettings(state);
 
   const lastLoadedSong = fetchLoadedSongFromLocalStorage();
   loadSong(lastLoadedSong || _loadDefaultSong()!);
@@ -196,49 +196,6 @@ function renderMetadata(
   );
   metadataElement.querySelector(".artist")!.textContent = song.artist || "";
   metadataElement.querySelector(".date")!.textContent = song.year || "";
-}
-
-async function renderSettings(
-  settings: Readonly<typeof state.settings>,
-  rootElement: HTMLElement = document.getElementById("root")!,
-) {
-  const settingsElement = rootElement.querySelector("#settings")!;
-  settingsElement.innerHTML = "";
-
-  const inputs = Object.entries(settings.featureFlags).map(
-    ([identifier, { enabled, description }]) =>
-      `<label title="${description}">
-  ${titleCase(identifier)}
-  <input type="checkbox" name="${identifier}" ${enabled ? "checked" : ""}/>
-</label>`,
-  );
-
-  if (settings.featureFlags.followMidiClockMessages.enabled) {
-    const devices = await state.midiEventListener?.getDevices() || [];
-
-    const deviceOptions = devices.map((d) => {
-      return `<option value="${d.id}">${d.name}</option>`;
-    });
-
-    const midiSelector = `
-  <div class="flex-row">
-    <label for="midiDevice" class="mr-8">MIDI Device (for clock input)</label>
-    <select name="midiDevice" id="midiDevice">
-      ${deviceOptions.join("\n")}
-    </select>
-  </div>
-  `;
-
-    inputs.push(midiSelector);
-  }
-
-  const html = inputs.join("\n");
-
-  settingsElement.insertAdjacentHTML(
-    "beforeend",
-    "<summary>Settings</summary>",
-  );
-  settingsElement.insertAdjacentHTML("beforeend", html);
 }
 
 // TODO: Action
