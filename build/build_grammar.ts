@@ -6,7 +6,7 @@ export function generateBundles(
   opts?: { customHeader?: string },
 ) {
   const result = generateBundlesCommand.action(grammarPath, {
-    isEsm: true,
+    esm: true,
     withTypes: true,
   });
   if (opts?.customHeader) addCustomHeader(grammarPath, opts.customHeader);
