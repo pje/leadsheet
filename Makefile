@@ -1,4 +1,4 @@
-.PHONY: build clean deps lint test unit_test browser_test ohm_bundle watch install_vscode_extension uninstall_vscode_extension
+.PHONY: build clean deps lint fmt-check test unit_test browser_test ohm_bundle watch install_vscode_extension uninstall_vscode_extension
 
 test_files=$(shell find . -type f -name '*test.ts')
 browser_test_files=./browser_test.ts
