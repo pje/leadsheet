@@ -19,6 +19,7 @@ const options: BuildOptions = {
 async function watch() {
   const ctx = await esbuild.context(options);
   await Promise.allSettled([
+    // typecheck(),
     ctx.watch(),
     watchGrammar(grammarFile, { customHeader: denoFmtIgnore }),
   ]);
@@ -29,6 +30,14 @@ async function build() {
   await esbuild.build(options);
   esbuild.stop();
 }
+
+// async function typecheck() {
+//   const command = new Deno.Command("deno", { args: ["check", "index.ts"] });
+
+//   const e = await command.output();
+//   const { code, stderr } = e;
+//   if (code !== 0) console.error(stderr);
+// }
 
 const mode = Deno.args.includes("watch") ? "watch" : "build";
 await ((mode == "watch") ? watch() : build());
