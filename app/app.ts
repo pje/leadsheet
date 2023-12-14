@@ -30,7 +30,7 @@ const state: State = {
 export async function bootstrap() {
   state.midiEventListener ||= new TimeEventListener(onBarAdvanced);
 
-  await renderSettings(state);
+  await renderSettings(state.settings, state.midiEventListener);
 
   const lastLoadedSong = fetchLoadedSongFromLocalStorage();
   loadSong(lastLoadedSong || _loadDefaultSong()!);

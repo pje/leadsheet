@@ -1,6 +1,5 @@
 import { titleCase } from "../lib/string.ts";
-import { State } from "./state.ts";
-
+import { type TimeEventListener } from "../lib/midi/time_event_listener.ts";
 export const colorChords = "colorChords" as const;
 export const unicodeChordSymbols = "unicodeChordSymbols" as const;
 export const followMidiClockMessages = "followMidiClockMessages" as const;
@@ -40,13 +39,14 @@ export type Settings = {
 };
 
 export async function render(
-  state: Readonly<State>,
+  settings: Readonly<Settings>,
+  midiEventListener?: TimeEventListener,
   rootElement: HTMLElement = document.getElementById("root")!,
 ) {
   const settingsElement = rootElement.querySelector("#settings")!;
   settingsElement.innerHTML = "";
 
-  const inputs = Object.entries(state.settings.featureFlags).map(
+  const inputs = Object.entries(settings.featureFlags).map(
     ([identifier, { enabled, description }]) =>
       `<label title="${description}">
   ${titleCase(identifier)}
@@ -54,8 +54,8 @@ export async function render(
 </label>`,
   );
 
-  if (state.settings.featureFlags.followMidiClockMessages.enabled) {
-    const devices = await state.midiEventListener?.getDevices() || [];
+  if (settings.featureFlags.followMidiClockMessages.enabled) {
+    const devices = await midiEventListener?.getDevices() || [];
 
     const deviceOptions = devices.map((d) => {
       return `<option value="${d.id}">${d.name}</option>`;
