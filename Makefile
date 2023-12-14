@@ -5,7 +5,7 @@ browser_test_files=./browser_test.ts
 unit_test_files=$(filter-out $(browser_test_files),$(test_files))
 deno_allows=--allow-env --allow-net --allow-read --allow-run --allow-write
 
-build: deps
+build: deps typecheck
 	deno run $(deno_allows) build/build.ts build
 
 watch: deps
@@ -14,6 +14,9 @@ watch: deps
 lint:
 	deno lint *.ts "**/*.ts" --ignore=node_modules,parser/grammar.ohm-bundle.d.ts
 	deno task detect-cyclic-imports
+
+typecheck:
+	deno check index.ts
 
 fmt-check:
 	deno fmt --check *.ts "**/*.ts" --ignore=node_modules
