@@ -10,6 +10,7 @@
     "@ohm-js/cli": "^2.0.0",
     "esbuild": "^0.19.7",
     "ohm-js": "^17.1.0",
-    "puppeteer": "^21.6.1"
+    "puppeteer": "^21.6.1",
+    "skott": "^0.31.3"
   }
 }
