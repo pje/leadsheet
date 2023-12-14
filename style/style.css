@@ -27,8 +27,22 @@
   --bright-aqua: #8ec07c;
   --bright-orange: #fe8019;
 
-  --staff-line-height: 15px;
+  --staff-line-height: 14px;
   --staff-height: calc(var(--staff-line-height) * 4);
+
+  @media (max-width: 575px) {
+    --num-cols: 2;
+
+    .bar {
+      &:nth-child(2n-1) {
+        .staff {
+          border-left-style: solid;
+        }
+      }
+    }
+  }
+
+  --num-cols: 4;
 }
 
 html {
@@ -55,6 +69,14 @@ html {
     h4,
     h5 {
       margin: unset;
+    }
+
+    .title {
+      font-size: min(3.2rem, 8vw);
+    }
+
+    .artist {
+      font-size: 1.5rem;
     }
 
     .date:empty,
@@ -126,7 +148,8 @@ html {
 
 #song {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(var(--num-cols), 1fr);
+
   align-items: end;
   row-gap: 32px;
 
@@ -134,7 +157,6 @@ html {
     &:nth-child(4n-3) {
       .staff {
         border-left-style: solid;
-        border-left-width: 1.5px;
       }
     }
 
@@ -153,10 +175,10 @@ html {
       position: relative;
       display: inline-block;
       width: fit-content;
-      top: 15px;
       padding-inline: 10px;
-      font-size: 2.25rem;
+      font-size: 1.5rem;
       font-style: italic;
+      margin-block: 8px;
       border-style: solid;
       border-width: 1px;
 
@@ -215,6 +237,8 @@ html {
     }
 
     .staff {
+      container-type: size;
+      container-name: staff;
       height: var(--staff-height);
       border-bottom: none;
       border-top: solid;
@@ -244,10 +268,10 @@ html {
 
       .clef {
         position: relative;
-        top: -50%;
-        left: -5.3%;
-        line-height: 100%;
-        font-size: 8.25em;
+        top: -49%;
+        left: -10cqh;
+        font-size: 185cqh;
+        line-height: 222cqh;
       }
 
       .key-signature {
@@ -287,11 +311,14 @@ html {
       }
 
       .time-signature {
+        position: relative;
+        top: -0.3cqh;
+        height: 100%;
         margin-left: 5px;
         display: flex;
         flex-direction: column;
-        font-size: 3rem;
-        line-height: 66.666%;
+        font-size: 75cqh;
+        line-height: 50cqh;
         font-weight: bold;
       }
 
