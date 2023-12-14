@@ -3,12 +3,13 @@
 test_files=$(shell find . -type f -name '*test.ts')
 browser_test_files=./browser_test.ts
 unit_test_files=$(filter-out $(browser_test_files),$(test_files))
+deno_allows=--allow-env --allow-net --allow-read --allow-run --allow-write
 
 build: deps
-	deno run -A build/build.ts build
+	deno run $(deno_allows) build/build.ts build
 
 watch: deps
-	deno run -A build/build.ts watch
+	deno run $(deno_allows) build/build.ts watch
 
 lint:
 	deno lint *.ts "**/*.ts" --ignore=node_modules,parser/grammar.ohm-bundle.d.ts
@@ -24,7 +25,7 @@ unit_test: $(unit_test_files)
 
 browser_test: $(browser_test_files)
 	PUPPETEER_PRODUCT=chrome deno run -A --unstable https://deno.land/x/puppeteer@16.2.0/install.ts
-	deno test --allow-env --allow-net --allow-read --allow-run --allow-write $^
+	deno test $(deno_allows) $^
 
 clean:
 	rm -rf index.css index.css.map index.js index.js.map node_modules test-failure*.png
