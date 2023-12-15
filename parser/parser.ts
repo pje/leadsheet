@@ -30,6 +30,7 @@ import {
   type Bar,
   type Barline,
   type Chordish,
+  type MetadataKeys,
   NoChord,
   Song,
 } from "./song.ts";
@@ -175,7 +176,8 @@ class SongActions extends ChordActions implements SongActionDict<void> {
     arg3: NNode,
     _arg4: NNode,
   ) => {
-    const key = <"title" | "artist" | "year" | "sig" | "key"> arg0.sourceString;
+    const key = <MetadataKeys> arg0
+      .sourceString;
     const val = arg3.sourceString;
     this.#s[key] = val;
   };

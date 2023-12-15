@@ -164,6 +164,7 @@ Song <: Chord {
   metadata =
     | meta<"title">
     | meta<"artist">
+    | meta<"album">
     | meta<"year">
     | meta<"sig">
     | meta<"key">

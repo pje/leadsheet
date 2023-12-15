@@ -149,6 +149,7 @@ Chorus:
     title: "songWithMetadata",
     contents: `title: my song
 artist: some guy
+album: tri repetae.
 year: 2023
 
 | A | B | C |
@@ -159,7 +160,13 @@ year: 2023
         bar("B"),
         bar("C"),
       ],
-      { key: "A", title: "my song", artist: "some guy", year: "2023" },
+      {
+        key: "A",
+        title: "my song",
+        artist: "some guy",
+        album: "tri repetae.",
+        year: "2023",
+      },
     ),
   },
   {

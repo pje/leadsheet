@@ -9,9 +9,18 @@ import {
 import { type Letter, transposeLetter } from "../theory/letter.ts";
 import { NoteRegex } from "../theory/notation.ts";
 
+export type MetadataKeys =
+  | "title"
+  | "artist"
+  | "album"
+  | "year"
+  | "sig"
+  | "key";
+
 export class Song {
   public title: string | undefined;
   public artist: string | undefined;
+  public album: string | undefined;
   public year: string | undefined;
   public sig: string | undefined;
   public key: string | undefined;
@@ -20,16 +29,13 @@ export class Song {
   constructor(
     bars?: Array<Bar>,
     metadata?: {
-      title?: string | undefined;
-      artist?: string | undefined;
-      year?: string | undefined;
-      sig?: string | undefined;
-      key?: string | undefined;
+      [K in MetadataKeys]?: string | undefined;
     },
   ) {
     this.bars = bars || [];
     this.title = metadata?.title;
     this.artist = metadata?.artist;
+    this.album = metadata?.album;
     this.year = metadata?.year;
     this.sig = metadata?.sig;
     this.key = metadata?.key;
