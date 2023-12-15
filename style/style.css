@@ -71,19 +71,6 @@ html {
       margin: unset;
     }
 
-    .title {
-      font-size: min(3.2rem, 8vw);
-    }
-
-    .artist {
-      font-size: 1.5rem;
-    }
-
-    .date:empty,
-    .artist:empty {
-      display: none;
-    }
-
     .key-selector {
       align-items: center;
       display: flex;
@@ -98,7 +85,7 @@ html {
 
       .key {
         text-align: right;
-        min-width: 64px;
+        min-width: 80px;
       }
     }
 
@@ -144,6 +131,54 @@ html {
   flex-direction: column;
   align-items: center;
   margin-bottom: 20px;
+
+  .title {
+    font-size: min(3.2rem, 8vw);
+  }
+
+  .date,
+  .artist,
+  .album {
+    font-weight: 400;
+  }
+
+  .date:empty,
+  .artist:empty,
+  .album:empty {
+    display: none;
+  }
+
+  .album {
+    font-style: italic;
+  }
+
+  .artist {
+    &:has(+ .album:not(:empty)) {
+      &::after {
+        content: " —";
+      }
+    }
+  }
+
+  .byline {
+    display: flex;
+    flex-direction: row;
+    font-size: 1.4rem;
+
+    & .album:not(:empty) {
+      margin-inline-start: 5px;
+    }
+
+    & .date:not(:empty) {
+      margin-inline-start: 5px;
+      &::before {
+        content: "(";
+      }
+      &::after {
+        content: ")";
+      }
+    }
+  }
 }
 
 #song {

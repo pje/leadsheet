@@ -165,6 +165,8 @@ export const KeySignatureToAccidentalList = new Map<
   ["Gb", _6_Flats],
 ]);
 
+// Returns "M" or "m"
+// TODO: this is inaccurate for many songs
 export function canonicalizeKeyQualifier(rawKeyQualifer: string): KeyQualifier {
   switch (rawKeyQualifer.trim()) {
     case "":

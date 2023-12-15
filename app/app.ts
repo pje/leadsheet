@@ -185,7 +185,7 @@ function renderMetadata(
   const metadataElement = rootElement.querySelector("#metadata")!;
 
   const formattedSongKey = song.key && song.key !== ""
-    ? _formatKeyName(song.key)
+    ? _formatKeyName(song.formatKeyName())
     : "?";
 
   metadataElement.querySelector(".title")!.textContent = song.title || "";
@@ -195,6 +195,7 @@ function renderMetadata(
     formattedSongKey,
   );
   metadataElement.querySelector(".artist")!.textContent = song.artist || "";
+  metadataElement.querySelector(".album")!.textContent = song.album || "";
   metadataElement.querySelector(".date")!.textContent = song.year || "";
 }
 

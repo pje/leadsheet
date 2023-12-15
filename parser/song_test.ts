@@ -1,5 +1,5 @@
 import { Chord, Dominant, Major, Minor } from "../theory/chord.ts";
-import { Song } from "./song.ts";
+import { MetadataKeys, Song } from "./song.ts";
 import { assertEquals } from "../test_utils.ts";
 
 const songFixture = new Song(
@@ -26,9 +26,10 @@ const songFixture = new Song(
   {
     title: "foo",
     artist: "bar",
+    album: "qux",
     year: "baz",
     sig: "5/4",
-    key: "",
+    key: "Em",
   },
 );
 
@@ -50,10 +51,31 @@ Deno.test(Song.prototype.guessKey.name, async (t) => {
     [songFixture, "Cm"],
   ]);
 
-  for (const [song, expected] of cases) {
+  for (const [s, expected] of cases) {
+    const song = s.dup();
+    song.key = "";
+
     await t.step(`should guess "${expected}"`, () => {
       const actual = song.guessKey();
       assertEquals(expected, actual);
+    });
+  }
+});
+
+Deno.test(Song.prototype.dup.name, async (t) => {
+  const cases = [songFixture];
+
+  for (const song of cases) {
+    await t.step(`should dup to itself`, () => {
+      const dupped = song.dup();
+
+      for (const k of MetadataKeys) {
+        assertEquals(song[k], dupped[k]);
+      }
+
+      assertEquals(song.bars, dupped.bars);
+
+      assertEquals(song, dupped);
     });
   }
 });
@@ -66,6 +88,7 @@ Deno.test(Song.prototype.format.name, async (t) => {
 artist: bar
 year: baz
 sig: 5/4
+key: Em
 
 Verse:
 || Cm7 Fm7 |

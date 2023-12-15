@@ -9,13 +9,16 @@ import {
 import { type Letter, transposeLetter } from "../theory/letter.ts";
 import { NoteRegex } from "../theory/notation.ts";
 
-export type MetadataKeys =
-  | "title"
-  | "artist"
-  | "album"
-  | "year"
-  | "sig"
-  | "key";
+export const MetadataKeys = [
+  "title",
+  "artist",
+  "album",
+  "year",
+  "sig",
+  "key",
+] as const;
+
+export type MetadataKeysType = typeof MetadataKeys[number];
 
 export class Song {
   public title: string | undefined;
@@ -29,7 +32,7 @@ export class Song {
   constructor(
     bars?: Array<Bar>,
     metadata?: {
-      [K in MetadataKeys]?: string | undefined;
+      [K in MetadataKeysType]?: string | undefined;
     },
   ) {
     this.bars = bars || [];
@@ -47,10 +50,10 @@ export class Song {
 
     const songKey = song.guessKey();
 
-    let [songKeyLetter, keyQualifier]: [Letter, string] = songKey
+    let [songKeyLetter, keyQualifier]: [Letter, string | undefined] = songKey
       .trim()
       .split(NoteRegex)
-      .filter(Boolean) as [Letter, string];
+      .filter(Boolean) as [Letter, string | undefined];
 
     keyQualifier ||= "M";
 
@@ -85,17 +88,32 @@ export class Song {
     return song;
   }
 
+  formatKeyName(): string {
+    const songKey = this.guessKey();
+
+    let [letter, qualifier]: [Letter, string | undefined] = songKey
+      .trim()
+      .split(NoteRegex)
+      .filter(Boolean) as [Letter, string | undefined];
+
+    qualifier ||= "M";
+    qualifier = canonicalizeKeyQualifier(qualifier);
+
+    return `${letter}${qualifier}`;
+  }
+
   // returns a new Song, value-identical to this one
   dup(): Song {
+    const memoo: { [K in MetadataKeysType]?: string | undefined } = {};
+
+    const m = MetadataKeys.reduce((memo, value) => {
+      memo[value] = this[value];
+      return memo;
+    }, memoo);
+
     return new Song(
       [...this.bars],
-      {
-        title: this.title,
-        artist: this.artist,
-        year: this.year,
-        sig: this.sig,
-        key: this.key,
-      },
+      m,
     );
   }
 
