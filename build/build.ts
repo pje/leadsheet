@@ -16,19 +16,20 @@ const options: BuildOptions = {
   sourcemap: true,
 };
 
+async function build() {
+  generateBundles(grammarFile, { customHeader: denoFmtIgnore });
+  await esbuild.build(options);
+  esbuild.stop();
+}
+
 async function watch() {
+  await build();
   const ctx = await esbuild.context(options);
   await Promise.allSettled([
     // typecheck(),
     ctx.watch(),
     watchGrammar(grammarFile, { customHeader: denoFmtIgnore }),
   ]);
-}
-
-async function build() {
-  generateBundles(grammarFile, { customHeader: denoFmtIgnore });
-  await esbuild.build(options);
-  esbuild.stop();
 }
 
 // async function typecheck() {
