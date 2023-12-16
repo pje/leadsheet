@@ -10,6 +10,7 @@ import {
   type Letter,
   LetterToPitchClass,
 } from "./letter.ts";
+import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
 
 export const Major = "M";
 export const Minor = "m";
@@ -43,38 +44,46 @@ const SigAccidentalToSymbol = new Map<SigAccidental, FlatOrSharpSymbol>([
 
 export { SigAccidentalToSymbol };
 
-export type Ionian = "ionian";
-export type Dorian = "dorian";
-export type Phyrgian = "phyrgian";
-export type Lydian = "lydian";
-export type Mixolydian = "mixolydian";
-export type Aeolian = "aeolian";
-export type Locrian = "locrian";
+export const Ionian = "ionian" as const;
+export const Dorian = "dorian" as const;
+export const Phyrgian = "phyrgian" as const;
+export const Lydian = "lydian" as const;
+export const Mixolydian = "mixolydian" as const;
+export const Aeolian = "aeolian" as const;
+export const Locrian = "locrian" as const;
 export type Mode =
-  | Ionian
-  | Dorian
-  | Phyrgian
-  | Lydian
-  | Mixolydian
-  | Aeolian
-  | Locrian;
+  | typeof Ionian
+  | typeof Dorian
+  | typeof Phyrgian
+  | typeof Lydian
+  | typeof Mixolydian
+  | typeof Aeolian
+  | typeof Locrian;
 
-export type KeyFlavorMajor = "major";
-export type KeyFlavorMinor = "minor";
-export type KeyFlavor = KeyFlavorMajor | Mode;
+export const KeyFlavorMajor = "M" as const;
+export const KeyFlavorMinor = "m" as const;
+export type KeyFlavor = typeof KeyFlavorMajor | typeof KeyFlavorMinor | Mode;
 
-export type Key = {
-  tonic: Letter;
-  flavor: KeyFlavor;
-};
+export class Key {
+  public tonic: Letter;
+  public flavor: KeyFlavor;
+
+  constructor(tonic: Letter, flavor?: KeyFlavor) {
+    this.tonic = tonic;
+    this.flavor = flavor || KeyFlavorMajor;
+  }
+}
 
 export function KeyFromString(s: string): Key | undefined {
   const matches = s.match(NoteRegex);
-  if (matches?.groups && matches?.groups[0] && matches?.groups[1]) {
-    return ({
-      tonic: matches.groups[0] as Letter,
-      flavor: matches.groups[1] as KeyFlavor,
-    });
+  const tonic = (matches && matches[1]) || undefined;
+  const rest = (matches && matches[2]) || undefined;
+
+  if (tonic) {
+    return new Key(
+      <Letter> tonic,
+      rest ? (<KeyFlavor> canonicalizeKeyQualifier(rest)) : undefined,
+    );
   } else {
     return undefined;
   }
@@ -146,28 +155,50 @@ export type AccidentalList =
   | typeof _5_Flats
   | typeof _6_Flats;
 
-export const KeySignatureToAccidentalList = new Map<
-  KeySignatureMajorLetter,
-  AccidentalList
->([
-  ["C", _0_Sharps],
-  ["G", _1_Sharps],
-  ["D", _2_Sharps],
-  ["A", _3_Sharps],
-  ["E", _4_Sharps],
-  ["B", _5_Sharps],
-  ["F#", _6_Sharps],
-  ["F", _1_Flats],
-  ["Bb", _2_Flats],
-  ["Eb", _3_Flats],
-  ["Ab", _4_Flats],
-  ["Db", _5_Flats],
-  ["Gb", _6_Flats],
-]);
+export const KeySignatureToAccidentalList = (l: Letter): AccidentalList => {
+  switch (l) {
+    case "C":
+    case "B#":
+      return _0_Sharps;
+    case "G":
+      return _1_Sharps;
+    case "D":
+      return _2_Sharps;
+    case "A":
+      return _3_Sharps;
+    case "E":
+    case "Fb":
+      return _4_Sharps;
+    case "B":
+    case "Cb":
+      return _5_Sharps;
+    case "F#":
+      return _6_Sharps;
+    case "F":
+    case "E#":
+      return _1_Flats;
+    case "Bb":
+    case "A#":
+      return _2_Flats;
+    case "Eb":
+    case "D#":
+      return _3_Flats;
+    case "Ab":
+    case "G#":
+      return _4_Flats;
+    case "Db":
+    case "C#":
+      return _5_Flats;
+    case "Gb":
+      return _6_Flats;
+    default:
+      nonexhaustiveSwitchGuard(l);
+  }
+};
 
-// Returns "M" or "m"
-// TODO: this is inaccurate for many songs
-export function canonicalizeKeyQualifier(rawKeyQualifer: string): KeyQualifier {
+export function canonicalizeKeyQualifier(
+  rawKeyQualifer: string,
+): KeyQualifier | string {
   switch (rawKeyQualifer.trim()) {
     case "":
     case "M":
@@ -181,7 +212,7 @@ export function canonicalizeKeyQualifier(rawKeyQualifer: string): KeyQualifier {
     case "min":
       return Minor;
     default:
-      return Major;
+      return rawKeyQualifer;
   }
 }
 
@@ -208,7 +239,7 @@ export function accidentalPreferenceForKey(key: Letter) {
 export function htmlElementsForKeySignature(
   keySignature: KeySignatureMajorLetter,
 ): Array<string> {
-  const accidentalList = KeySignatureToAccidentalList.get(keySignature)!;
+  const accidentalList = KeySignatureToAccidentalList(keySignature)!;
 
   return accidentalList.map(
     (e: SigAccidental) => `<div class="accidental ${e}">${e}</div>`,

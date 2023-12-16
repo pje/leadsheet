@@ -1,6 +1,10 @@
 import {
   canonicalizeKeyQualifier,
   conventionalizeKey,
+  Key,
+  KeyFlavorMajor,
+  KeyFlavorMinor,
+  KeyFromString,
   type KeyQualifier,
   Major,
   Minor,
@@ -56,6 +60,20 @@ Deno.test(conventionalizeKey.name, async (t) => {
   for (const [k, v] of cases) {
     await t.step(`${k} ⇒ ${v}`, () => {
       assertEquals(v, conventionalizeKey(k));
+    });
+  }
+});
+
+Deno.test(KeyFromString.name, async (t) => {
+  const cases = new Map<string, Key>([
+    ["A", new Key("A", KeyFlavorMajor)],
+    ["AM", new Key("A", KeyFlavorMajor)],
+    ["Am", new Key("A", KeyFlavorMinor)],
+  ]);
+
+  for (const [k, v] of cases) {
+    await t.step(`${k} ⇒ ${v}`, () => {
+      assertEquals(v, KeyFromString(k));
     });
   }
 });

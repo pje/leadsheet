@@ -1,6 +1,7 @@
 import { Chord, Dominant, Major, Minor } from "../theory/chord.ts";
 import { MetadataKeys, Song } from "./song.ts";
 import { assertEquals } from "../test_utils.ts";
+import { Key, KeyFlavorMinor } from "../theory/key.ts";
 
 const songFixture = new Song(
   [
@@ -29,7 +30,7 @@ const songFixture = new Song(
     album: "qux",
     year: "baz",
     sig: "5/4",
-    key: "Em",
+    key: new Key("E", "m"),
   },
 );
 
@@ -47,13 +48,13 @@ Deno.test(Song.prototype.parseSig.name, async (t) => {
 });
 
 Deno.test(Song.prototype.guessKey.name, async (t) => {
-  const cases = new Map<Song, string>([
-    [songFixture, "Cm"],
+  const cases = new Map<Song, Key | undefined>([
+    [songFixture, new Key("C", KeyFlavorMinor)],
   ]);
 
   for (const [s, expected] of cases) {
     const song = s.dup();
-    song.key = "";
+    song.key = undefined;
 
     await t.step(`should guess "${expected}"`, () => {
       const actual = song.guessKey();

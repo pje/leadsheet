@@ -4,10 +4,13 @@ import {
   accidentalPreferenceForKey,
   canonicalizeKeyQualifier,
   conventionalizeKey,
+  Key,
+  KeyFlavorMajor,
+  KeyFlavorMinor,
+  KeyFromString,
   Minor as MinorKey,
 } from "../theory/key.ts";
-import { type Letter, transposeLetter } from "../theory/letter.ts";
-import { NoteRegex } from "../theory/notation.ts";
+import { transposeLetter } from "../theory/letter.ts";
 
 export const MetadataKeys = [
   "title",
@@ -20,22 +23,26 @@ export const MetadataKeys = [
 
 export type MetadataKeysType = typeof MetadataKeys[number];
 
+type Metadata = {
+  [K in MetadataKeysType]?: K extends "key" ? Key | undefined
+    : string | undefined;
+};
+
 export class Song {
   public title: string | undefined;
   public artist: string | undefined;
   public album: string | undefined;
   public year: string | undefined;
   public sig: string | undefined;
-  public key: string | undefined;
+  public key: Key | undefined;
   public bars: Array<Bar>;
 
   constructor(
     bars?: Array<Bar>,
-    metadata?: {
-      [K in MetadataKeysType]?: string | undefined;
-    },
+    metadata?: Metadata,
   ) {
     this.bars = bars || [];
+
     this.title = metadata?.title;
     this.artist = metadata?.artist;
     this.album = metadata?.album;
@@ -48,21 +55,14 @@ export class Song {
   transpose(halfSteps: number): Song {
     const song = this.dup();
 
-    const songKey = song.guessKey();
-
-    let [songKeyLetter, keyQualifier]: [Letter, string | undefined] = songKey
-      .trim()
-      .split(NoteRegex)
-      .filter(Boolean) as [Letter, string | undefined];
-
-    keyQualifier ||= "M";
+    const { tonic, flavor } = song.guessKey()!;
 
     const destinationKey = conventionalizeKey(
-      transposeLetter(songKeyLetter, halfSteps),
+      transposeLetter(tonic, halfSteps),
     );
 
     const destinationRelativeMajorKey =
-      canonicalizeKeyQualifier(keyQualifier) == MinorKey
+      canonicalizeKeyQualifier(flavor) == MinorKey
         ? conventionalizeKey(transposeLetter(destinationKey, 3))
         : destinationKey;
 
@@ -83,37 +83,29 @@ export class Song {
       return bar;
     });
 
-    song.key = `${destinationKey}${keyQualifier}`;
+    song.key = KeyFromString(`${destinationKey}${flavor}`);
 
     return song;
   }
 
   formatKeyName(): string {
-    const songKey = this.guessKey();
+    const { tonic, flavor } = this.guessKey() || {};
 
-    let [letter, qualifier]: [Letter, string | undefined] = songKey
-      .trim()
-      .split(NoteRegex)
-      .filter(Boolean) as [Letter, string | undefined];
-
-    qualifier ||= "M";
-    qualifier = canonicalizeKeyQualifier(qualifier);
-
-    return `${letter}${qualifier}`;
+    return tonic && flavor ? `${tonic}${flavor}` : "?";
   }
 
   // returns a new Song, value-identical to this one
   dup(): Song {
-    const memoo: { [K in MetadataKeysType]?: string | undefined } = {};
-
-    const m = MetadataKeys.reduce((memo, value) => {
-      memo[value] = this[value];
-      return memo;
-    }, memoo);
-
     return new Song(
       [...this.bars],
-      m,
+      {
+        title: this.title,
+        artist: this.artist,
+        album: this.album,
+        year: this.year,
+        sig: this.sig,
+        key: this.key,
+      },
     );
   }
 
@@ -125,7 +117,7 @@ export class Song {
     if (this.artist) accumulator += `artist: ${this.artist}\n`;
     if (this.year) accumulator += `year: ${this.year}\n`;
     if (this.sig) accumulator += `sig: ${this.sig}\n`;
-    if (this.key) accumulator += `key: ${this.key}\n`;
+    if (this.key) accumulator += `key: ${this.formatKeyName()}\n`;
 
     let previousChord: string | undefined = undefined;
     const barsBySection = Map.groupBy(this.bars, ({ name }) => name || "");
@@ -173,15 +165,17 @@ export class Song {
     return accumulator;
   }
 
-  guessKey(): string {
+  guessKey(): Key | undefined {
     if (this.key) return this.key;
     const c = this.getFirstChord();
-    if (c && c.quality === Major) {
-      return c.tonic;
+    if (!c) return undefined;
+
+    if (c.quality === Major) {
+      return new Key(c.tonic, KeyFlavorMajor);
     } else if (c && c.quality === Minor) {
-      return `${c.tonic}m`;
+      return new Key(c.tonic, KeyFlavorMinor);
     } else {
-      return `${c?.tonic || "?"}`;
+      return undefined;
     }
   }
 

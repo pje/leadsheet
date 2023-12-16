@@ -1,12 +1,14 @@
 import { titleCase } from "../lib/string.ts";
 import { type TimeEventListener } from "../lib/midi/time_event_listener.ts";
 export const colorChords = "colorChords" as const;
+export const keySignature = "keySignature" as const;
 export const unicodeChordSymbols = "unicodeChordSymbols" as const;
 export const followMidiClockMessages = "followMidiClockMessages" as const;
 
 export type FeatureFlagKeysType = typeof FeatureFlagKeys[number];
 export const FeatureFlagKeys = [
   colorChords,
+  keySignature,
   unicodeChordSymbols,
   followMidiClockMessages,
 ] as const;
@@ -22,6 +24,10 @@ export const defaultFeatureFlags: FeatureFlags = {
   [colorChords]: {
     enabled: true,
     description: "Color chord symbols by type (maj, min, dom, etc)",
+  },
+  [keySignature]: {
+    enabled: true,
+    description: "Render key signature",
   },
   [unicodeChordSymbols]: {
     enabled: false,

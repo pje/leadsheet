@@ -17,6 +17,13 @@ import {
   Song,
 } from "../parser/song.ts";
 import { type State } from "./state.ts";
+import {
+  conventionalizeKey,
+  Key,
+  KeySignatureToAccidentalList,
+  SigAccidental,
+  SigAccidentalToSymbol,
+} from "../theory/key.ts";
 
 const state: State = {
   song: undefined,
@@ -160,8 +167,29 @@ function renderClefAndSignatures(
 ) {
   const { numerator, denominator } = song.parseSig();
 
+  let keySignatureEl = "";
+  if (song.key && state.settings.featureFlags.keySignature.enabled) {
+    const accidentals = KeySignatureToAccidentalList(
+      conventionalizeKey(song.key.tonic),
+    );
+    const accidentalToElement = (a: SigAccidental) => {
+      const classes = [
+        "accidental",
+        ...(a.replace("#", "s").split("")),
+      ];
+      const symbol = SigAccidentalToSymbol.get(a);
+
+      return `<span class="${classes.join(" ")}">${symbol}</span>`;
+    };
+    const accidentalElements = accidentals.map(accidentalToElement);
+    keySignatureEl = `<div class="key-signature">
+  ${accidentalElements.join("\n")}
+</div>`;
+  }
+
   const staffElements = `
   <div class="clef treble">𝄞</div>
+  ${keySignatureEl}
   <div class="time-signature">
     <div class="numerator">${numerator}</div>
     <div class="slash" hidden>/</div>
@@ -184,8 +212,8 @@ function renderMetadata(
 ) {
   const metadataElement = rootElement.querySelector("#metadata")!;
 
-  const formattedSongKey = song.key && song.key !== ""
-    ? _formatKeyName(song.formatKeyName())
+  const formattedSongKey = song.key && song.key
+    ? _formatKeyName(song.key)
     : "?";
 
   metadataElement.querySelector(".title")!.textContent = song.title || "";
@@ -298,7 +326,8 @@ function _getBarlineClass(
   return result;
 }
 
-function _formatKeyName(str: string): string {
+function _formatKeyName(key: Key): string {
+  const str = `${key.tonic}${key.flavor}`;
   return state.settings.featureFlags.unicodeChordSymbols.enabled
     ? unicodeifyMusicalSymbols(str)
     : str;

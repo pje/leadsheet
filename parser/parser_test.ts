@@ -19,6 +19,7 @@ import {
 } from "../theory/chord.ts";
 import { assertEquals } from "../test_utils.ts";
 import { Bar, Song } from "./song.ts";
+import { Key } from "../theory/key.ts";
 
 const songsDir = "./leadsheets";
 const rawSongs: Array<{ name: string; contents: string }> = [];
@@ -61,12 +62,12 @@ const songFixtures: Array<{
   {
     title: "noChord",
     contents: `| N.C. |`,
-    expected: new Song([bar("N.C.")], { key: "?" }),
+    expected: new Song([bar("N.C.")], { key: undefined }),
   },
   {
     title: "oneChord",
     contents: `| C |`,
-    expected: new Song([bar("C")], { key: "C" }),
+    expected: new Song([bar("C")], { key: new Key("C") }),
   },
   {
     title: "Sectional",
@@ -80,12 +81,12 @@ Chorus:
       barWithSection("A", "D"),
       barWithSection("Chorus", "Am"),
       barWithSection("Chorus", "Bm"),
-    ], { key: "C" }),
+    ], { key: new Key("C") }),
   },
   {
     title: "oneChordNoSpaces",
     contents: `|C|`,
-    expected: new Song([bar("C")], { key: "C" }),
+    expected: new Song([bar("C")], { key: new Key("C") }),
   },
   {
     title: "simpleSong",
@@ -99,7 +100,7 @@ Chorus:
         bar("G7"),
         bar("C6"),
       ],
-      { key: "C" },
+      { key: new Key("C") },
     ),
   },
   {
@@ -107,7 +108,7 @@ Chorus:
     contents: `| C | % | D | % |`,
     expected: new Song(
       [bar("C"), bar("C"), bar("D"), bar("D")],
-      { key: "C" },
+      { key: new Key("C") },
     ),
   },
   {
@@ -120,7 +121,7 @@ Chorus:
         { ...bar("C"), openBarline: "|2x:", closeBarline: "|" },
         { ...bar("D"), openBarline: "|", closeBarline: ":||" },
       ],
-      { key: "C" },
+      { key: new Key("C") },
     ),
   },
   {
@@ -142,7 +143,7 @@ Chorus:
         bar("F"),
         bar("G"),
       ],
-      { key: "A" },
+      { key: new Key("A") },
     ),
   },
   {
@@ -161,7 +162,7 @@ year: 2023
         bar("C"),
       ],
       {
-        key: "A",
+        key: new Key("A"),
         title: "my song",
         artist: "some guy",
         album: "tri repetae.",
@@ -187,7 +188,7 @@ year: 2023
         bar("C"),
         bar("D"),
       ],
-      { key: "A" },
+      { key: new Key("A") },
     ),
   },
   {
@@ -202,7 +203,7 @@ year: 2023
         { ...bar("Cm"), openBarline: "|:", closeBarline: "|" },
         { ...bar("Dm"), openBarline: "|", closeBarline: ":3x||" },
       ],
-      { key: "A" },
+      { key: new Key("A") },
     ),
   },
 ];

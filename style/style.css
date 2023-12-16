@@ -63,12 +63,20 @@ html {
       color: #fffdf3;
     }
 
-    h1,
-    h2,
-    h3,
-    h4,
-    h5 {
+    h1, h2, h3, h4, h5 {
       margin: unset;
+    }
+
+    .title {
+      font-size: min(3.2rem, 8vw);
+    }
+
+    .artist {
+      font-size: 1.5rem;
+    }
+
+    .date:empty, .artist:empty {
+      display: none;
     }
 
     .key-selector {
@@ -94,8 +102,7 @@ html {
       font-size: 12px;
     }
 
-    .unicode-flat,
-    .unicode-sharp {
+    .unicode-flat, .unicode-sharp {
       position: relative;
       font-size: 15pt;
       left: -5px;
@@ -272,6 +279,11 @@ html {
     }
 
     .staff {
+      --high-G-top: -40cqh;
+      --high-F-top: calc(
+        var(--high-G-top) + calc(var(--staff-line-height) / 2)
+      );
+
       container-type: size;
       container-name: staff;
       height: var(--staff-height);
@@ -310,37 +322,56 @@ html {
       }
 
       .key-signature {
-        display: flex;
-        flex-direction: column;
-        font-size: 35px;
-        line-height: 35px;
+        --inline-init: -16cqh;
+        --incr: 20cqh;
+
+        display: inline-flex;
+        flex-direction: row;
+        letter-spacing: -20cqh;
 
         .accidental {
           position: relative;
+          left: var(--inline-init);
+          font-size: 35cqh;
 
-          &.Bb {
-            top: -21px;
-            left: -40px;
+          &.b {
+            line-height: 50cqh;
           }
-          &.Eb {
-            top: -13px;
-            left: -25px;
+
+          &.s {
+            line-height: 61cqh;
           }
-          &.Ab {
-            top: -50px;
-            left: -10px;
+
+          &.F {
+            top: calc(var(--high-F-top) + calc(var(--staff-line-height) * 0));
           }
-          &.Db {
-            top: -13px;
-            left: 5px;
+
+          &.C {
+            top: calc(var(--high-G-top) + calc(var(--staff-line-height) * 2));
           }
-          &.Gb {
-            top: -13px;
-            left: 20px;
+
+          &.G.s {
+            top: calc(var(--high-G-top) + calc(var(--staff-line-height) * 0));
           }
-          &.Cb {
-            top: -13px;
-            left: 35px;
+
+          &.G.b {
+            top: calc(var(--high-F-top) + calc(var(--staff-line-height) * 3));
+          }
+
+          &.D {
+            top: calc(var(--high-F-top) + calc(var(--staff-line-height) * 1));
+          }
+
+          &.A {
+            top: calc(var(--high-G-top) + calc(var(--staff-line-height) * 3));
+          }
+
+          &.E {
+            top: calc(var(--high-G-top) + calc(var(--staff-line-height) * 1));
+          }
+
+          &.B {
+            top: calc(var(--high-F-top) + calc(var(--staff-line-height) * 2));
           }
         }
       }
@@ -349,7 +380,7 @@ html {
         position: relative;
         top: -0.3cqh;
         height: 100%;
-        margin-left: 5px;
+        /* margin-left: 70cqh; */
         display: flex;
         flex-direction: column;
         font-size: 75cqh;

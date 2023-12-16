@@ -35,6 +35,7 @@ import {
   Song,
 } from "./song.ts";
 import { Err, Ok, type Result } from "../lib/result.ts";
+import { KeyFromString } from "../theory/key.ts";
 
 class ChordActions implements ChordActionDict<void> {
   chord = (root: NNode, flavor: NNode) =>
@@ -179,7 +180,12 @@ class SongActions extends ChordActions implements SongActionDict<void> {
     const key = <MetadataKeysType> arg0
       .sourceString;
     const val = arg3.sourceString;
-    this.#s[key] = val;
+
+    if (key == "key") {
+      this.#s[key] = KeyFromString(val);
+    } else {
+      this.#s[key] = val;
+    }
   };
 }
 
