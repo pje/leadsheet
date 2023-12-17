@@ -1,8 +1,8 @@
 import { type PitchClass, transposePitchClass } from "./pitch_class.ts";
 import { type FlatOrSharpSymbol, FlatSymbol, SharpSymbol } from "./notation.ts";
 
-type A2G = "A" | "B" | "C" | "D" | "E" | "F" | "G";
-export type Letter = `${A2G}${"" | "#" | "b"}`;
+type AthroughG = "A" | "B" | "C" | "D" | "E" | "F" | "G";
+export type Letter = `${AthroughG}${"" | "#" | "b"}`;
 
 export const LetterToPitchClass: Record<Letter, PitchClass> = {
   "B#": 0,
@@ -43,26 +43,6 @@ export function transposeLetter(
 
   return preferredAccidental == FlatSymbol ? flat : sharp;
 }
-
-export type LetterSpelledWithOneSharp =
-  | "A#"
-  | "B#"
-  | "C#"
-  | "D#"
-  | "E#"
-  | "F#"
-  | "G#";
-
-export type LetterSpelledWithOneFlat =
-  | "Ab"
-  | "Bb"
-  | "Cb"
-  | "Db"
-  | "Eb"
-  | "Fb"
-  | "Gb";
-
-export type LetterSpelledOnlyNatural = "G" | "D" | "A";
 
 export const LettersForPitchClass = {
   0: ["C", undefined, "B#"],
