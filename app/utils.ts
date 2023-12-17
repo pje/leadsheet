@@ -5,11 +5,8 @@ export function unicodeifyMusicalSymbols(s: string) {
   note ||= "";
   flavor ||= "";
 
-  return `${note}<sup>${flavor}<sup>`.replace(
-    "b",
-    `<span class="unicode-flat">♭</span>`,
-  ).replace(
-    "#",
-    `<span class="unicode-sharp">♯</span>`,
-  );
+  return `${note}<sup>${flavor}<sup>`.replaceAll(/b|#/g, (substr: string) => {
+    const [symbol, klass] = substr === "#" ? ["♯", "sharp"] : ["♭", "flat"];
+    return `<span class="unicode-${klass}">${symbol}</span>`;
+  });
 }
