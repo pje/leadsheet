@@ -6,7 +6,10 @@ import {
   type FeatureFlagKeysType,
   render as renderSettings,
 } from "./settings.ts";
-import { Clock, TimeEventListener } from "../lib/midi/time_event_listener.ts";
+import {
+  type Clock,
+  TimeEventListener,
+} from "../lib/midi/time_event_listener.ts";
 import {
   type Barline,
   type Chordish,
@@ -14,7 +17,7 @@ import {
   NoChord,
   printChordish,
   RepeatedChordSymbol,
-  Song,
+  type Song,
 } from "../parser/song.ts";
 import { type State } from "./state.ts";
 import { Key, SigAccidental, SigAccidentalToSymbol } from "../theory/key.ts";

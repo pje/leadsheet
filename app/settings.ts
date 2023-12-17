@@ -1,5 +1,6 @@
 import { titleCase } from "../lib/string.ts";
 import { type TimeEventListener } from "../lib/midi/time_event_listener.ts";
+
 export const colorChords = "colorChords" as const;
 export const keySignature = "keySignature" as const;
 export const unicodeChordSymbols = "unicodeChordSymbols" as const;

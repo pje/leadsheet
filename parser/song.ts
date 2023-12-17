@@ -1,5 +1,5 @@
 import { groupsOf } from "../lib/array.ts";
-import { Chord, Major, Minor, type Quality } from "../theory/chord.ts";
+import { type Chord, Major, Minor, type Quality } from "../theory/chord.ts";
 import { Key, KeyFlavorMajor, KeyFlavorMinor } from "../theory/key.ts";
 import { SharpSymbol } from "../theory/notation.ts";
 

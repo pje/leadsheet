@@ -30,14 +30,14 @@ import {
   type Bar,
   type Barline,
   type Chordish,
-  Metadata,
+  type Metadata,
   type MetadataKeysType,
   NoChord,
   Song,
 } from "./song.ts";
 import { Err, Ok, type Result } from "../lib/result.ts";
 import { Key } from "../theory/key.ts";
-import { Letter } from "../theory/letter.ts";
+import { type Letter } from "../theory/letter.ts";
 
 class ChordActions implements ChordActionDict<void> {
   chord = (root: NNode, flavor: NNode) =>
