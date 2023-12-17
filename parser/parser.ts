@@ -30,12 +30,14 @@ import {
   type Bar,
   type Barline,
   type Chordish,
+  Metadata,
   type MetadataKeysType,
   NoChord,
   Song,
 } from "./song.ts";
 import { Err, Ok, type Result } from "../lib/result.ts";
-import { KeyFromString } from "../theory/key.ts";
+import { Key } from "../theory/key.ts";
+import { Letter } from "../theory/letter.ts";
 
 class ChordActions implements ChordActionDict<void> {
   chord = (root: NNode, flavor: NNode) =>
@@ -107,26 +109,29 @@ class ChordActions implements ChordActionDict<void> {
 }
 
 class SongActions extends ChordActions implements SongActionDict<void> {
-  #s: Song;
   #currentSection: string | undefined;
 
-  constructor(s: Song) {
+  constructor() {
     super();
-    this.#s = s;
     this.#currentSection = undefined;
   }
 
-  Song = (metadata: INode, bars: NNode) => {
-    metadata.children.forEach((e) => e.eval());
-    bars.eval();
-    return this.#s;
+  Song = (metadataNodes: INode, sectionsNode: NNode) => {
+    const bars: Bar[] = sectionsNode.eval();
+    const metadata: Metadata = Object.fromEntries(
+      metadataNodes.children.map((e) => e.eval()),
+    );
+    const song = new Song(bars, metadata);
+    return song;
   };
 
   Sections = (maybeSection: INode, bars: INode) => {
-    zip(maybeSection.children, bars.children).forEach(([section, bars2]) => {
-      section.children.forEach((c2) => c2.eval());
-      bars2.eval();
-    });
+    return zip(maybeSection.children, bars.children).flatMap(
+      ([section, bars2]) => {
+        section.children.forEach((c2) => c2.eval());
+        return bars2.eval();
+      },
+    );
   };
 
   Section = (sectionName: INode, _1: INode) => {
@@ -135,6 +140,7 @@ class SongActions extends ChordActions implements SongActionDict<void> {
   };
 
   Bars = (barline: NNode, barChords: INode, closingBarlines: INode) => {
+    const bars: Bar[] = [];
     let previousChord: Chordish | undefined = undefined;
     let previousBarline = barline.sourceString;
 
@@ -165,27 +171,41 @@ class SongActions extends ChordActions implements SongActionDict<void> {
           chords,
         };
         previousBarline = thisBarline;
-        this.#s.bars.push(bar);
+        bars.push(bar);
       },
     );
+
+    return bars;
   };
 
-  meta = (
+  metaString = (
     arg0: Node,
     _arg1: TNode,
     _arg2: INode,
     arg3: NNode,
     _arg4: NNode,
-  ) => {
-    const key = <MetadataKeysType> arg0
-      .sourceString;
+  ): [Exclude<MetadataKeysType, "key">, string] => {
+    const key = <Exclude<MetadataKeysType, "key">> arg0.sourceString;
     const val = arg3.sourceString;
+    return [key, val];
+  };
 
-    if (key == "key") {
-      this.#s[key] = KeyFromString(val);
-    } else {
-      this.#s[key] = val;
-    }
+  metaKey = (
+    _arg0: TNode,
+    _arg1: TNode,
+    _arg2: INode,
+    arg3: NNode,
+    _arg4: NNode,
+  ): ["key", Key | undefined] => {
+    const { tonic, flavor } = arg3.eval();
+    return ["key", tonic ? new Key(tonic, flavor) : undefined];
+  };
+
+  scale = (arg0: NNode, arg1: INode): Key => {
+    const tonic: Letter = arg0.eval();
+    const flavor: string | undefined = arg1.child(0)?.sourceString;
+
+    return new Key(tonic, flavor);
   };
 }
 
@@ -202,9 +222,8 @@ export function ParseSong(rawSong: string): Result<Song> {
   const matchResult = grammar.Song.match(rawSong, "Song");
   if (matchResult.failed()) return Err(matchResult.message!);
   const semantics = grammar.Song.createSemantics();
-  semantics.addOperation<void>("eval", new SongActions(new Song()));
+  semantics.addOperation<void>("eval", new SongActions());
   const song: Song = semantics(matchResult).eval();
-  song.key ||= song.guessKey();
   return Ok(song);
 }
 

@@ -17,8 +17,8 @@ import {
   Power,
   Suspended,
 } from "../theory/chord.ts";
-import { assertEquals } from "../test_utils.ts";
-import { Bar, Song } from "./song.ts";
+import { assertEquals, bar, barWithSection } from "../test_utils.ts";
+import { Song } from "./song.ts";
 import { Key } from "../theory/key.ts";
 
 const songsDir = "./leadsheets";
@@ -34,25 +34,6 @@ for await (const songFile of Deno.readDir(`${songsDir}/`)) {
 }
 
 const emptyString = ``;
-const _emptyBar: Bar = {
-  chords: [],
-  openBarline: "|",
-  closeBarline: "|",
-  name: undefined,
-};
-
-function bar(...chords: string[]): Bar {
-  return {
-    ..._emptyBar,
-    chords: chords.map((str: string) =>
-      str === "N.C." ? str : ParseChord(str).value!
-    ),
-  };
-}
-
-function barWithSection(section: string, ...chords: string[]): Bar {
-  return { ...bar(...chords), name: section };
-}
 
 const songFixtures: Array<{
   title: string;

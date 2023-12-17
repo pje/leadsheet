@@ -1,16 +1,57 @@
-import {
-  type FlatOrSharpSymbol,
-  FlatSymbol,
-  NoteRegex,
-  SharpSymbol,
-} from "./notation.ts";
+import { type FlatOrSharpSymbol, FlatSymbol, SharpSymbol } from "./notation.ts";
 import { type PitchClass } from "./pitch_class.ts";
 import {
   GetLettersForPitchClass,
   type Letter,
   LetterToPitchClass,
+  transposeLetter,
 } from "./letter.ts";
 import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
+
+export class Key {
+  public tonic: Letter;
+  public flavor: KeyFlavor;
+
+  constructor(tonic: Letter, flavor?: KeyFlavor) {
+    this.flavor = flavor ? canonicalizeFlavor(flavor) : KeyFlavorMajor;
+    this.tonic = conventionalize(tonic, this.flavor);
+  }
+
+  transpose(halfSteps: number): Key {
+    const destinationLetter = transposeLetter(this.tonic, halfSteps);
+    return new Key(destinationLetter, this.flavor);
+  }
+
+  accidentalPreference(): FlatOrSharpSymbol | undefined {
+    if (
+      this.signature().length === 0 ||
+      this.flavor !== Major && this.flavor !== Minor
+    ) return undefined;
+
+    const relativeMajor = this.flavor === Minor
+      ? transposeLetter(this.tonic, 3)
+      : this.tonic;
+
+    const pc = LetterToPitchClass(relativeMajor);
+
+    return (ConventionallyFlatMajorKeys as Array<PitchClass>).includes(pc)
+      ? FlatSymbol
+      : SharpSymbol;
+  }
+
+  signature(): AccidentalList {
+    if (this.flavor !== Major && this.flavor !== Minor) return _0_Sharps; // unknown
+    const relativeMajor = this.flavor === Minor
+      ? transposeLetter(this.tonic, 3)
+      : this.tonic;
+
+    return MajorKeyToAccidentalList(relativeMajor);
+  }
+
+  format(): string {
+    return `${this.tonic}${this.flavor}`;
+  }
+}
 
 export const Major = "M";
 export const Minor = "m";
@@ -18,11 +59,29 @@ export const Minor = "m";
 export type KeyQualifier = typeof Major | typeof Minor;
 
 export const ConventionallyFlatMajorKeys = [
+  // <0> LetterToPitchClass("C"), // CM has no accidentals
   <1> LetterToPitchClass("Db"),
   <3> LetterToPitchClass("Eb"),
   <5> LetterToPitchClass("F"),
   <8> LetterToPitchClass("Ab"),
   <10> LetterToPitchClass("Bb"),
+];
+
+export const ConventionallySharpMinorKeys = [
+  <1> LetterToPitchClass("C#"),
+  <4> LetterToPitchClass("E"),
+  <6> LetterToPitchClass("F#"),
+  <8> LetterToPitchClass("G#"),
+  // <9> LetterToPitchClass("A"), // Am has no accidentals
+  <11> LetterToPitchClass("B"),
+];
+
+export const ConventionallyAmbiguousMajorKeys = [
+  <6> LetterToPitchClass("Gb"), // F#M/GbM is ambiguous
+];
+
+export const ConventionallyAmbiguousMinorKeys = [
+  <3> LetterToPitchClass("Eb"), // Ebm/D#m is ambiguous
 ];
 
 const SigAccidentalToSymbol = new Map<SigAccidental, FlatOrSharpSymbol>([
@@ -62,32 +121,11 @@ export type Mode =
 
 export const KeyFlavorMajor = "M" as const;
 export const KeyFlavorMinor = "m" as const;
-export type KeyFlavor = typeof KeyFlavorMajor | typeof KeyFlavorMinor | Mode;
-
-export class Key {
-  public tonic: Letter;
-  public flavor: KeyFlavor;
-
-  constructor(tonic: Letter, flavor?: KeyFlavor) {
-    this.tonic = tonic;
-    this.flavor = flavor || KeyFlavorMajor;
-  }
-}
-
-export function KeyFromString(s: string): Key | undefined {
-  const matches = s.match(NoteRegex);
-  const tonic = (matches && matches[1]) || undefined;
-  const rest = (matches && matches[2]) || undefined;
-
-  if (tonic) {
-    return new Key(
-      <Letter> tonic,
-      rest ? (<KeyFlavor> canonicalizeKeyQualifier(rest)) : undefined,
-    );
-  } else {
-    return undefined;
-  }
-}
+export type KeyFlavor =
+  | typeof KeyFlavorMajor
+  | typeof KeyFlavorMinor
+  | Mode
+  | string;
 
 export type KeySignatureMajorLetter = Extract<
   Letter,
@@ -155,7 +193,7 @@ export type AccidentalList =
   | typeof _5_Flats
   | typeof _6_Flats;
 
-export const KeySignatureToAccidentalList = (l: Letter): AccidentalList => {
+const MajorKeyToAccidentalList = (l: Letter): AccidentalList => {
   switch (l) {
     case "C":
     case "B#":
@@ -196,51 +234,53 @@ export const KeySignatureToAccidentalList = (l: Letter): AccidentalList => {
   }
 };
 
-export function canonicalizeKeyQualifier(
-  rawKeyQualifer: string,
-): KeyQualifier | string {
-  switch (rawKeyQualifer.trim()) {
-    case "":
-    case "M":
-    case "Major":
+function canonicalizeFlavor(str: string | undefined): KeyQualifier | string {
+  if (str === undefined || str === "" || str === "M") return Major;
+
+  switch (str.toLowerCase().trim()) {
     case "major":
     case "maj":
       return Major;
-    case "m":
-    case "Minor":
     case "minor":
     case "min":
+    case "m":
       return Minor;
     default:
-      return rawKeyQualifer;
+      return str;
   }
 }
 
-// e.g. It's more common to talk about "E" major than "Fb" major
-export function conventionalizeKey(key: Letter): Letter {
-  const degree = LetterToPitchClass(key);
+// e.g. "G# minor" is the same as "Ab minor", but we prefer G# because it has fewer accidentals
+function conventionalize(tonic: Letter, flavor: string): Letter {
+  if (flavor === Major) {
+    const isConventionallyFlat =
+      (ConventionallyFlatMajorKeys as Array<PitchClass>).includes(
+        LetterToPitchClass(tonic),
+      );
+    const [natural, flat, _sharp] =
+      GetLettersForPitchClass[LetterToPitchClass(tonic)];
+    return isConventionallyFlat ? (natural || flat) : natural ? natural : tonic;
+  } else if (flavor === Minor) {
+    const pc = LetterToPitchClass(tonic);
+    const isAmbiguous = (ConventionallyAmbiguousMinorKeys as Array<PitchClass>)
+      .includes(pc);
+    const isConventionallySharp =
+      (ConventionallySharpMinorKeys as Array<PitchClass>).includes(pc);
+    const [natural, flat, sharp] =
+      GetLettersForPitchClass[LetterToPitchClass(tonic)];
 
-  const [natural, flat, _sharp] = GetLettersForPitchClass[degree];
-
-  return ((ConventionallyFlatMajorKeys as Array<PitchClass>).includes(degree))
-    ? (natural || flat)
-    : natural
-    ? natural
-    : key;
+    if (natural) return natural;
+    if (isAmbiguous) return tonic;
+    return isConventionallySharp ? sharp : flat;
+  } else {
+    return tonic;
+  }
 }
 
-export function accidentalPreferenceForKey(key: Letter) {
-  const degree = LetterToPitchClass(key);
-  return (ConventionallyFlatMajorKeys as Array<PitchClass>).includes(degree)
-    ? FlatSymbol
-    : SharpSymbol;
-}
-
-export function htmlElementsForKeySignature(
-  keySignature: KeySignatureMajorLetter,
+export function htmlElementsForKey(
+  key: Key,
 ): Array<string> {
-  const accidentalList = KeySignatureToAccidentalList(keySignature)!;
-
+  const accidentalList = key.signature();
   return accidentalList.map(
     (e: SigAccidental) => `<div class="accidental ${e}">${e}</div>`,
   );

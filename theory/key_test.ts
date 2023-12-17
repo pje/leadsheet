@@ -1,48 +1,48 @@
 import {
-  canonicalizeKeyQualifier,
-  conventionalizeKey,
+  AccidentalList,
   Key,
   KeyFlavorMajor,
   KeyFlavorMinor,
-  KeyFromString,
-  type KeyQualifier,
   Major,
   Minor,
 } from "./key.ts";
-import { type Letter } from "./letter.ts";
 import { assertEquals } from "../test_utils.ts";
+import { FlatOrSharpSymbol, FlatSymbol, SharpSymbol } from "./notation.ts";
+import { Letter } from "./letter.ts";
 
-Deno.test(canonicalizeKeyQualifier.name, async (t) => {
-  const cases = new Map<string, KeyQualifier>([
-    ["", Major],
-    ["M", Major],
-    ["major", Major],
-    ["Major", Major],
-    ["maj", Major],
-    ["m", Minor],
-    ["minor", Minor],
-    ["Minor", Minor],
-    ["min", Minor],
+const someUnknownKeyName = "phrygian oblique or whatever";
+
+Deno.test("constructor: canonicalizes major/minor strings", async (t) => {
+  const cases = new Map<[Letter, string], Key>([
+    [["A", ""], new Key("A", Major)],
+    [["A", "M"], new Key("A", Major)],
+    [["A", "major"], new Key("A", Major)],
+    [["A", "Major"], new Key("A", Major)],
+    [["A", "maj"], new Key("A", Major)],
+    [["A", "m"], new Key("A", Minor)],
+    [["A", "minor"], new Key("A", Minor)],
+    [["A", "Minor"], new Key("A", Minor)],
+    [["A", "min"], new Key("A", Minor)],
   ]);
-  for (const [k, v] of cases) {
+  for (const [[tonic, flavor], expected] of cases) {
     await t.step(
-      `"${k}" ⇒ "${v}"`,
-      () => assertEquals(v, canonicalizeKeyQualifier(k)),
+      `"Key(${tonic}, ${flavor})" ⇒ "${JSON.stringify(expected)}"`,
+      () => assertEquals(expected, new Key(tonic, flavor)),
     );
   }
 });
 
-Deno.test(conventionalizeKey.name, async (t) => {
+Deno.test("constructor: conventionalizes Letters (implicit major)", async (t) => {
   const cases = new Map<Letter, Letter>([
     ["A", "A"],
-    ["A#", "Bb"],
-    ["Bb", "Bb"],
+    ["A#", "Bb"], // prefer BbM to A#M
+    ["Bb", "Bb"], // prefer BbM to A#M
     ["B", "B"],
     ["B#", "C"],
     ["Cb", "B"],
     ["C", "C"],
-    ["C#", "Db"],
-    ["Db", "Db"],
+    ["C#", "Db"], // prefer DbM to C#M
+    ["C#", "Db"], // prefer DbM to C#M
     ["D", "D"],
     ["D#", "Eb"],
     ["Eb", "Eb"],
@@ -50,30 +50,104 @@ Deno.test(conventionalizeKey.name, async (t) => {
     ["E#", "F"],
     ["Fb", "E"],
     ["F", "F"],
-    ["F#", "F#"], // ambiguous
-    ["Gb", "Gb"], // ambiguous
+    ["F#", "F#"], // ambiguous, so no transform
+    ["Gb", "Gb"], // ambiguous, so no transform
     ["G", "G"],
     ["G#", "Ab"],
     ["Ab", "Ab"],
   ]);
+  for (const [tonic, expectedTonic] of cases) {
+    const key = new Key(tonic);
+    await t.step(
+      `new Key(${tonic}).tonic ⇒ "${expectedTonic}"`,
+      () => assertEquals(expectedTonic, key.tonic),
+    );
+  }
+});
 
-  for (const [k, v] of cases) {
+Deno.test("constructor: conventionalizes Letters (explicit minor)", async (t) => {
+  const cases = new Map<[Letter, string], Letter>([
+    [["A", "m"], "A"],
+    [["A#", "m"], "Bb"], // prefer Bbm to A#m
+    [["Bb", "m"], "Bb"],
+    [["B", "m"], "B"],
+    [["B#", "m"], "C"],
+    [["Cb", "m"], "B"],
+    [["C", "m"], "C"],
+    [["C#", "m"], "C#"],
+    [["Db", "m"], "C#"],
+    [["D", "m"], "D"],
+    [["D#", "m"], "D#"], // ambiguous, so no transform
+    [["Eb", "m"], "Eb"], // ambiguous, so no transform
+    [["E", "m"], "E"],
+    [["E#", "m"], "F"],
+    [["Fb", "m"], "E"],
+    [["F", "m"], "F"],
+    [["F#", "m"], "F#"],
+    [["Gb", "m"], "F#"],
+    [["G", "m"], "G"],
+    [["G#", "m"], "G#"],
+    [["Ab", "m"], "G#"], // prefer G#m to Abm
+  ]);
+  for (const [[tonic, flavor], expectedTonic] of cases) {
+    const key = new Key(tonic, flavor);
+    await t.step(
+      `new Key(${tonic}).tonic ⇒ "${expectedTonic}"`,
+      () => assertEquals(expectedTonic, key.tonic),
+    );
+  }
+});
+
+Deno.test(Key.prototype.transpose.name, async (t) => {
+  const cases = new Map<[Key, number], Key>([
+    [[new Key("A", KeyFlavorMajor), 1], new Key("A#", KeyFlavorMajor)],
+    [
+      [new Key("A", someUnknownKeyName), 2],
+      new Key("B", someUnknownKeyName),
+    ],
+  ]);
+
+  for (const [[k, halfSteps], v] of cases) {
     await t.step(`${k} ⇒ ${v}`, () => {
-      assertEquals(v, conventionalizeKey(k));
+      assertEquals(v, k.transpose(halfSteps));
     });
   }
 });
 
-Deno.test(KeyFromString.name, async (t) => {
-  const cases = new Map<string, Key>([
-    ["A", new Key("A", KeyFlavorMajor)],
-    ["AM", new Key("A", KeyFlavorMajor)],
-    ["Am", new Key("A", KeyFlavorMinor)],
+Deno.test(Key.prototype.accidentalPreference.name, async (t) => {
+  const cases = new Map<Key, FlatOrSharpSymbol | undefined>([
+    [new Key("C", KeyFlavorMajor), undefined],
+    [new Key("A", KeyFlavorMinor), undefined],
+    [new Key("A", KeyFlavorMajor), SharpSymbol],
+    [new Key("C", KeyFlavorMinor), FlatSymbol],
+    [new Key("G#", KeyFlavorMinor), SharpSymbol], // G#m
+    [new Key("Ab", KeyFlavorMinor), SharpSymbol], // G#m is more conventional than Abm (five sharps vs six flats), so we should pick G#m
+    [new Key("A", someUnknownKeyName), undefined], // better to show no sharps or flats if we don't explicitly know the scale
   ]);
 
-  for (const [k, v] of cases) {
-    await t.step(`${k} ⇒ ${v}`, () => {
-      assertEquals(v, KeyFromString(k));
+  for (const [k, expected] of cases) {
+    await t.step(`${k.format()} ⇒ ${expected}`, () => {
+      assertEquals(expected, k.accidentalPreference());
+    });
+  }
+});
+
+Deno.test(Key.prototype.signature.name, async (t) => {
+  const cases = new Map<Key, AccidentalList>([
+    [new Key("C", KeyFlavorMajor), []],
+    [new Key("A", KeyFlavorMinor), []],
+    [new Key("A", KeyFlavorMajor), ["F#", "C#", "G#"]],
+    [new Key("F#", KeyFlavorMinor), ["F#", "C#", "G#"]],
+    [new Key("C", KeyFlavorMinor), ["Bb", "Eb", "Ab"]],
+    [new Key("G#", KeyFlavorMinor), ["F#", "C#", "G#", "D#", "A#"]], // G#m
+    [new Key("Ab", KeyFlavorMinor), ["F#", "C#", "G#", "D#", "A#"]], // G#m is more conventional than Abm (five sharps vs six flats), so we should pick G#m
+
+    [new Key("A", someUnknownKeyName), []], // better to show no sharps or flats if we don't explicitly know the scale
+  ]);
+
+  for (const [k, expected] of cases) {
+    await t.step(`${JSON.stringify(k)} ⇒ ${expected}`, () => {
+      assertEquals(expected, k.signature());
     });
   }
 });

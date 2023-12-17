@@ -1,16 +1,7 @@
 import { groupsOf } from "../lib/array.ts";
 import { Chord, Major, Minor, type Quality } from "../theory/chord.ts";
-import {
-  accidentalPreferenceForKey,
-  canonicalizeKeyQualifier,
-  conventionalizeKey,
-  Key,
-  KeyFlavorMajor,
-  KeyFlavorMinor,
-  KeyFromString,
-  Minor as MinorKey,
-} from "../theory/key.ts";
-import { transposeLetter } from "../theory/letter.ts";
+import { Key, KeyFlavorMajor, KeyFlavorMinor } from "../theory/key.ts";
+import { SharpSymbol } from "../theory/notation.ts";
 
 export const MetadataKeys = [
   "title",
@@ -23,7 +14,7 @@ export const MetadataKeys = [
 
 export type MetadataKeysType = typeof MetadataKeys[number];
 
-type Metadata = {
+export type Metadata = {
   [K in MetadataKeysType]?: K extends "key" ? Key | undefined
     : string | undefined;
 };
@@ -35,40 +26,25 @@ export class Song {
   public year: string | undefined;
   public sig: string | undefined;
   public key: Key | undefined;
-  public bars: Array<Bar>;
+  public bars: Bar[];
 
-  constructor(
-    bars?: Array<Bar>,
-    metadata?: Metadata,
-  ) {
-    this.bars = bars || [];
-
+  constructor(bars: Bar[], metadata?: Metadata) {
+    this.bars = bars;
     this.title = metadata?.title;
     this.artist = metadata?.artist;
     this.album = metadata?.album;
     this.year = metadata?.year;
     this.sig = metadata?.sig;
-    this.key = metadata?.key;
+    this.key = metadata?.key || this.guessKey();
   }
 
   // Returns a new Song transposed by `halfSteps`
   transpose(halfSteps: number): Song {
     const song = this.dup();
 
-    const { tonic, flavor } = song.guessKey()!;
+    song.key = song.key?.transpose(halfSteps);
 
-    const destinationKey = conventionalizeKey(
-      transposeLetter(tonic, halfSteps),
-    );
-
-    const destinationRelativeMajorKey =
-      canonicalizeKeyQualifier(flavor) == MinorKey
-        ? conventionalizeKey(transposeLetter(destinationKey, 3))
-        : destinationKey;
-
-    const flatsOrSharps = accidentalPreferenceForKey(
-      destinationRelativeMajorKey,
-    );
+    const flatsOrSharps = song.key?.accidentalPreference() || SharpSymbol;
 
     song.bars = song.bars.map((bar) => {
       bar.chords = bar.chords.map((chordish) => {
@@ -83,15 +59,11 @@ export class Song {
       return bar;
     });
 
-    song.key = KeyFromString(`${destinationKey}${flavor}`);
-
     return song;
   }
 
   formatKeyName(): string {
-    const { tonic, flavor } = this.guessKey() || {};
-
-    return tonic && flavor ? `${tonic}${flavor}` : "?";
+    return this.key?.format() || UnknownKey;
   }
 
   // returns a new Song, value-identical to this one
@@ -165,17 +137,17 @@ export class Song {
     return accumulator;
   }
 
-  guessKey(): Key | undefined {
+  private guessKey(): Key | undefined {
     if (this.key) return this.key;
-    const c = this.getFirstChord();
-    if (!c) return undefined;
+    const c = this.getFirstChord()!;
+    if (c === undefined) return undefined;
 
-    if (c.quality === Major) {
-      return new Key(c.tonic, KeyFlavorMajor);
-    } else if (c && c.quality === Minor) {
-      return new Key(c.tonic, KeyFlavorMinor);
-    } else {
-      return undefined;
+    switch (c.quality) {
+      case Minor:
+        return new Key(c.tonic, KeyFlavorMinor);
+      case Major:
+      default:
+        return new Key(c.tonic, KeyFlavorMajor);
     }
   }
 
@@ -208,6 +180,8 @@ export const AllRepeatedChordSymbols = [
   "-",
   "𝄎",
 ];
+
+export const UnknownKey = "?" as const;
 
 export type Bar = {
   chords: Array<Chordish>;

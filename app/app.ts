@@ -17,13 +17,7 @@ import {
   Song,
 } from "../parser/song.ts";
 import { type State } from "./state.ts";
-import {
-  conventionalizeKey,
-  Key,
-  KeySignatureToAccidentalList,
-  SigAccidental,
-  SigAccidentalToSymbol,
-} from "../theory/key.ts";
+import { Key, SigAccidental, SigAccidentalToSymbol } from "../theory/key.ts";
 
 const state: State = {
   song: undefined,
@@ -169,9 +163,7 @@ function renderClefAndSignatures(
 
   let keySignatureEl = "";
   if (song.key && state.settings.featureFlags.keySignature.enabled) {
-    const accidentals = KeySignatureToAccidentalList(
-      conventionalizeKey(song.key.tonic),
-    );
+    const accidentals = song.key.signature();
     const accidentalToElement = (a: SigAccidental) => {
       const classes = [
         "accidental",
