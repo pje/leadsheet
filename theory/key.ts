@@ -1,8 +1,8 @@
 import { type FlatOrSharpSymbol, FlatSymbol, SharpSymbol } from "./notation.ts";
 import { type PitchClass } from "./pitch_class.ts";
 import {
-  GetLettersForPitchClass,
   type Letter,
+  LettersForPitchClass,
   LetterToPitchClass,
   transposeLetter,
 } from "./letter.ts";
@@ -55,7 +55,6 @@ export class Key {
 
 export const Major = "M";
 export const Minor = "m";
-
 export type KeyQualifier = typeof Major | typeof Minor;
 
 export const ConventionallyFlatMajorKeys = [
@@ -84,7 +83,7 @@ export const ConventionallyAmbiguousMinorKeys = [
   <3> LetterToPitchClass("Eb"), // Ebm/D#m is ambiguous
 ];
 
-const SigAccidentalToSymbol = new Map<SigAccidental, FlatOrSharpSymbol>([
+export const SigAccidentalToSymbol = new Map<SigAccidental, FlatOrSharpSymbol>([
   ["F#", SharpSymbol],
   ["C#", SharpSymbol],
   ["G#", SharpSymbol],
@@ -100,8 +99,6 @@ const SigAccidentalToSymbol = new Map<SigAccidental, FlatOrSharpSymbol>([
   ["Cb", FlatSymbol],
   ["Fb", FlatSymbol],
 ]);
-
-export { SigAccidentalToSymbol };
 
 export const Ionian = "ionian" as const;
 export const Dorian = "dorian" as const;
@@ -252,22 +249,21 @@ function canonicalizeFlavor(str: string | undefined): KeyQualifier | string {
 
 // e.g. "G# minor" is the same as "Ab minor", but we prefer G# because it has fewer accidentals
 function conventionalize(tonic: Letter, flavor: string): Letter {
+  const pc = LetterToPitchClass(tonic);
+
   if (flavor === Major) {
     const isConventionallyFlat =
-      (ConventionallyFlatMajorKeys as Array<PitchClass>).includes(
-        LetterToPitchClass(tonic),
-      );
+      (ConventionallyFlatMajorKeys as Array<PitchClass>).includes(pc);
     const [natural, flat, _sharp] =
-      GetLettersForPitchClass[LetterToPitchClass(tonic)];
+      LettersForPitchClass[LetterToPitchClass(tonic)];
     return isConventionallyFlat ? (natural || flat) : natural ? natural : tonic;
   } else if (flavor === Minor) {
-    const pc = LetterToPitchClass(tonic);
     const isAmbiguous = (ConventionallyAmbiguousMinorKeys as Array<PitchClass>)
       .includes(pc);
     const isConventionallySharp =
       (ConventionallySharpMinorKeys as Array<PitchClass>).includes(pc);
     const [natural, flat, sharp] =
-      GetLettersForPitchClass[LetterToPitchClass(tonic)];
+      LettersForPitchClass[LetterToPitchClass(tonic)];
 
     if (natural) return natural;
     if (isAmbiguous) return tonic;

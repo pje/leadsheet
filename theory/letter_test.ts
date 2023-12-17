@@ -1,8 +1,8 @@
 import { assertArrayIncludes } from "https://deno.land/std@0.208.0/assert/assert_array_includes.ts";
 import {
   AllLetters,
-  GetLettersForPitchClass,
   type Letter,
+  LettersForPitchClass,
   LetterToPitchClass,
   transposeLetter,
 } from "./letter.ts";
@@ -127,10 +127,10 @@ Deno.test(transposeLetter.name, async (t) => {
   }
 });
 
-Deno.test(`${GetLettersForPitchClass} sanity checks`, async (t) => {
+Deno.test(`${LettersForPitchClass} sanity checks`, async (t) => {
   for (const l of AllLetters) {
     await t.step(`${l} maps to itself`, () => {
-      const result = GetLettersForPitchClass[LetterToPitchClass(l)];
+      const result = LettersForPitchClass[LetterToPitchClass(l)];
       assertArrayIncludes<string>(<Array<string>> Object.values(result), [l]);
     });
   }

@@ -79,7 +79,7 @@ export function transposeLetter(
 
   const currentPitchClass = LetterToPitchClass(noteName)!;
   const newPitchClass = transposePitchClass(currentPitchClass, halfSteps);
-  const [natural, flat, sharp] = GetLettersForPitchClass[newPitchClass]!;
+  const [natural, flat, sharp] = LettersForPitchClass[newPitchClass]!;
 
   if (natural) return natural;
 
@@ -106,7 +106,7 @@ export type LetterSpelledWithOneFlat =
 
 export type LetterSpelledOnlyNatural = "G" | "D" | "A";
 
-export const GetLettersForPitchClass = {
+export const LettersForPitchClass = {
   0: ["C", undefined, "B#"],
   1: [undefined, "Db", "C#"],
   2: ["D", undefined, undefined],
