@@ -1,13 +1,4 @@
-import { NoteRegex } from "../theory/notation.ts";
-
-export function replaceDupesWithRepeats(chords: Array<string>): Array<string> {
-  let previous: string | undefined = undefined;
-  return chords.map((c) => {
-    const result = !!c && c == previous ? "/" : c;
-    previous = c;
-    return result;
-  });
-}
+const NoteRegex = /^([A-G]{1}(?:[#♯b♭𝄪𝄫])?)(.*)$/;
 
 export function unicodeifyMusicalSymbols(s: string) {
   let [note, flavor] = s.split(NoteRegex).filter(String);

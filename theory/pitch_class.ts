@@ -4,11 +4,10 @@
 // a.k.a. "Integer Notation"
 //
 // 👉 https://en.wikipedia.org/wiki/Pitch_class
-export type PitchClass = (typeof AllPitchClasses)[number];
-export const AllPitchClasses = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] as const;
+export type PitchClass = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
 
 export function transposePitchClass(pc: PitchClass, halfSteps: number) {
-  return <PitchClass> modulo(pc + halfSteps, AllPitchClasses.length);
+  return <PitchClass> modulo(pc + halfSteps, 12);
 }
 
 // in JS `%` actually means the "remainder" operator.
