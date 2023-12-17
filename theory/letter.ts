@@ -1,74 +1,32 @@
-import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
 import { type PitchClass, transposePitchClass } from "./pitch_class.ts";
 import { type FlatOrSharpSymbol, FlatSymbol, SharpSymbol } from "./notation.ts";
 
-export const AllLetters = [
-  "A",
-  "A#",
-  "Bb",
-  "B",
-  "B#",
-  "Cb",
-  "C",
-  "C#",
-  "Db",
-  "D",
-  "D#",
-  "Eb",
-  "E",
-  "E#",
-  "Fb",
-  "F",
-  "F#",
-  "Gb",
-  "G",
-  "G#",
-  "Ab",
-] as const;
+type A2G = "A" | "B" | "C" | "D" | "E" | "F" | "G";
+export type Letter = `${A2G}${"" | "#" | "b"}`;
 
-export type Letter = (typeof AllLetters)[number];
-
-export function LetterToPitchClass(key: Letter): PitchClass {
-  switch (key) {
-    case "B#":
-    case "C":
-      return 0;
-    case "Db":
-    case "C#":
-      return 1;
-    case "D":
-      return 2;
-    case "Eb":
-    case "D#":
-      return 3;
-    case "E":
-    case "Fb":
-      return 4;
-    case "E#":
-    case "F":
-      return 5;
-    case "Gb":
-    case "F#":
-      return 6;
-    case "G":
-      return 7;
-    case "Ab":
-    case "G#":
-      return 8;
-    case "A":
-      return 9;
-    case "Bb":
-    case "A#":
-      return 10;
-    case "Cb":
-    case "B":
-      return 11;
-    default:
-      // just here to get static exhaustiveness checking (TS 5.x)
-      // if we add another value to Letter, we will start getting compile-time errors here
-      nonexhaustiveSwitchGuard(key);
-  }
-}
+export const LetterToPitchClass: Record<Letter, PitchClass> = {
+  "B#": 0,
+  "C": 0,
+  "Db": 1,
+  "C#": 1,
+  "D": 2,
+  "Eb": 3,
+  "D#": 3,
+  "E": 4,
+  "Fb": 4,
+  "E#": 5,
+  "F": 5,
+  "Gb": 6,
+  "F#": 6,
+  "G": 7,
+  "Ab": 8,
+  "G#": 8,
+  "A": 9,
+  "Bb": 10,
+  "A#": 10,
+  "Cb": 11,
+  "B": 11,
+};
 
 export function transposeLetter(
   noteName: Letter,
@@ -77,7 +35,7 @@ export function transposeLetter(
 ): Letter {
   if (halfSteps == 0) return noteName;
 
-  const currentPitchClass = LetterToPitchClass(noteName)!;
+  const currentPitchClass = LetterToPitchClass[noteName];
   const newPitchClass = transposePitchClass(currentPitchClass, halfSteps);
   const [natural, flat, sharp] = LettersForPitchClass[newPitchClass]!;
 

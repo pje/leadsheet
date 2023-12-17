@@ -32,7 +32,7 @@ export class Key {
       ? transposeLetter(this.tonic, 3)
       : this.tonic;
 
-    const pc = LetterToPitchClass(relativeMajor);
+    const pc = LetterToPitchClass[relativeMajor];
 
     return (SharpMajorKeys as Array<PitchClass>).includes(pc)
       ? SharpSymbol
@@ -59,28 +59,28 @@ export type KeyQualifier = typeof Major | typeof Minor;
 
 // Keys that are conventionally expressed in sharps instead of flats
 export const SharpMajorKeys = [
-  // <0> LetterToPitchClass("C"), // CM has no accidentals
-  <2> LetterToPitchClass("D"),
-  <4> LetterToPitchClass("E"),
-  <7> LetterToPitchClass("G"),
-  <9> LetterToPitchClass("A"),
-  <11> LetterToPitchClass("B"),
+  // <0> LetterToPitchClass["C"], // CM has no accidentals
+  <2> LetterToPitchClass["D"],
+  <4> LetterToPitchClass["E"],
+  <7> LetterToPitchClass["G"],
+  <9> LetterToPitchClass["A"],
+  <11> LetterToPitchClass["B"],
 ];
 export const SharpMinorKeys = [
-  <1> LetterToPitchClass("C#"),
-  <4> LetterToPitchClass("E"),
-  <6> LetterToPitchClass("F#"),
-  <8> LetterToPitchClass("G#"),
-  // <9> LetterToPitchClass("A"), // Am has no accidentals
-  <11> LetterToPitchClass("B"),
+  <1> LetterToPitchClass["C#"],
+  <4> LetterToPitchClass["E"],
+  <6> LetterToPitchClass["F#"],
+  <8> LetterToPitchClass["G#"],
+  // <9> LetterToPitchClass["A"], // Am has no accidentals
+  <11> LetterToPitchClass["B"],
 ];
 
 // Minor keys that are conventionally expressed in sharps instead of flats
 export const AmbiguousMajorKeys = [
-  <6> LetterToPitchClass("Gb"), // F#M/GbM is ambiguous
+  <6> LetterToPitchClass["Gb"], // F#M/GbM is ambiguous
 ];
 export const AmbiguousMinorKeys = [
-  <3> LetterToPitchClass("Eb"), // Ebm/D#m is ambiguous
+  <3> LetterToPitchClass["Eb"], // Ebm/D#m is ambiguous
 ];
 
 export const SigAccidentalToSymbol = new Map<SigAccidental, FlatOrSharpSymbol>([
@@ -251,7 +251,7 @@ function canonicalizeFlavor(str: string | undefined): KeyQualifier | string {
 function conventionalize(tonic: Letter, flavor: string): Letter {
   if (flavor !== Minor && flavor !== Major) return tonic;
 
-  const pc = LetterToPitchClass(tonic);
+  const pc = LetterToPitchClass[tonic];
   const [natural, flat, sharp] = LettersForPitchClass[pc];
 
   if (natural) return natural;
