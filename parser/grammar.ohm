@@ -153,7 +153,9 @@ Song <: Chord {
 
   Bars = barline (Chordish+ barline)+
 
-  Chordish = chord | NoChord | RepeatPreviousChord
+  Chordish = chord | OptionalChord | NoChord | RepeatPreviousChord
+
+  OptionalChord = "(" spaceNoNL* chord spaceNoNL* ")"
 
   Section = SectionName colon
   SectionName = (~colon ~"|" any)+

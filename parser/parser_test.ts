@@ -1,11 +1,9 @@
 import {
   assert,
   assertFalse,
-  fail,
 } from "https://deno.land/std@0.208.0/assert/mod.ts";
 import { ParseChord, ParseSong } from "./parser.ts";
 import { type Letter } from "../theory/letter.ts";
-import { type Result } from "../lib/result.ts";
 import {
   Augmented,
   Chord,
@@ -17,7 +15,12 @@ import {
   Power,
   Suspended,
 } from "../theory/chord.ts";
-import { assertEquals, bar, barWithSection } from "../test_utils.ts";
+import {
+  assertEquals,
+  bar,
+  barWithSection,
+  parserResultOrFail,
+} from "../test_utils.ts";
 import { Song } from "./song.ts";
 import { Key } from "../theory/key.ts";
 
@@ -49,6 +52,11 @@ const songFixtures: Array<{
     title: "oneChord",
     contents: `| C |`,
     expected: new Song([bar("C")], { key: new Key("C") }),
+  },
+  {
+    title: "optionalChord",
+    contents: `| (C) |`,
+    expected: new Song([bar("(C)")], { key: new Key("C") }),
   },
   {
     title: "Sectional",
@@ -324,14 +332,5 @@ function assertValidSong(str: string) {
     assert(true); // Great Job!™
   } else {
     assert(false);
-  }
-}
-
-function parserResultOrFail<T>(result: Result<T>): T {
-  if (result.error) {
-    fail(`grammar failed to match!
-  failure: ${result.error.message}`);
-  } else {
-    return result.value;
   }
 }

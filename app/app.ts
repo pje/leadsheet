@@ -15,12 +15,17 @@ import {
   type Chordish,
   type ChordishQuality,
   NoChord,
-  printChordish,
+  NoChordTypeName,
+  OptionalChordTypeName,
   RepeatedChordSymbol,
+  RepeatPreviousChord,
+  RepeatPreviousChordTypeName,
   type Song,
 } from "../parser/song.ts";
 import { type State } from "./state.ts";
 import { Key, SigAccidental, SigAccidentalToSymbol } from "../theory/key.ts";
+import { ChordTypeName } from "../theory/chord.ts";
+import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
 
 const state: State = {
   song: undefined,
@@ -111,8 +116,8 @@ function renderBars(
   song: Readonly<Song>,
   rootElement: HTMLElement = document.getElementById("root")!,
 ) {
-  let previousChord: Chordish | undefined = undefined;
-  let previousChordColorClass: ChordishQuality | undefined = undefined;
+  let previousChord: Chordish = new NoChord();
+  let previousChordColorClass: ChordishQuality = "no-chord";
   let previousSection: string | undefined = undefined;
 
   const songElement = rootElement.querySelector("#song")!;
@@ -121,11 +126,19 @@ function renderBars(
   song.bars.map((bar) => {
     const chords = bar.chords.map((chordish) => {
       const formattedChordName = _formatChordName(chordish);
-      const [result, colorClass] = previousChord && previousChordColorClass &&
-          _formatChordName(previousChord) === formattedChordName &&
-          previousChord !== NoChord
-        ? [RepeatedChordSymbol, previousChordColorClass]
-        : [formattedChordName, _getColorClass(chordish)];
+
+      let colorClass: ChordishQuality;
+      let result: string;
+
+      if (chordish.type === RepeatPreviousChordTypeName) {
+        colorClass = previousChordColorClass;
+        result = _formatChordName(previousChord);
+      } else {
+        colorClass = _getColorClass(chordish);
+        result = formattedChordName === _formatChordName(previousChord)
+          ? RepeatedChordSymbol
+          : formattedChordName;
+      }
 
       previousChord = chordish;
       previousChordColorClass = colorClass;
@@ -289,18 +302,26 @@ function _getTransposedAmountEl() {
 }
 
 function _formatChordName(c: Readonly<Chordish>): string {
-  const printed = printChordish.bind(c)();
+  const printed = c.print();
   return state.settings.featureFlags.unicodeChordSymbols.enabled
     ? unicodeifyMusicalSymbols(printed)
     : printed;
 }
 
-function _getColorClass(c: Readonly<Chordish>): ChordishQuality {
-  switch (c) {
-    case NoChord:
+type ChordishWithoutRepeats = Exclude<Chordish, RepeatPreviousChord>;
+
+function _getColorClass(c: Readonly<ChordishWithoutRepeats>): ChordishQuality {
+  const { type } = c;
+
+  switch (type) {
+    case NoChordTypeName:
       return "no-chord";
-    default:
+    case OptionalChordTypeName:
+      return c.chord.quality;
+    case ChordTypeName:
       return c.quality;
+    default:
+      nonexhaustiveSwitchGuard(type);
   }
 }
 

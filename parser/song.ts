@@ -1,7 +1,14 @@
 import { groupsOf } from "../lib/array.ts";
-import { type Chord, Major, Minor, type Quality } from "../theory/chord.ts";
+import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
+import {
+  Chord,
+  ChordTypeName,
+  Major,
+  Minor,
+  type Quality,
+} from "../theory/chord.ts";
 import { Key, KeyFlavorMajor, KeyFlavorMinor } from "../theory/key.ts";
-import { SharpSymbol } from "../theory/notation.ts";
+import { FlatOrSharpSymbol, SharpSymbol } from "../theory/notation.ts";
 
 export const MetadataKeys = [
   "title",
@@ -48,8 +55,10 @@ export class Song {
 
     song.bars = song.bars.map((bar) => {
       bar.chords = bar.chords.map((chordish) => {
-        switch (chordish) {
-          case NoChord:
+        const { type } = chordish;
+        switch (type) {
+          case NoChordTypeName:
+          case RepeatPreviousChordTypeName:
             return chordish;
           default:
             return chordish.transpose(halfSteps, flatsOrSharps);
@@ -99,24 +108,32 @@ export class Song {
       const lines: string[][] = [[""]];
 
       groupsOf(bars, 4).forEach((barGroup: Bar[]) => {
-        const line = [];
+        const line: string[] = [];
         let previousBarline: string | undefined = undefined;
 
         for (const bar of barGroup) {
           if (previousBarline != bar.openBarline) line.push(bar.openBarline);
 
           for (const chordish of bar.chords) {
-            switch (chordish) {
-              case NoChord: {
-                line.push(NoChord);
+            const { type } = chordish;
+            switch (type) {
+              case RepeatPreviousChordTypeName:
+              case NoChordTypeName:
+              case OptionalChordTypeName:
+                line.push(chordish.print());
                 break;
-              }
-              default: {
+              case ChordTypeName: {
                 const c = chordish.print();
-                line.push(c === previousChord ? "%" : c);
-                previousChord = c;
+                if (c === previousChord) {
+                  line.push(RepeatedChordSymbol);
+                } else {
+                  line.push(c);
+                  previousChord = c;
+                }
                 break;
               }
+              default:
+                nonexhaustiveSwitchGuard(type);
             }
           }
 
@@ -141,13 +158,14 @@ export class Song {
     if (this.key) return this.key;
     const c = this.getFirstChord()!;
     if (c === undefined) return undefined;
+    const { quality, tonic } = c.type === OptionalChordTypeName ? c.chord : c;
 
-    switch (c.quality) {
+    switch (quality) {
       case Minor:
-        return new Key(c.tonic, KeyFlavorMinor);
+        return new Key(tonic, KeyFlavorMinor);
       case Major:
       default:
-        return new Key(c.tonic, KeyFlavorMajor);
+        return new Key(tonic, KeyFlavorMajor);
     }
   }
 
@@ -161,17 +179,70 @@ export class Song {
     return { numerator, denominator };
   }
 
-  private getFirstChord(): Chord | undefined {
-    for (const chordish of this.bars![0]!.chords) {
-      if (chordish === NoChord) continue;
-      return chordish;
-    }
-    return undefined;
+  private getFirstChord(): Chord | OptionalChord | undefined {
+    return this.bars[0]?.chords?.find(
+      (c): c is Chord | OptionalChord =>
+        c.type === SongChordTypeName || c.type === OptionalChordTypeName,
+    );
   }
 }
 
-export const NoChord = "N.C." as const;
-export type Chordish = Chord | typeof NoChord;
+export const SongChordTypeName = "chord" as const;
+export const OptionalChordTypeName = "optionalChord" as const;
+export const NoChordTypeName = "noChord" as const;
+export const RepeatPreviousChordTypeName = "repeatPreviousChord" as const;
+
+export class OptionalChord {
+  public type = OptionalChordTypeName;
+  public chord: Chord;
+
+  constructor(chord: Chord) {
+    this.chord = chord;
+  }
+
+  dup() {
+    return new OptionalChord(this.chord.dup());
+  }
+
+  transpose(halfSteps: number, flatsOrSharps: FlatOrSharpSymbol) {
+    return new OptionalChord(this.chord.transpose(halfSteps, flatsOrSharps));
+  }
+
+  print() {
+    return `(${this.chord.print()})`;
+  }
+}
+
+export class NoChord {
+  public type = NoChordTypeName;
+
+  dup() {
+    return new NoChord();
+  }
+
+  print(): string {
+    return "N.C.";
+  }
+}
+
+export class RepeatPreviousChord {
+  public type = RepeatPreviousChordTypeName;
+
+  dup() {
+    return new RepeatPreviousChord();
+  }
+
+  print(): string {
+    return RepeatedChordSymbol;
+  }
+}
+
+export type Chordish =
+  | Chord
+  | OptionalChord
+  | NoChord
+  | RepeatPreviousChord;
+
 export type ChordishQuality = Quality | "no-chord";
 export const RepeatedChordSymbol = "%";
 export const AllRepeatedChordSymbols = [
@@ -206,12 +277,3 @@ const SingleBarline = "|";
 type singleOrDoubleBarline =
   | typeof DoubleBarline
   | typeof SingleBarline;
-
-export function printChordish(this: Readonly<Chordish>): string {
-  switch (this) {
-    case NoChord:
-      return NoChord;
-    default:
-      return this.print();
-  }
-}

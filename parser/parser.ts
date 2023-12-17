@@ -15,6 +15,7 @@ import {
   Add9,
   Augmented,
   Chord,
+  ChordTypeName,
   Diminished,
   Dominant,
   type Extent,
@@ -26,18 +27,23 @@ import {
   Suspended,
 } from "../theory/chord.ts";
 import {
-  AllRepeatedChordSymbols,
   type Bar,
   type Barline,
   type Chordish,
   type Metadata,
   type MetadataKeysType,
   NoChord,
+  NoChordTypeName,
+  OptionalChord,
+  OptionalChordTypeName,
+  RepeatPreviousChord,
+  RepeatPreviousChordTypeName,
   Song,
 } from "./song.ts";
 import { Err, Ok, type Result } from "../lib/result.ts";
 import { Key } from "../theory/key.ts";
 import { type Letter } from "../theory/letter.ts";
+import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
 
 class ChordActions implements ChordActionDict<void> {
   chord = (root: NNode, flavor: NNode) =>
@@ -141,22 +147,27 @@ class SongActions extends ChordActions implements SongActionDict<void> {
 
   Bars = (barline: NNode, barChords: INode, closingBarlines: INode) => {
     const bars: Bar[] = [];
-    let previousChord: Chordish | undefined = undefined;
+    let previousChord: Chord | OptionalChord | NoChord | undefined = undefined;
     let previousBarline = barline.sourceString;
 
     zip(barChords.children, closingBarlines.children).forEach(
       ([barNode, closingBarlineNode]) => {
         const chords = barNode.children.map(
           (chordishNode) => {
-            const chordString = chordishNode.sourceString.trim();
+            const chordish = <Chordish> chordishNode.eval();
+            const { type } = chordish;
 
-            if (chordString === NoChord) {
-              previousChord = NoChord;
-            } else if (!isRepeat(chordString)) {
-              previousChord = chordishNode.eval();
+            switch (type) {
+              case RepeatPreviousChordTypeName:
+                return previousChord?.dup() || chordish;
+              case ChordTypeName:
+              case OptionalChordTypeName:
+              case NoChordTypeName:
+                previousChord = chordish.dup();
+                return chordish.dup();
+              default:
+                nonexhaustiveSwitchGuard(type);
             }
-
-            return previousChord === NoChord ? NoChord : previousChord!.dup();
           },
         );
 
@@ -177,6 +188,17 @@ class SongActions extends ChordActions implements SongActionDict<void> {
 
     return bars;
   };
+
+  NoChord = (_0: TNode) => new NoChord();
+  RepeatPreviousChord = (_0: TNode) => new RepeatPreviousChord();
+
+  OptionalChord = (
+    _0: TNode,
+    _1: INode,
+    chordNode: NNode,
+    _3: INode,
+    _4: TNode,
+  ): OptionalChord => new OptionalChord(chordNode.eval());
 
   metaString = (
     arg0: Node,
@@ -226,10 +248,6 @@ export function ParseSong(rawSong: string): Result<Song> {
   const song: Song = semantics(matchResult).eval();
   return Ok(song);
 }
-
-const isRepeat = (s: string) => {
-  return AllRepeatedChordSymbols.includes(s);
-};
 
 const isImplicitMajor = (quality: INode, extent: INode, alterations: INode) => (
   !quality.sourceString &&

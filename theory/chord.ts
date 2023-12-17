@@ -2,7 +2,11 @@ import { type Letter, transposeLetter } from "./letter.ts";
 import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
 import { type FlatOrSharpSymbol } from "./notation.ts";
 
+export const ChordTypeName = "chord" as const;
+
 export class Chord {
+  public type = ChordTypeName;
+
   public tonic: Letter;
   public quality: Quality;
   public extent?: Extent;

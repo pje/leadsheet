@@ -66,6 +66,7 @@ export interface SongActionDict<T> extends ChordActionDict<T> {
   Sections?: (this: NonterminalNode, arg0: IterationNode, arg1: IterationNode) => T;
   Bars?: (this: NonterminalNode, arg0: NonterminalNode, arg1: IterationNode, arg2: IterationNode) => T;
   Chordish?: (this: NonterminalNode, arg0: NonterminalNode) => T;
+  OptionalChord?: (this: NonterminalNode, arg0: TerminalNode, arg1: IterationNode, arg2: NonterminalNode, arg3: IterationNode, arg4: TerminalNode) => T;
   Section?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode) => T;
   SectionName?: (this: NonterminalNode, arg0: IterationNode) => T;
   lineComment?: (this: NonterminalNode, arg0: TerminalNode, arg1: IterationNode, arg2: NonterminalNode) => T;
