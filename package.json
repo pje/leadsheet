@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "main": "index.js",
   "dependencies": {
+    "@vexflow-fonts/leland": "^1.0.1",
     "tufte-css": "^1.8.0"
   },
   "devDependencies": {

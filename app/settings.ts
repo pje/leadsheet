@@ -5,11 +5,13 @@ export const colorChords = "colorChords" as const;
 export const keySignature = "keySignature" as const;
 export const unicodeChordSymbols = "unicodeChordSymbols" as const;
 export const followMidiClockMessages = "followMidiClockMessages" as const;
+export const leland = "useLelandForMusicalSymbols" as const;
 
 export type FeatureFlagKeysType = typeof FeatureFlagKeys[number];
 export const FeatureFlagKeys = [
   colorChords,
   keySignature,
+  leland,
   unicodeChordSymbols,
   followMidiClockMessages,
 ] as const;
@@ -29,6 +31,10 @@ export const defaultFeatureFlags: FeatureFlags = {
   [keySignature]: {
     enabled: true,
     description: "Render key signature",
+  },
+  [leland]: {
+    enabled: true,
+    description: `Use Leland font for musical symbols`,
   },
   [unicodeChordSymbols]: {
     enabled: false,

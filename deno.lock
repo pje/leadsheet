@@ -6,6 +6,7 @@
       "npm:@types/node": "npm:@types/node@18.16.19",
       "npm:@types/web@^0.0.125": "npm:@types/web@0.0.125",
       "npm:@vexflow-fonts/bravura@^1.0.2": "npm:@vexflow-fonts/bravura@1.0.2",
+      "npm:@vexflow-fonts/leland@^1.0.1": "npm:@vexflow-fonts/leland@1.0.1",
       "npm:@vexflow-fonts/petaluma@^1.0.1": "npm:@vexflow-fonts/petaluma@1.0.1",
       "npm:esbuild-plugin-tsc@^0.4.0": "npm:esbuild-plugin-tsc@0.4.0_typescript@5.3.2",
       "npm:esbuild@^0.19.7": "npm:esbuild@0.19.7",
@@ -357,6 +358,10 @@
       },
       "@vexflow-fonts/bravura@1.0.2": {
         "integrity": "sha512-n3KC5hpv1CEoZCbMJ43WeUq71cIIycOUlWe2RU5OOIIKrQ9V8n0KV8v/oX/MDHokTXvUyTo4vJ2dsoMyMBeg4w==",
+        "dependencies": {}
+      },
+      "@vexflow-fonts/leland@1.0.1": {
+        "integrity": "sha512-0n19Gge6Ypiz41l0jw1fSme0xg4Rm/SezsvGsm9KxfNOO7aPlQuWfnyWd+3SGwKQx0/XL8pBmYjGjkAVMyIRpA==",
         "dependencies": {}
       },
       "@vexflow-fonts/petaluma@1.0.1": {

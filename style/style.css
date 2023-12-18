@@ -291,6 +291,57 @@ html {
       border-top: solid;
       border-top-width: 1px;
 
+      &.leland {
+        font-family: Leland;
+
+        .clef {
+          top: -48.3%;
+          left: -10cqh;
+          font-size: 96cqh;
+          line-height: 250cqh;
+        }
+
+        .time-signature {
+          top: 23.4cqh;
+          font-size: 71cqh;
+          line-height: 50.9cqh;
+        }
+
+        .key-signature {
+          margin-left: 8cqh;
+          letter-spacing: 0cqh;
+
+          .accidental {
+            font-size: 80cqh;
+          }
+
+          .accidental.s {
+            line-height: 55.8cqh;
+          }
+
+          .accidental.b {
+            line-height: 53.2cqh;
+          }
+        }
+
+        &.barline-repeat-close {
+          &::after {
+            content: ":";
+            line-height: 4.8rem;
+            font-size: 2.7rem;
+            left: 430cqh;
+          }
+        }
+
+        &.barline-repeat-open {
+          &::after {
+            content: ":";
+            line-height: 4.8rem;
+            font-size: 2.7rem;
+          }
+        }
+      }
+
       @media (prefers-color-scheme: light) {
         border-color: #111;
         background: repeating-linear-gradient(
