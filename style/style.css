@@ -465,10 +465,10 @@ html {
 
         &::after {
           content: ":";
-          font-size: 3.2rem;
-          line-height: 3.2rem;
           position: relative;
-          left: 320px;
+          font-size: 2.9rem;
+          line-height: 3rem;
+          left: 436.5cqh;
         }
       }
 
@@ -478,8 +478,8 @@ html {
 
         &::after {
           content: ":";
-          font-size: 3.2rem;
-          line-height: 3.2rem;
+          font-size: 2.9rem;
+          line-height: 3rem;
         }
       }
     }
