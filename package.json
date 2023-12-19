@@ -5,12 +5,12 @@
   "main": "index.js",
   "dependencies": {
     "@fontsource/noto-music": "^5.0.18",
+    "ohm-js": "^17.1.0",
     "tufte-css": "^1.8.0"
   },
   "devDependencies": {
     "@ohm-js/cli": "^2.0.0",
     "esbuild": "^0.19.10",
-    "ohm-js": "^17.1.0",
     "puppeteer": "^21.6.1",
     "skott": "^0.31.3",
     "stylelint": "^16.0.2",
