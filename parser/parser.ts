@@ -15,7 +15,6 @@ import {
   Add9,
   Augmented,
   Chord,
-  // ChordTypeName,
   Diminished,
   Dominant,
   type Extent,
