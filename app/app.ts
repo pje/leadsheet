@@ -132,7 +132,7 @@ function renderBars(
 
       if (chordish.type === RepeatPreviousChordTypeName) {
         colorClass = previousChordColorClass;
-        result = _formatChordName(previousChord);
+        result = _formatChordName(chordish);
       } else {
         colorClass = _getColorClass(chordish);
         result = formattedChordName === _formatChordName(previousChord)

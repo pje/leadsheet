@@ -15,7 +15,7 @@ import {
   Add9,
   Augmented,
   Chord,
-  ChordTypeName,
+  // ChordTypeName,
   Diminished,
   Dominant,
   type Extent,
@@ -33,17 +33,13 @@ import {
   type Metadata,
   type MetadataKeysType,
   NoChord,
-  NoChordTypeName,
   OptionalChord,
-  OptionalChordTypeName,
   RepeatPreviousChord,
-  RepeatPreviousChordTypeName,
   Song,
 } from "./song.ts";
 import { Err, Ok, type Result } from "../lib/result.ts";
 import { Key } from "../theory/key.ts";
 import { type Letter } from "../theory/letter.ts";
-import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
 
 class ChordActions implements ChordActionDict<void> {
   chord = (root: NNode, flavor: NNode) =>
@@ -62,20 +58,18 @@ class ChordActions implements ChordActionDict<void> {
       string[],
     ] = qualityNode.eval();
 
-    const [q2, e2, a2]: [
-      Quality | undefined,
+    const [e2, a2]: [
       Extent | undefined,
       string[],
-    ] = extentNode.child(0)?.eval() || [undefined, undefined, []];
+    ] = extentNode.child(0)?.eval() || [undefined, []];
 
     const alterations = alterationsNodes.children.map((a) => a.sourceString);
 
-    return [q2 || q, e2 || e, ...a, ...a2, ...alterations];
+    return [q, e2 || e, ...a, ...a2, ...alterations];
   };
 
   #evalPassthrough = (n: NNode) => n.eval();
-  #extentPassthrough =
-    (extent: Extent) => (_: NNode) => [undefined, extent, []];
+  #extentPassthrough = (extent: Extent) => (_: NNode) => [extent, []];
 
   extent = this.#evalPassthrough;
   thirteen = this.#extentPassthrough(13);
@@ -86,7 +80,7 @@ class ChordActions implements ChordActionDict<void> {
   five = this.#extentPassthrough(5);
   four = this.#extentPassthrough(4);
   two = this.#extentPassthrough(2);
-  six_and_nine = (_0: NNode, _1: INode, _2: NNode) => [undefined, 6, [Add9]];
+  six_and_nine = (_0: NNode, _1: INode, _2: NNode) => [6, [Add9]];
 
   #qualityPassthrough =
     (quality: Quality) => (_: NNode) => [quality, undefined, []];
@@ -99,14 +93,7 @@ class ChordActions implements ChordActionDict<void> {
   sus = this.#qualityPassthrough(Suspended);
   dominant = (_0: NNode) => [Dominant, 7, []];
   half_diminished = (_0: NNode) => [Minor, 7, ["b5"]];
-  minor_major = (_0: NNode) => [MinorMajor, 7, []];
-  minor_major_with_parens = (
-    arg0: NNode,
-    _1: TNode,
-    _2: NNode,
-    _3: NNode,
-    _4: NNode,
-  ) => this.minor_major(arg0);
+  minor_major = this.#qualityPassthrough(MinorMajor);
 }
 
 class SongActions extends ChordActions implements SongActionDict<void> {
@@ -142,28 +129,12 @@ class SongActions extends ChordActions implements SongActionDict<void> {
 
   Bars = (barline: NNode, barChords: INode, closingBarlines: INode) => {
     const bars: Bar[] = [];
-    let previousChord: Chord | OptionalChord | NoChord | undefined = undefined;
     let previousBarline = barline.sourceString;
 
     zip(barChords.children, closingBarlines.children).forEach(
       ([barNode, closingBarlineNode]) => {
-        const chords = barNode.children.map(
-          (chordishNode) => {
-            const chordish = <Chordish> chordishNode.eval();
-            const { type } = chordish;
-
-            switch (type) {
-              case RepeatPreviousChordTypeName:
-                return previousChord?.dup() || chordish;
-              case ChordTypeName:
-              case OptionalChordTypeName:
-              case NoChordTypeName:
-                previousChord = chordish.dup();
-                return chordish.dup();
-              default:
-                nonexhaustiveSwitchGuard(type);
-            }
-          },
+        const chords = barNode.children.map((chordishNode) =>
+          <Chordish> chordishNode.eval()
         );
 
         const thisBarline = closingBarlineNode.children.map((c) =>

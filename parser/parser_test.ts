@@ -96,7 +96,7 @@ Chorus:
     title: "repetition",
     contents: `| C | % | D | % |`,
     expected: new Song(
-      [bar("C"), bar("C"), bar("D"), bar("D")],
+      [bar("C"), bar("%"), bar("D"), bar("%")],
       { key: new Key("C") },
     ),
   },
