@@ -1,6 +1,6 @@
 .PHONY: build clean deps lint fmt-check test unit_test browser_test ohm_bundle watch install_vscode_extension uninstall_vscode_extension
 
-test_files=$(shell find . -type f -name '*test.ts')
+test_files=$(shell find . -type f -name '*test.ts' | grep -v node_modules)
 browser_test_files=./browser_test.ts
 unit_test_files=$(filter-out $(browser_test_files),$(test_files))
 deno_allows=--allow-env --allow-net --allow-read --allow-run --allow-write
@@ -13,6 +13,7 @@ watch: deps
 
 lint:
 	deno lint *.ts "**/*.ts" --ignore=node_modules,parser/grammar.ohm-bundle.d.ts
+	npx stylelint "**/*.css"
 	deno task detect-cyclic-imports
 
 typecheck:

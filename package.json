@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "main": "index.js",
   "dependencies": {
-    "@vexflow-fonts/leland": "^1.0.1",
+    "@fontsource/noto-music": "^5.0.18",
     "tufte-css": "^1.8.0"
   },
   "devDependencies": {
@@ -12,6 +12,8 @@
     "esbuild": "^0.19.7",
     "ohm-js": "^17.1.0",
     "puppeteer": "^21.6.1",
-    "skott": "^0.31.3"
+    "skott": "^0.31.3",
+    "stylelint": "^16.0.2",
+    "stylelint-config-standard": "^35.0.0"
   }
 }

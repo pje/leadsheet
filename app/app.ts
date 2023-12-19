@@ -7,11 +7,6 @@ import {
   render as renderSettings,
 } from "./settings.ts";
 import {
-  Flat as LelandFlat,
-  Sharp as LelandSharp,
-  TrebleClef as LelandTrebleClef,
-} from "../style/leland.ts";
-import {
   type Clock,
   TimeEventListener,
 } from "../lib/midi/time_event_listener.ts";
@@ -31,11 +26,6 @@ import { type State } from "./state.ts";
 import { Key, SigAccidental, SigAccidentalToSymbol } from "../theory/key.ts";
 import { ChordTypeName } from "../theory/chord.ts";
 import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
-import {
-  FlatOrSharpSymbol,
-  FlatSymbol,
-  SharpSymbol,
-} from "../theory/notation.ts";
 
 const state: State = {
   song: undefined,
@@ -159,10 +149,6 @@ function renderBars(
 
     const staffClasses = [
       "staff",
-      ...[
-        state.settings.featureFlags.useLelandForMusicalSymbols.enabled &&
-        "leland",
-      ],
       _getBarlineClass(bar.openBarline, "open"),
       _getBarlineClass(bar.closeBarline, "close"),
     ];
@@ -195,19 +181,13 @@ function renderClefAndSignatures(
   if (song.key && state.settings.featureFlags.keySignature.enabled) {
     const accidentals = song.key.signature();
     const accidentalToElement = (a: SigAccidental) => {
+      const symbol = SigAccidentalToSymbol.get(a)!;
       const classes = [
         "accidental",
-        ...(a.replace("#", "s").split("")),
+        ...(a.split("").map((c) =>
+          c.replace("#", "sharp").replace("b", "flat").toLowerCase() // "Bb" => ["b", "flat"]
+        )),
       ];
-      let symbol = SigAccidentalToSymbol.get(a)!;
-
-      if (state.settings.featureFlags.useLelandForMusicalSymbols.enabled) {
-        symbol = <FlatOrSharpSymbol> symbol.replaceAll(SharpSymbol, LelandSharp)
-          .replaceAll(
-            FlatSymbol,
-            LelandFlat,
-          );
-      }
 
       return `<span class="${classes.join(" ")}">${symbol}</span>`;
     };
@@ -217,9 +197,7 @@ function renderClefAndSignatures(
 </div>`;
   }
 
-  const clef = state.settings.featureFlags.useLelandForMusicalSymbols.enabled
-    ? LelandTrebleClef
-    : "𝄞";
+  const clef = "𝄞";
 
   const staffElements = `
   <div class="clef treble">${clef}</div>

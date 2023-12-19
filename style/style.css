@@ -36,7 +36,7 @@
     .bar {
       &:nth-child(2n-1) {
         .staff {
-          border-left-style: solid;
+          border-inline-start-style: solid;
         }
       }
     }
@@ -51,11 +51,11 @@ html {
 
   body {
     width: auto;
-    padding-left: 32px;
+    padding-inline-start: 32px;
     padding-right: 32px;
 
     @media (prefers-color-scheme: light) {
-      background-color: rgb(255, 255, 243);
+      background-color: rgb(255 255 243);
       color: #111;
     }
 
@@ -89,7 +89,7 @@ html {
       .transpose-buttons {
         display: flex;
         flex-direction: column;
-        margin-left: 4px;
+        margin-inline-start: 4px;
       }
 
       .key {
@@ -138,30 +138,30 @@ html {
   gap: 10px;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 20px;
-
-  .title {
-    font-size: min(3.2rem, 8vw);
-  }
+  margin-block-end: 20px;
 
   .date, .artist, .album {
     font-weight: 400;
-  }
-
-  .date:empty, .artist:empty, .album:empty {
-    display: none;
   }
 
   .album {
     font-style: italic;
   }
 
-  .artist {
+  .date:empty, .artist:empty, .album:empty {
+    display: none;
+  }
+
+  .artist:not(:empty) {
     &:has(+ .album:not(:empty)) {
       &::after {
         content: " —";
       }
     }
+  }
+
+  .title {
+    font-size: min(3.2rem, 8vw);
   }
 
   .byline {
@@ -189,14 +189,160 @@ html {
 #song {
   display: grid;
   grid-template-columns: repeat(var(--num-cols), 1fr);
-
   align-items: end;
   row-gap: 32px;
 
   .bar {
     &:nth-child(4n-3) {
       .staff {
-        border-left-style: solid;
+        border-inline-start-style: solid;
+      }
+    }
+
+    /* stylelint-disable-next-line no-descending-specificity */
+    .staff {
+      --high-g-top: -114cqh;
+      --high-f-top: calc(var(--high-g-top) + calc(var(--staff-line-height) / 2));
+
+      /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
+      font-family: "Noto Music";
+      display: flex;
+      container-type: size;
+      container-name: staff;
+      height: var(--staff-height);
+      border-block-end: none;
+      border-top: solid;
+      border-top-width: 1px;
+
+      .clef {
+        position: relative;
+        top: -31cqh;
+        font-size: 96cqh;
+      }
+
+      .key-signature {
+        letter-spacing: -4cqh;
+
+        .accidental {
+          position: relative;
+          font-size: 80cqh;
+
+          &.f {
+            top: calc(var(--high-f-top) + calc(var(--staff-line-height) * 0));
+          }
+
+          &.c {
+            top: calc(var(--high-g-top) + calc(var(--staff-line-height) * 2));
+          }
+
+          &.g.sharp {
+            top: calc(var(--high-g-top) + calc(var(--staff-line-height) * 0));
+          }
+
+          &.g.flat {
+            top: calc(var(--high-f-top) + calc(var(--staff-line-height) * 3));
+          }
+
+          &.d {
+            top: calc(var(--high-f-top) + calc(var(--staff-line-height) * 1));
+          }
+
+          &.a {
+            top: calc(var(--high-g-top) + calc(var(--staff-line-height) * 3));
+          }
+
+          &.e {
+            top: calc(var(--high-g-top) + calc(var(--staff-line-height) * 1));
+          }
+
+          &.b {
+            top: calc(var(--high-f-top) + calc(var(--staff-line-height) * 2));
+          }
+        }
+      }
+
+      .time-signature {
+        position: relative;
+        top: -12cqh;
+        margin-inline-start: 18cqh;
+        font-size: 71cqh;
+        line-height: 51cqh;
+        font-weight: bold;
+      }
+
+      @media (prefers-color-scheme: light) {
+        border-color: #111;
+        background: repeating-linear-gradient(to top,
+            #151515,
+            #151515 1px,
+            transparent 0,
+            transparent 25%);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        border-color: #fffdf3;
+        background: repeating-linear-gradient(to top,
+            #fffdf3,
+            #fffdf3 1px,
+            transparent 0,
+            transparent 25%);
+      }
+
+      & .actual-barline-double-open {
+        font-size: 100cqh;
+        position: relative;
+        top: -39cqh;
+        /* content: 𝄆 */
+      }
+
+      & .actual-barline-double-close {
+        font-size: 100cqh;
+        position: relative;
+        top: -39cqh;
+        /* content: 𝄇 */
+      }
+
+      &.barline-single-close {
+        border-right-style: solid;
+        border-right-width: 1.5px;
+      }
+
+      /* &.barline-single-open {
+        border-inline-start-style: solid;
+        border-inline-start-width: 1.5px;
+      } */
+
+      &.barline-double-open {
+        border-inline-start-style: double;
+        border-inline-start-width: 8.5px;
+      }
+
+      &.barline-double-close {
+        border-right-style: double;
+        border-right-width: 8.5px;
+      }
+
+      &.barline-repeat-close {
+        border-right-style: double;
+        border-right-width: 8.5px;
+
+        &::after {
+          content: ":";
+          line-height: 2.2rem;
+          font-size: 2.7rem;
+          left: 430cqh;
+        }
+      }
+
+      &.barline-repeat-open {
+        border-inline-start-style: double;
+        border-inline-start-width: 8.5px;
+
+        &::after {
+          content: ":";
+          line-height: 2.2rem;
+          font-size: 2.7rem;
+        }
       }
     }
 
@@ -236,13 +382,14 @@ html {
       flex-direction: row;
       justify-content: space-evenly;
       gap: 10px;
-      padding: 0 10px 0 10px;
-      margin-bottom: 6px;
+      padding-inline: 10px;
+      padding-block: 0;
+      margin-block-end: 6px;
 
       .chord {
         min-height: 26px;
         white-space: nowrap;
-        /* this prevents long chord names from breaking into multiple lines*/
+        /* this prevents long chord names from breaking into multiple lines */
         font-size: 1.75rem;
         text-align: center;
         flex-basis: 0;
@@ -276,206 +423,6 @@ html {
         }
       }
     }
-
-    .staff {
-      --high-G-top: -40cqh;
-      --high-F-top: calc(var(--high-G-top) + calc(var(--staff-line-height) / 2));
-
-      container-type: size;
-      container-name: staff;
-      height: var(--staff-height);
-      border-bottom: none;
-      border-top: solid;
-      border-top-width: 1px;
-
-      &.leland {
-        font-family: Leland;
-
-        .clef {
-          top: -48.3%;
-          left: -9.3cqh;
-          font-size: 96cqh;
-          line-height: 250cqh;
-        }
-
-        .time-signature {
-          top: 23.4cqh;
-          font-size: 71cqh;
-          line-height: 50.9cqh;
-        }
-
-        .key-signature {
-          margin-left: 8cqh;
-          letter-spacing: 0cqh;
-
-          .accidental {
-            font-size: 80cqh;
-          }
-
-          .accidental.s {
-            line-height: 55.8cqh;
-          }
-
-          .accidental.b {
-            line-height: 53.2cqh;
-          }
-        }
-
-        &.barline-repeat-close {
-          &::after {
-            content: ":";
-            line-height: 4.8rem;
-            font-size: 2.7rem;
-            left: 430cqh;
-          }
-        }
-
-        &.barline-repeat-open {
-          &::after {
-            content: ":";
-            line-height: 4.8rem;
-            font-size: 2.7rem;
-          }
-        }
-      }
-
-      @media (prefers-color-scheme: light) {
-        border-color: #111;
-        background: repeating-linear-gradient(to top,
-            #151515,
-            #151515 1px,
-            transparent 0px,
-            transparent 25%);
-      }
-
-      @media (prefers-color-scheme: dark) {
-        border-color: #fffdf3;
-        background: repeating-linear-gradient(to top,
-            #fffdf3,
-            #fffdf3 1px,
-            transparent 0px,
-            transparent 25%);
-      }
-
-      .clef {
-        position: relative;
-        top: -49%;
-        left: -10cqh;
-        font-size: 185cqh;
-        line-height: 222cqh;
-      }
-
-      .key-signature {
-        --inline-init: -16cqh;
-        --incr: 20cqh;
-
-        display: inline-flex;
-        flex-direction: row;
-        letter-spacing: -20cqh;
-
-        .accidental {
-          position: relative;
-          left: var(--inline-init);
-          font-size: 35cqh;
-
-          &.b {
-            line-height: 50cqh;
-          }
-
-          &.s {
-            line-height: 61cqh;
-          }
-
-          &.F {
-            top: calc(var(--high-F-top) + calc(var(--staff-line-height) * 0));
-          }
-
-          &.C {
-            top: calc(var(--high-G-top) + calc(var(--staff-line-height) * 2));
-          }
-
-          &.G.s {
-            top: calc(var(--high-G-top) + calc(var(--staff-line-height) * 0));
-          }
-
-          &.G.b {
-            top: calc(var(--high-F-top) + calc(var(--staff-line-height) * 3));
-          }
-
-          &.D {
-            top: calc(var(--high-F-top) + calc(var(--staff-line-height) * 1));
-          }
-
-          &.A {
-            top: calc(var(--high-G-top) + calc(var(--staff-line-height) * 3));
-          }
-
-          &.E {
-            top: calc(var(--high-G-top) + calc(var(--staff-line-height) * 1));
-          }
-
-          &.B {
-            top: calc(var(--high-F-top) + calc(var(--staff-line-height) * 2));
-          }
-        }
-      }
-
-      .time-signature {
-        position: relative;
-        top: -0.3cqh;
-        height: 100%;
-        /* margin-left: 70cqh; */
-        display: flex;
-        flex-direction: column;
-        font-size: 75cqh;
-        line-height: 50cqh;
-        font-weight: bold;
-      }
-
-      &.barline-single-close {
-        border-right-style: solid;
-        border-right-width: 1.5px;
-      }
-
-      /* &.barline-single-open {
-        border-left-style: solid;
-        border-left-width: 1.5px;
-      } */
-
-      &.barline-double-open {
-        border-left-style: double;
-        border-left-width: 8.5px;
-      }
-
-      &.barline-double-close {
-        border-right-style: double;
-        border-right-width: 8.5px;
-      }
-
-      &.barline-repeat-close {
-        border-right-style: double;
-        border-right-width: 8.5px;
-
-        &::after {
-          content: ":";
-          position: relative;
-          font-size: 2.9rem;
-          line-height: 3rem;
-          left: 436.5cqh;
-        }
-      }
-
-      &.barline-repeat-open {
-        border-left-style: double;
-        border-left-width: 8.5px;
-
-        &::after {
-          content: ":";
-          font-size: 2.9rem;
-          line-height: 3rem;
-        }
-      }
-    }
   }
 }
 
@@ -486,11 +433,10 @@ html {
   padding-top: 5rem;
 
   #fine {
-    /* background-image: url("gruppetto.svg"); */
     background-repeat: no-repeat;
     background-size: contain;
     height: 100px;
-    width: 10em;
+    font-size: 6rem;
   }
 }
 

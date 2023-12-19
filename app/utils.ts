@@ -5,8 +5,15 @@ export function unicodeifyMusicalSymbols(s: string) {
   note ||= "";
   flavor ||= "";
 
-  return `${note}<sup>${flavor}<sup>`.replaceAll(/b|#/g, (substr: string) => {
-    const [symbol, klass] = substr === "#" ? ["♯", "sharp"] : ["♭", "flat"];
-    return `<span class="unicode-${klass}">${symbol}</span>`;
-  });
+  let [superable, ...after] = flavor.split("/"); // e.g. Csus2/E
+  superable ||= "";
+  if (after.length > 0) after = ["/", ...after];
+
+  return `${note}<sup>${superable}</sup>${after.join("")}`.replaceAll(
+    /b|#/g,
+    (substr: string) => {
+      const [symbol, klass] = substr === "#" ? ["♯", "sharp"] : ["♭", "flat"];
+      return `<span class="unicode-${klass}">${symbol}</span>`;
+    },
+  );
 }

@@ -5,13 +5,11 @@ export const colorChords = "colorChords" as const;
 export const keySignature = "keySignature" as const;
 export const unicodeChordSymbols = "unicodeChordSymbols" as const;
 export const followMidiClockMessages = "followMidiClockMessages" as const;
-export const leland = "useLelandForMusicalSymbols" as const;
 
 export type FeatureFlagKeysType = typeof FeatureFlagKeys[number];
 export const FeatureFlagKeys = [
   colorChords,
   keySignature,
-  leland,
   unicodeChordSymbols,
   followMidiClockMessages,
 ] as const;
@@ -31,10 +29,6 @@ export const defaultFeatureFlags: FeatureFlags = {
   [keySignature]: {
     enabled: true,
     description: "Render key signature",
-  },
-  [leland]: {
-    enabled: true,
-    description: `Use Leland font for musical symbols`,
   },
   [unicodeChordSymbols]: {
     enabled: false,
@@ -76,7 +70,7 @@ export async function render(
 
     const midiSelector = `
   <div class="flex-row">
-    <label for="midiDevice" class="mr-8">MIDI Device (for clock input)</label>
+    <label for="midiDevice">MIDI Device (for clock input)</label>
     <select name="midiDevice" id="midiDevice">
       ${deviceOptions.join("\n")}
     </select>

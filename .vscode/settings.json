@@ -13,10 +13,12 @@
     "editor.formatOnSave": false,
   },
   "css.format.braceStyle": "collapse",
-  "css.format.newlineBetweenSelectors": false,
   "css.format.newlineBetweenRules": false,
+  "css.format.newlineBetweenSelectors": false,
+  "css.validate": false, // use stylelint instead
   "deno.enable": true,
   "deno.lint": true,
   "deno.unstable": false,
+  "stylelint.enable": true,
   "typescript.tsdk": "node_modules/typescript/lib"
 }

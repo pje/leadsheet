@@ -1,6 +1,7 @@
 {
   "recommendations": [
     "attilah.ohm",
-    "denoland.vscode-deno"
+    "denoland.vscode-deno",
+    "stylelint.vscode-stylelint"
   ]
 }
