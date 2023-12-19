@@ -140,7 +140,7 @@ class SongActions extends ChordActions implements SongActionDict<void> {
     );
   };
 
-  Section = (sectionName: INode, _1: INode) => {
+  Section = (sectionName: INode, _1: TNode) => {
     // TODO: get rid of the statefulness here
     this.#currentSection = sectionName.sourceString;
   };
