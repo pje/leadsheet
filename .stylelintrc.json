@@ -3,6 +3,7 @@
   "rules": {
     "comment-empty-line-before": null,
     "custom-property-empty-line-before": null,
+    "font-family-no-missing-generic-family-keyword": null,
     "media-feature-range-notation": "prefix",
     "rule-empty-line-before": null
   }

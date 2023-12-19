@@ -204,7 +204,6 @@ html {
       --high-g-top: -114cqh;
       --high-f-top: calc(var(--high-g-top) + calc(var(--staff-line-height) / 2));
 
-      /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
       font-family: "Noto Music";
       display: flex;
       container-type: size;
@@ -306,11 +305,6 @@ html {
         border-right-style: solid;
         border-right-width: 1.5px;
       }
-
-      /* &.barline-single-open {
-        border-inline-start-style: solid;
-        border-inline-start-width: 1.5px;
-      } */
 
       &.barline-double-open {
         border-inline-start-style: double;
@@ -433,6 +427,7 @@ html {
   padding-top: 5rem;
 
   #fine {
+    font-family: "Noto Music";
     background-repeat: no-repeat;
     background-size: contain;
     height: 100px;
