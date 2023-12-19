@@ -55,18 +55,12 @@ class ChordActions implements ChordActionDict<void> {
       normalizeAccidentals(accidentals.sourceString),
     ].join("");
 
-  flavor = (qualityNode: INode, extentNode: INode, alterationsNodes: INode) => {
+  flavor = (qualityNode: NNode, extentNode: INode, alterationsNodes: INode) => {
     const [q, e, a]: [
       Quality | undefined,
       Extent | undefined,
       string[],
-    ] = isImplicitPower(qualityNode, extentNode)
-      ? [Power, undefined, []]
-      : isImplicitMajor(qualityNode, extentNode, alterationsNodes)
-      ? [Major, undefined, []]
-      : isImplicitDominant(qualityNode, extentNode, alterationsNodes)
-      ? [Dominant, undefined, []]
-      : qualityNode.child(0)?.eval();
+    ] = qualityNode.eval();
 
     const [q2, e2, a2]: [
       Quality | undefined,
@@ -100,6 +94,7 @@ class ChordActions implements ChordActionDict<void> {
   augmented = this.#qualityPassthrough(Augmented);
   diminished = this.#qualityPassthrough(Diminished);
   major = this.#qualityPassthrough(Major);
+  power = this.#qualityPassthrough(Power);
   minor = this.#qualityPassthrough(Minor);
   sus = this.#qualityPassthrough(Suspended);
   dominant = (_0: NNode) => [Dominant, 7, []];
@@ -248,28 +243,6 @@ export function ParseSong(rawSong: string): Result<Song> {
   const song: Song = semantics(matchResult).eval();
   return Ok(song);
 }
-
-const isImplicitMajor = (quality: INode, extent: INode, alterations: INode) => (
-  !quality.sourceString &&
-  (extent.sourceString.trim() === "" || extent.sourceString.startsWith("6")) &&
-  !alterations.sourceString.includes("alt")
-);
-
-const isImplicitDominant = (
-  quality: INode,
-  extent: INode,
-  alterations: INode,
-) => (
-  !quality.sourceString &&
-  (
-    ["7", "9", "11", "13"].some((s) => extent.sourceString.startsWith(s)) ||
-    alterations.sourceString.includes("alt")
-  )
-);
-
-const isImplicitPower = (quality: INode, extent: INode) => (
-  !quality.sourceString && extent.sourceString.startsWith("5")
-);
 
 function normalizeLetter(str: string): string {
   return str.toUpperCase();

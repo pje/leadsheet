@@ -16,7 +16,7 @@ import {
 export interface ChordActionDict<T> extends BaseActionDict<T> {
   chord?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode) => T;
   root?: (this: NonterminalNode, arg0: NonterminalNode, arg1: IterationNode) => T;
-  flavor?: (this: NonterminalNode, arg0: IterationNode, arg1: IterationNode, arg2: IterationNode) => T;
+  flavor?: (this: NonterminalNode, arg0: NonterminalNode, arg1: IterationNode, arg2: IterationNode) => T;
   noteLetter?: (this: NonterminalNode, arg0: NonterminalNode | TerminalNode) => T;
   accidental?: (this: NonterminalNode, arg0: TerminalNode) => T;
   alteration_symbol?: (this: NonterminalNode, arg0: NonterminalNode | TerminalNode) => T;
@@ -38,11 +38,16 @@ export interface ChordActionDict<T> extends BaseActionDict<T> {
   augmented?: (this: NonterminalNode, arg0: NonterminalNode | TerminalNode) => T;
   diminished?: (this: NonterminalNode, arg0: NonterminalNode | TerminalNode) => T;
   dominant?: (this: NonterminalNode, arg0: NonterminalNode) => T;
+  implicitDominant?: (this: NonterminalNode, arg0: NonterminalNode) => T;
   half_diminished?: (this: NonterminalNode, arg0: NonterminalNode) => T;
-  major?: (this: NonterminalNode, arg0: NonterminalNode | TerminalNode) => T;
   minor?: (this: NonterminalNode, arg0: NonterminalNode | TerminalNode) => T;
+  minor_lowercase_m?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  power?: (this: NonterminalNode, arg0: NonterminalNode) => T;
+  implicitPower?: (this: NonterminalNode, arg0: NonterminalNode) => T;
+  major?: (this: NonterminalNode, arg0: NonterminalNode | TerminalNode) => T;
+  implicitMajor?: (this: NonterminalNode, arg0: NonterminalNode | TerminalNode) => T;
   alteration?: (this: NonterminalNode, arg0: NonterminalNode) => T;
-  alteration_no_parens?: (this: NonterminalNode, arg0: Node, arg1: IterationNode | NonterminalNode) => T;
+  alteration_no_parens?: (this: NonterminalNode, arg0: NonterminalNode | TerminalNode, arg1: IterationNode | NonterminalNode) => T;
   alteration_in_parens?: (this: NonterminalNode, arg0: TerminalNode, arg1: IterationNode, arg2: NonterminalNode, arg3: IterationNode, arg4: TerminalNode) => T;
   alteration_add_no_omit?: (this: NonterminalNode, arg0: IterationNode, arg1: NonterminalNode, arg2: IterationNode) => T;
   newline?: (this: NonterminalNode, arg0: IterationNode, arg1: TerminalNode) => T;

@@ -13,7 +13,7 @@ Chord {
 
   root = noteLetter accidental?
 
-  flavor = quality? extent? alteration*
+  flavor = quality extent? alteration*
 
   noteLetter =
     | caseInsensitive<"A">
@@ -71,8 +71,9 @@ Chord {
     | diminished
     | dominant
     | half_diminished
-    | major
     | minor
+    | power
+    | major
 
   sus =
     | caseInsensitive<"sus">
@@ -103,9 +104,28 @@ Chord {
   dominant =
     | caseInsensitive<"dominant">
     | caseInsensitive<"dom">
+    | implicitDominant
+
+  implicitDominant =
+    | &caseInsensitive<"alt"> // `Calt` implies a dominant 7
+    | &(seven | nine | eleven | thirteen)
 
   half_diminished =
     | caseInsensitive<"ø">
+
+  minor =
+    | caseInsensitive<"minor">
+    | caseInsensitive<"min">
+    | "-"
+    | "⁻"
+    | minor_lowercase_m
+
+  minor_lowercase_m = | ("m" | "ᵐ") ~ "a"
+
+  power =
+    | implicitPower
+
+  implicitPower = &(five)
 
   major =
     | caseInsensitive<"major">
@@ -113,14 +133,10 @@ Chord {
     | "M"
     | "ᴹ"
     | "Δ"
+    | implicitMajor
 
-  minor =
-    | caseInsensitive<"minor">
-    | caseInsensitive<"min">
-    | "-"
-    | "⁻"
-    | "m"
-    | "ᵐ"
+  // NB this must be the last quality we try to match because it will *always* match
+  implicitMajor = &(three | six | "")
 
   alteration =
     | alteration_in_parens
@@ -133,7 +149,7 @@ Chord {
     | "/" root                                   // e.g. C/G
     | caseInsensitive<"alt"> extent?             // e.g. alt, alt7
     | caseInsensitive<"sus"> ("2"|"4")?          // e.g. sus, sus2, sus4
-    | quality? extent                            // e.g. `CoM7`
+    | quality extent                             // e.g. `CoM7`
 
   alteration_in_parens = "(" spaceNoNL? alteration_no_parens spaceNoNL? ")"
 
