@@ -46,7 +46,8 @@
 }
 
 html {
-  font-size: 100%; /* use rem units everywhere now */
+  font-size: 100%;
+  /* use rem units everywhere now */
 
   body {
     width: auto;
@@ -143,15 +144,11 @@ html {
     font-size: min(3.2rem, 8vw);
   }
 
-  .date,
-  .artist,
-  .album {
+  .date, .artist, .album {
     font-weight: 400;
   }
 
-  .date:empty,
-  .artist:empty,
-  .album:empty {
+  .date:empty, .artist:empty, .album:empty {
     display: none;
   }
 
@@ -178,6 +175,7 @@ html {
 
     & .date:not(:empty) {
       margin-inline-start: 5px;
+
       &::before {
         content: "(";
       }
@@ -243,7 +241,8 @@ html {
 
       .chord {
         min-height: 26px;
-        white-space: nowrap; /* this prevents long chord names from breaking into multiple lines*/
+        white-space: nowrap;
+        /* this prevents long chord names from breaking into multiple lines*/
         font-size: 1.75rem;
         text-align: center;
         flex-basis: 0;
@@ -280,9 +279,7 @@ html {
 
     .staff {
       --high-G-top: -40cqh;
-      --high-F-top: calc(
-        var(--high-G-top) + calc(var(--staff-line-height) / 2)
-      );
+      --high-F-top: calc(var(--high-G-top) + calc(var(--staff-line-height) / 2));
 
       container-type: size;
       container-name: staff;
@@ -296,7 +293,7 @@ html {
 
         .clef {
           top: -48.3%;
-          left: -10cqh;
+          left: -9.3cqh;
           font-size: 96cqh;
           line-height: 250cqh;
         }
@@ -344,24 +341,20 @@ html {
 
       @media (prefers-color-scheme: light) {
         border-color: #111;
-        background: repeating-linear-gradient(
-          to top,
-          #151515,
-          #151515 1px,
-          transparent 0px,
-          transparent 25%
-        );
+        background: repeating-linear-gradient(to top,
+            #151515,
+            #151515 1px,
+            transparent 0px,
+            transparent 25%);
       }
 
       @media (prefers-color-scheme: dark) {
         border-color: #fffdf3;
-        background: repeating-linear-gradient(
-          to top,
-          #fffdf3,
-          #fffdf3 1px,
-          transparent 0px,
-          transparent 25%
-        );
+        background: repeating-linear-gradient(to top,
+            #fffdf3,
+            #fffdf3 1px,
+            transparent 0px,
+            transparent 25%);
       }
 
       .clef {

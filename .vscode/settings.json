@@ -1,7 +1,9 @@
 {
   "[css]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    // "editor.defaultFormatter": "esbenp.prettier-vscode", // broken currently :(
+    "editor.defaultFormatter": "vscode.css-language-features",
     "editor.formatOnSave": true,
+    "files.insertFinalNewline": true,
   },
   "[typescript]": {
     "editor.defaultFormatter": "denoland.vscode-deno",
@@ -10,6 +12,9 @@
   "[javascript]": {
     "editor.formatOnSave": false,
   },
+  "css.format.braceStyle": "collapse",
+  "css.format.newlineBetweenSelectors": false,
+  "css.format.newlineBetweenRules": false,
   "deno.enable": true,
   "deno.lint": true,
   "deno.unstable": false,
