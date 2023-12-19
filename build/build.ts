@@ -1,5 +1,5 @@
-import * as esbuild from "https://deno.land/x/esbuild@v0.19.9/mod.js";
-import { type BuildOptions } from "https://deno.land/x/esbuild@v0.19.9/mod.js";
+import * as esbuild from "https://deno.land/x/esbuild@v0.19.10/mod.js";
+import { type BuildOptions } from "https://deno.land/x/esbuild@v0.19.10/mod.js";
 import { generateBundles } from "./build_grammar.ts";
 import { watchGrammar } from "./watch_grammar.ts";
 

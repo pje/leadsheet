@@ -1,4 +1,4 @@
-import { debounce } from "https://deno.land/std@0.207.0/async/debounce.ts";
+import { debounce } from "https://deno.land/std@0.209.0/async/debounce.ts";
 import { generateBundles } from "./build_grammar.ts";
 
 export async function watch(
