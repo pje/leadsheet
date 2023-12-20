@@ -3,6 +3,7 @@ import { MetadataKeys, Song } from "./song.ts";
 import { assertEquals, bar } from "../test_utils.ts";
 import { Key, KeyFlavorMajor, KeyFlavorMinor } from "../theory/key.ts";
 import { Letter } from "../theory/letter.ts";
+import { Alteration } from "../theory/chord/alteration.ts";
 
 const songFixture = new Song(
   [
@@ -19,7 +20,7 @@ const songFixture = new Song(
       openBarline: "|",
       closeBarline: "||",
       chords: [
-        new Chord("Bb", Major, 6, "(add 9)"),
+        new Chord("Bb", Major, 6, new Alteration("add", 9)),
         new Chord("Eb", Dominant, 9),
       ],
       name: "Chorus",

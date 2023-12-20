@@ -17,3 +17,15 @@ export function unicodeifyMusicalSymbols(s: string) {
     },
   );
 }
+
+// panic if foo is not typeof Type
+// export function assertJSType<T>(foo: any, expectedJsType: string): T {
+//   const actual = typeof foo;
+//   if (actual !== expectedJsType) {
+//     const printable = actual === "object" ? JSON.stringify(foo) : foo;
+//     throw new TypeError(
+//       `type assertion failed: expected ${printable} to be type "${expectedJsType}", got "${actual}"`,
+//     );
+//   }
+//   return foo;
+// }

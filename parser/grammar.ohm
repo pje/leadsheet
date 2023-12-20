@@ -25,28 +25,38 @@ Chord {
     | caseInsensitive<"G">
 
   accidental =
-    | "##" | "𝄪" | "♯♯"
-    | "bb" | "𝄫" | "♭♭"
-    | "#"  | "♯"
-    | "b"  | "♭"
-    | "♮"
+    | double_sharp
+    | double_flat
+    | sharp
+    | flat
+    | natural
 
-  alteration_symbol =
-    | "Δ"
-    | "+"
-    | "⁺"
-    | "o"
-    | "°"
-    | "-"
-    | "⁻"
-    | caseInsensitive<"ø">
+  double_sharp =
+    | "##"
+    | "𝄪"
+    | "♯♯"
+
+  double_flat =
+    | "bb"
+    | "𝄫"
+    | "♭♭"
+
+  sharp =
+    | "#"
+    | "♯"
+
+  flat =
+    | "b"
+    | "♭"
+
+  natural =
+    | "♮"
 
   extent =
     | thirteen
     | eleven
     | nine
     | seven
-    | six_and_nine
     | six
     | five
     | four
@@ -57,7 +67,6 @@ Chord {
   eleven = | "11" | "¹¹"
   nine = | "9" | "⁹"
   seven = | "7" | "⁷"
-  six_and_nine = | six "/"? nine
   six = | "6" | "⁶"
   five = | "5" | "⁵"
   four = | "4" | "⁴"
@@ -143,18 +152,57 @@ Chord {
     | alteration_no_parens
 
   alteration_no_parens =
-    | accidental extent                          // e.g. #11, b13
-    | alteration_symbol extent                   // e.g. Δ9,  ⁺7
-    | alteration_add_no_omit extent              // e.g. "no 5", no5, "add 5", "omit 5"
-    | "/" root                                   // e.g. C/G
-    | caseInsensitive<"alt"> extent?             // e.g. alt, alt7
-    | caseInsensitive<"sus"> ("2"|"4")?          // e.g. sus, sus2, sus4
-    | quality extent                             // e.g. `CoM7`
+    | alter_raise<extent>          // e.g. #11,
+    | alter_lower<extent>          // e.g. b13,
+    | alter_major<extent>          // e.g. M13, Δ13
+    | alter_minor<extent>          // e.g. M7
+    | alter_suspend<(two | four)>  // e.g. sus2, sus4
+    | alter_compound<root>         // e.g. C/G
+    | alter_implicit_add_9         // e.g. 6/9 (only intended to handle 6/9 chords)
+    | alter_suspend_implicit_4     // e.g. sus
+    | alter_add<extent>            // e.g. add 5, add5
+    | alter_omit<extent>           // e.g. no 5, no5, omit 5, omit5
+    | alter_everything<seven>      // e.g. alt7
+    | alter_everything_implicit_7  // e.g. alt
+
+  alter_raise<T> =
+    | sharp T
+
+  alter_lower<T> =
+    | flat T
+
+  alter_major<T> =
+    | major T
+
+  alter_minor<T> =
+    | minor T
+
+  alter_add<T> =
+    | caseInsensitive<"add"> spaceNoNL* T
+
+  alter_omit<T> =
+    | caseInsensitive<"no"> spaceNoNL* T
+    | caseInsensitive<"omit"> spaceNoNL* T
+
+  alter_compound<T> =
+    | "/" T
+
+  alter_implicit_add_9 =
+    | "/" nine
+
+  alter_suspend<T> =
+    | caseInsensitive<"sus"> T
+
+  alter_suspend_implicit_4 =
+    | alter_suspend<"">
+
+  alter_everything<T> =
+    | "alt" T
+
+  alter_everything_implicit_7 =
+    | alter_everything<"">
 
   alteration_in_parens = "(" spaceNoNL? alteration_no_parens spaceNoNL? ")"
-
-  alteration_add_no_omit =
-    spaceNoNL* (caseInsensitive<"add"> | caseInsensitive<"no"> | caseInsensitive<"omit">) spaceNoNL*
 
   newline = "\r"? "\n"
   spaceNoNL = ~newline "\x00".."\x20"

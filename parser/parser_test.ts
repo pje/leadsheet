@@ -23,6 +23,7 @@ import {
 } from "../test_utils.ts";
 import { Song } from "./song.ts";
 import { Key } from "../theory/key.ts";
+import { Alteration } from "../theory/chord/alteration.ts";
 
 const songsDir = "./leadsheets";
 const rawSongs: Array<{ name: string; contents: string }> = [];
@@ -211,9 +212,8 @@ Deno.test(`chord symbols`, async (t) => {
     [`Cmaj`, new Chord("C", Major)],
     [`Cmajor`, new Chord("C", Major)],
     [`C6`, new Chord("C", Major, 6)],
-    [`C6/9`, new Chord("C", Major, 6, "(add 9)")],
-    [`C69`, new Chord("C", Major, 6, "(add 9)")],
-    [`Cm6/9`, new Chord("C", Minor, 6, "(add 9)")],
+    [`C6/9`, new Chord("C", Major, 6, new Alteration("add", 9))],
+    [`Cm6/9`, new Chord("C", Minor, 6, new Alteration("add", 9))],
     [`CM7`, new Chord("C", Major, 2)],
     [`Cᴹ⁷`, new Chord("C", Major, 7)],
     [`CM11`, new Chord("C", Major, 11)],
@@ -246,39 +246,66 @@ Deno.test(`chord symbols`, async (t) => {
     [`C°`, new Chord("C", Diminished)],
     [`Co7`, new Chord("C", Diminished, 7)],
     [`C°⁷`, new Chord("C", Diminished, 7)],
-    [`CoM7`, new Chord("C", Diminished, undefined, "M7")],
-    [`Cø`, new Chord("C", Minor, 7, "b5")],
-    [`Cø7`, new Chord("C", Minor, 7, "b5")],
+    [`CoM7`, new Chord("C", Diminished, undefined, new Alteration("major", 7))],
+    [`Cø`, new Chord("C", Minor, 7, new Alteration("lower", 5))],
+    [`Cø7`, new Chord("C", Minor, 7, new Alteration("lower", 5))],
     [`Caug`, new Chord("C", Augmented)],
     [`Caugmented`, new Chord("C", Augmented)],
     [`C⁺`, new Chord("C", Augmented)],
     [`C+`, new Chord("C", Augmented)],
     [`C⁺7`, new Chord("C", Augmented, 7)],
-    [`C+7#9`, new Chord("C", Augmented, 7, "#9")],
-    [`C/D`, new Chord("C", Major, undefined, "/D")],
-    [`Cm/D`, new Chord("C", Minor, undefined, "/D")],
-    [`Calt`, new Chord("C", Dominant, 7, "alt")],
-    [`C7alt`, new Chord("C", Dominant, 7, "alt")],
-    [`Cm11#13(no 3)`, new Chord("C", Minor, 11, "#13", "(no 3)")],
+    [`C+7#9`, new Chord("C", Augmented, 7, new Alteration("raise", 9))],
+    [`C/D`, new Chord("C", Major, undefined, new Alteration("compound", "D"))],
+    [`Cm/D`, new Chord("C", Minor, undefined, new Alteration("compound", "D"))],
+    [`Calt`, new Chord("C", Dominant, 7, new Alteration("everything", 7))],
+    [`C7alt`, new Chord("C", Dominant, 7, new Alteration("everything", 7))],
+    [
+      `C7(b13)(b9)`,
+      new Chord(
+        "C",
+        Dominant,
+        7,
+        new Alteration("lower", 13),
+        new Alteration("lower", 9),
+      ),
+    ],
+    [
+      `C7b13b9`,
+      new Chord(
+        "C",
+        Dominant,
+        7,
+        new Alteration("lower", 13),
+        new Alteration("lower", 9),
+      ),
+    ],
+    [
+      `Cm11#13(no 3)`,
+      new Chord(
+        "C",
+        Minor,
+        11,
+        new Alteration("raise", 13),
+        new Alteration("omit", 3),
+      ),
+    ],
     [
       `F𝄫minMaj9#11(sus4)(no13)(no 5)(omit 5)(♯¹¹)/E`,
       new Chord(
         <Letter> "F𝄫", // TODO: this should be canonicalized to Eb
         MinorMajor,
         9,
-        "#11",
-        "(sus4)",
-        "(no13)",
-        "(no 5)",
-        "(omit 5)",
-        "(♯¹¹)",
-        "/E",
+        new Alteration("raise", 11),
+        new Alteration("suspend", 4),
+        new Alteration("omit", 13),
+        new Alteration("omit", 5),
+        new Alteration("omit", 5),
+        new Alteration("raise", 11),
+        new Alteration("compound", "E"),
       ),
     ],
   ]);
-  for (
-    const [str, expectedChord] of positiveCases
-  ) {
+  for (const [str, expectedChord] of positiveCases) {
     await t.step(
       `"${str}" should parse as ${JSON.stringify(expectedChord)}`,
       () => {
@@ -327,10 +354,5 @@ Deno.test(`songs`, async (t) => {
 
 function assertValidSong(str: string) {
   const _song = parserResultOrFail(ParseSong(str));
-
-  if (_song) {
-    assert(true); // Great Job!™
-  } else {
-    assert(false);
-  }
+  assert(_song ? true : false);
 }
