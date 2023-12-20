@@ -35,13 +35,13 @@ Deno.test("index.html renders via file:// protocol", async () => {
 
     assertEquals("Chelsea Bridge", await getTitle(page));
     assertEquals("Billy Strayhorn", await getArtist(page));
-    assertEquals("Fm", await getKey(page));
-    assertEquals("Eb7", (await getChords(page))[0]);
+    assertEquals("Bbm", await getKey(page));
+    assertEquals("Bbm6", (await getChords(page))[0]);
 
     await transpose(page, -3);
 
-    assertEquals("Dm", await getKey(page));
-    assertEquals("C7", (await getChords(page))[0]);
+    assertEquals("Gm", await getKey(page));
+    assertEquals("Gm6", (await getChords(page))[0]);
     assertEquals("-3", await getTransposedAmount(page));
 
     await uploadFile(page, songFilePath);
@@ -49,13 +49,13 @@ Deno.test("index.html renders via file:// protocol", async () => {
     assertEquals("0", await getTransposedAmount(page));
     assertEquals("Chelsea Bridge", await getTitle(page));
     assertEquals("Billy Strayhorn", await getArtist(page));
-    assertEquals("Fm", await getKey(page));
-    assertEquals("Eb7", (await getChords(page))[0]);
+    assertEquals("Bbm", await getKey(page));
+    assertEquals("Bbm6", (await getChords(page))[0]);
 
     await enableFeature(page, colorChords);
 
     const firstChordsClasses = (await getChordClasses(page))[0]!;
-    assertArrayIncludes(firstChordsClasses, ["dom"]);
+    assertArrayIncludes(firstChordsClasses, ["min"]);
   } catch (e) {
     log.info(e);
     const filename = path.join(

@@ -364,15 +364,14 @@ function _loadDefaultSong(): Song | undefined {
 }
 
 const defaultSongRaw = `title: Chelsea Bridge
+title: Chelsea Bridge
 artist: Billy Strayhorn
 year: 1941
 sig: 4/4
-key: Fm
-
-||: Eb7 | Db7 | Eb7 Db7 | Bb7 |
-| Ebm7 | Ab7 | Db6 :1|| Db / / B7 :2||
-|| F#m9 B7 | Dm7 Go7 |  F#m7 F7 | Bm7 E7 |
-| AM7 / Am7 D7 | GM7 | Gm7 | Db7 C7 B7 Bb7 |
-| Eb7 | Db7 | Eb7 Db7 | Bb7 |
-| Ebm7 | Ab7 | Db6 | Db6 |
-`;
+key: Bbm
+A:
+|: Bbm6 | Abm6 | Bbm6 | Abm6 | Bb9 | Ebm7 | Ab7 | DbM7 | % :|
+B:
+| B13 | B7(b13)(b9) | EM7 E6 | F#m7 B7(b13)(b9) | E7 | AM7 C7 | G6 | Gm6 | Db9 C9 B9 Bb9 ||
+A:
+| Bbm6 | Abm6 | Bbm6 | Abm6 | Bb9 | Ebm7 | Ab7 | DbM7 | % ||`;
