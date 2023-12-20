@@ -61,11 +61,11 @@ export class Chord {
     );
   }
 
-  print(): string {
-    return `${this.tonic}${this.printFlavor()}`;
+  print(formatters?: Formatters): string {
+    return `${this.tonic}${this.printFlavor(formatters)}`;
   }
 
-  private printFlavor(): string {
+  private printFlavor(formatters?: Formatters): string {
     let extent = this.extent || "";
     let quality = "";
     const alterations = [...this.alterations];
@@ -112,12 +112,19 @@ export class Chord {
         nonexhaustiveSwitchGuard(this.quality);
     }
 
-    const printedAlterations = alterations.map((a) => {
-      return a.print();
-    }).join("");
+    const printedAlterations = formatters?.alterations
+      ? formatters.alterations(alterations)
+      : alterations.map((a) =>
+        (["add", "omit"].includes(a.kind)) ? `(${a.print()})` : a.print()
+      ).join("");
 
     return `${quality}${extent}${printedAlterations}`;
   }
 }
 
 export const ChordTypeName = "chord" as const;
+
+export type Formatters = {
+  alterations: AlterationsFormatter;
+};
+export type AlterationsFormatter = (as: Alteration[]) => string;

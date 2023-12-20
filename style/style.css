@@ -381,12 +381,29 @@ html {
       margin-block-end: 6px;
 
       .chord {
+        display: flex;
+        flex-direction: row;
         min-height: 26px;
         white-space: nowrap;
         /* this prevents long chord names from breaking into multiple lines */
         font-size: 1.75rem;
         text-align: center;
         flex-basis: 0;
+
+        .fractional {
+          display: flex;
+          flex-direction: column;
+          font-size: 1.2cqh;
+          line-height: 1.2cqh;
+
+          /* &::before {
+            content: "(";
+          }
+
+          &::after {
+            content: ")";
+          } */
+        }
 
         &.aug {
           color: var(--bright-yellow);

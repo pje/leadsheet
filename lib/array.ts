@@ -41,3 +41,19 @@ export function groupsOf<T>(
     return resultArray;
   }, []);
 }
+
+// Split an array into two arrays based on `predicate`'s return value.
+//
+// @example
+// ```ts
+//  partition([1, 2, 3, 4, 5], (e) => isEven())
+//  => [[2, 4, 6], [1, 3, 5]]
+// ```
+export function partition<T>(
+  as: Array<T>,
+  predicate: (a: T) => boolean,
+): [Array<T>, Array<T>] {
+  const [one, two]: [Array<T>, Array<T>] = [[], []];
+  as.forEach((a) => predicate(a) ? one.push(a) : two.push(a));
+  return [one, two];
+}

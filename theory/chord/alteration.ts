@@ -38,9 +38,9 @@ export class Alteration {
       case "minor":
         return `m${target}`;
       case "add":
-        return `(add${target})`;
+        return `add${target}`;
       case "omit":
-        return `(no${target})`;
+        return `no${target}`;
       case "compound":
         return `/${target}`;
       case "suspend":

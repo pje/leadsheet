@@ -24,8 +24,10 @@ import {
 } from "../parser/song.ts";
 import { type State } from "./state.ts";
 import { Key, SigAccidental, SigAccidentalToSymbol } from "../theory/key.ts";
-import { ChordTypeName } from "../theory/chord.ts";
+import { ChordTypeName, type Extent } from "../theory/chord.ts";
 import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
+import { type Alteration } from "../theory/chord/alteration.ts";
+import { partition } from "../lib/array.ts";
 
 const state: State = {
   song: undefined,
@@ -306,10 +308,32 @@ function _getTransposedAmountEl() {
 }
 
 function _formatChordName(c: Readonly<Chordish>): string {
-  const printed = c.print();
+  const printed = c.print({ alterations: fractionalFormatter });
   return state.settings.featureFlags.unicodeChordSymbols.enabled
     ? unicodeifyMusicalSymbols(printed)
     : printed;
+}
+
+function fractionalFormatter(as: Alteration[]): string {
+  const defaultFormat = (as: Alteration[]) => as.map((a) => a.print()).join("");
+  if (as.length < 2) return defaultFormat(as);
+
+  const [parenable, rest] = partition(
+    as,
+    (a: Alteration) => ["lower", "raise", "add", "omit"].includes(a.kind),
+  );
+
+  if (parenable.length < 2) return defaultFormat(as);
+
+  parenable.sort((a, b) => <Extent> b.target - <Extent> a.target);
+
+  const fractionalContent = parenable.map((a) => {
+    return `<div>${a.print()}</div>`;
+  });
+
+  return `${defaultFormat(rest)}(<div class="fractional">${
+    fractionalContent.join("\n")
+  }</div>)`;
 }
 
 type ChordishWithoutRepeats = Exclude<Chordish, RepeatPreviousChord>;
