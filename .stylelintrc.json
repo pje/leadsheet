@@ -1,4 +1,5 @@
 {
+  "ignoreFiles": "build/*",
   "extends": ["stylelint-config-standard"],
   "rules": {
     "comment-empty-line-before": null,
