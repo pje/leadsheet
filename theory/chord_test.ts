@@ -3,6 +3,7 @@ import { assertNotEquals } from "https://deno.land/std@0.209.0/assert/assert_not
 import { assertEquals } from "../test_utils.ts";
 import { Chord } from "./chord.ts";
 import { Alteration } from "./chord/alteration.ts";
+import { DefaultChordFormatterInstance } from "./chord/formatter.ts";
 
 Deno.test("===", async (t) => {
   const a1 = new Chord("A", "maj", 7, new Alteration("raise", 11));
@@ -95,7 +96,7 @@ Deno.test(Chord.prototype.print.name, async (t) => {
   for (const [chord, expected] of cases) {
     await t.step(
       `"${JSON.stringify(chord)}" should print as "${expected}"`,
-      () => assertEquals(expected, chord.print()),
+      () => assertEquals(expected, chord.print(DefaultChordFormatterInstance)),
     );
   }
 });

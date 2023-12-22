@@ -28,6 +28,7 @@ import { ChordTypeName, type Extent } from "../theory/chord.ts";
 import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
 import { type Alteration } from "../theory/chord/alteration.ts";
 import { partition } from "../lib/array.ts";
+import { DefaultChordFormatter } from "../theory/chord/formatter.ts";
 
 const state: State = {
   song: undefined,
@@ -310,33 +311,37 @@ function _getTransposedAmountEl() {
   return document.getElementById("transposed-steps")!;
 }
 
+const FancyHTMLFormatter = class extends DefaultChordFormatter {
+  override alterations(as: Array<Alteration>) {
+    if (as.length < 2) return super.alterations(as);
+
+    const [parenable, rest] = partition(
+      as,
+      (a: Alteration) => ["lower", "raise", "add", "omit"].includes(a.kind),
+    );
+
+    if (parenable.length < 2) return super.alterations(as);
+
+    parenable.sort((a, b) => <Extent> b.target - <Extent> a.target);
+
+    const fractionalContent = parenable.map((a) => {
+      return `<span>${a.print()}</span>`;
+    });
+
+    return [
+      super.alterations(rest),
+      `<span class="paren-open">(</span>`,
+      `<span class="fractional">${fractionalContent.join("")}</span>`,
+      `<span class="paren-close">)</span>`,
+    ].join("");
+  }
+};
+
 function _formatChordName(c: Readonly<Chordish>): string {
-  const printed = c.print({ alterations: fractionalFormatter });
+  const printed = c.print(new FancyHTMLFormatter());
   return state.settings.featureFlags.unicodeChordSymbols.enabled
     ? unicodeifyMusicalSymbols(printed)
     : printed;
-}
-
-function fractionalFormatter(as: Alteration[]): string {
-  const defaultFormat = (as: Alteration[]) => as.map((a) => a.print()).join("");
-  if (as.length < 2) return defaultFormat(as);
-
-  const [parenable, rest] = partition(
-    as,
-    (a: Alteration) => ["lower", "raise", "add", "omit"].includes(a.kind),
-  );
-
-  if (parenable.length < 2) return defaultFormat(as);
-
-  parenable.sort((a, b) => <Extent> b.target - <Extent> a.target);
-
-  const fractionalContent = parenable.map((a) => {
-    return `<div>${a.print()}</div>`;
-  });
-
-  return `${defaultFormat(rest)}(<div class="fractional">${
-    fractionalContent.join("\n")
-  }</div>)`;
 }
 
 type ChordishWithoutRepeats = Exclude<Chordish, RepeatPreviousChord>;

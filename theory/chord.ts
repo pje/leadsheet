@@ -1,19 +1,9 @@
 import { type Letter, transposeLetter } from "./letter.ts";
-import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
 import { type FlatOrSharpSymbol } from "./notation.ts";
 import { type Alteration } from "./chord/alteration.ts";
 import { type Extent } from "./chord/extent.ts";
-import {
-  Augmented,
-  Diminished,
-  Dominant,
-  Major,
-  Minor,
-  MinorMajor,
-  Power,
-  type Quality,
-  Suspended,
-} from "./chord/quality.ts";
+import { Major, type Quality } from "./chord/quality.ts";
+export * from "./chord/alteration.ts";
 export * from "./chord/extent.ts";
 export * from "./chord/quality.ts";
 
@@ -61,70 +51,13 @@ export class Chord {
     );
   }
 
-  print(formatters?: Formatters): string {
-    return `${this.tonic}${this.printFlavor(formatters)}`;
-  }
-
-  private printFlavor(formatters?: Formatters): string {
-    let extent = this.extent || "";
-    let quality = "";
-    const alterations = [...this.alterations];
-
-    switch (this.quality) {
-      case Augmented:
-        quality = "+";
-        break;
-      case Diminished:
-        quality = "o";
-        break;
-      case Dominant:
-        quality = ""; // "dom" is implicit, `extent` defines the dominant type
-        break;
-      case Major:
-        if (this.extent == 6) {
-          const i = alterations.findIndex((a) => a.isAdd9());
-          if (i >= 0) {
-            alterations.splice(i, 1);
-            quality = "6/9"; // we want "C6/9" instead of "C6(add 9)"
-            extent = "";
-          } else {
-            quality = ""; // we want "C6" instead of "CM6"
-          }
-        } else if (!this.extent) {
-          quality = ""; // we want "C" instead of "CM"
-        } else {
-          quality = "M"; // we want CM9
-        }
-        break;
-      case Minor:
-        quality = "m";
-        break;
-      case MinorMajor:
-        quality = "minMaj";
-        break;
-      case Power:
-        quality = "5";
-        break;
-      case Suspended:
-        quality = "sus"; // `extent` defines the suspension type
-        break;
-      default:
-        nonexhaustiveSwitchGuard(this.quality);
-    }
-
-    const printedAlterations = formatters?.alterations
-      ? formatters.alterations(alterations)
-      : alterations.map((a) =>
-        (["add", "omit"].includes(a.kind)) ? `(${a.print()})` : a.print()
-      ).join("");
-
-    return `${quality}${extent}${printedAlterations}`;
+  print(formatter: Formatter): string {
+    return formatter.format(this);
   }
 }
 
 export const ChordTypeName = "chord" as const;
 
-export type Formatters = {
-  alterations: AlterationsFormatter;
+type Formatter = {
+  format(c: Chord): string;
 };
-export type AlterationsFormatter = (as: Alteration[]) => string;

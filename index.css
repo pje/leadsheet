@@ -195,6 +195,9 @@ html {
   row-gap: calc(var(--staff-height) * 0.5);
 
   .bar {
+    /* container-type: size; */
+    /* container-name: bar; */
+
     &:nth-child(4n-3) {
       .staff {
         border-inline-start-style: solid;
@@ -206,10 +209,10 @@ html {
       --high-g-top: -114cqh;
       --high-f-top: calc(var(--high-g-top) + calc(var(--staff-line-height) / 2));
 
-      font-family: "Noto Music";
-      display: flex;
       container-type: size;
       container-name: staff;
+      display: flex;
+      font-family: "Noto Music";
       height: var(--staff-height);
       border-block-end: none;
       border-top: solid;
@@ -386,9 +389,23 @@ html {
         flex-direction: row;
         white-space: nowrap;
         /* this prevents long chord names from breaking into multiple lines */
-
         font-size: 100cqh;
+        text-align: center;
         justify-content: center;
+
+        .fractional, .paren-open, .paren-close {
+          font-weight: normal;
+        }
+
+        .fractional {
+          align-items: center;
+          display: flex;
+          flex-direction: column;
+          font-size: 58cqh;
+          line-height: 45cqh;
+          position: relative;
+          top: 15cqh;
+        }
 
         &.aug {
           color: var(--bright-yellow);
@@ -416,16 +433,6 @@ html {
         }
         &.sus {
           color: var(--bright-orange);
-        }
-
-        .fractional {
-          display: flex;
-          flex-direction: column;
-          position: relative;
-          top: 15cqh;
-          align-items: center;
-          font-size: 58cqh;
-          line-height: 45cqh;
         }
       }
     }

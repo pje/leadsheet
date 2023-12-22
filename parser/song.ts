@@ -1,6 +1,10 @@
 import { groupsOf } from "../lib/array.ts";
 import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
 import {
+  ChordFormatter,
+  DefaultChordFormatterInstance,
+} from "../theory/chord/formatter.ts";
+import {
   Chord,
   ChordTypeName,
   Major,
@@ -123,7 +127,7 @@ export class Song {
                 line.push(chordish.print());
                 break;
               case ChordTypeName: {
-                const c = chordish.print();
+                const c = chordish.print(DefaultChordFormatterInstance);
                 if (c === previousChord) {
                   line.push(RepeatedChordSymbol);
                 } else {
@@ -208,8 +212,8 @@ export class OptionalChord {
     return new OptionalChord(this.chord.transpose(halfSteps, flatsOrSharps));
   }
 
-  print() {
-    return `(${this.chord.print()})`;
+  print(formatter: ChordFormatter = DefaultChordFormatterInstance): string {
+    return `(${this.chord.print(formatter)})`;
   }
 }
 
