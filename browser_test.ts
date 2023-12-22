@@ -16,27 +16,39 @@ const indexAbsolutePath = path.resolve("./index.html");
 const songFilePath = path.resolve("./leadsheets/chelsea_bridge.leadsheet");
 const screenshotsPath = Deno.realPathSync(".");
 
+async function setup() {
+  const [width, height] = [1200, 1400];
+
+  return await puppeteer.launch({
+    args: [`--window-size=${width},${height}`],
+    defaultViewport: { width, height },
+    // devtools: true, //  uncomment to debug
+    // headless: false, //  uncomment to debug
+    // slowMo: 10, // in ms, uncomment to debug
+  });
+}
+
 Deno.test("index.html renders via file:// protocol", async () => {
   const browser = await setup();
   const page = await browser.newPage();
 
   page
-    .on(
-      "console",
-      (message) =>
-        log.error(
-          `${message.type().substr(0, 3).toUpperCase()} ${message.text()}`,
-        ),
-    )
+    .on("console", (message) =>
+      log.error(
+        `${message.type().slice(0, 3).toUpperCase()} ${message.text()}`,
+      ))
     .on("pageerror", ({ message }) => log.error(message));
 
   try {
     await page.goto(`file://${indexAbsolutePath}`);
 
+    await loadFile(page, songFilePath);
+
     assertEquals("Chelsea Bridge", await getTitle(page));
     assertEquals("Billy Strayhorn", await getArtist(page));
     assertEquals("Bbm", await getKey(page));
     assertEquals("Bbm6", (await getChords(page))[0]);
+    assertEquals("0", await getTransposedAmount(page));
 
     await transpose(page, -3);
 
@@ -44,35 +56,19 @@ Deno.test("index.html renders via file:// protocol", async () => {
     assertEquals("Gm6", (await getChords(page))[0]);
     assertEquals("-3", await getTransposedAmount(page));
 
-    await uploadFile(page, songFilePath);
-
-    assertEquals("0", await getTransposedAmount(page));
-    assertEquals("Chelsea Bridge", await getTitle(page));
-    assertEquals("Billy Strayhorn", await getArtist(page));
-    assertEquals("Bbm", await getKey(page));
-    assertEquals("Bbm6", (await getChords(page))[0]);
-
     await enableFeature(page, colorChords);
 
     const firstChordsClasses = (await getChordClasses(page))[0]!;
     assertArrayIncludes(firstChordsClasses, ["min"]);
-  } catch (e) {
-    log.info(e);
-    const filename = path.join(
-      screenshotsPath,
-      `test-failure-${time().now().getSeconds()}.png`,
-    );
-    log.info(`\n🚨 test failure screenshot saved to: ${filename}`);
 
-    await page.screenshot({ path: filename });
+    await screenshotOnSuccess(page);
+  } catch (e) {
+    await screenshotOnFailure(page);
+    throw e;
   } finally {
     await teardown(browser);
   }
 });
-
-async function setup(): Promise<Browser> {
-  return await puppeteer.launch();
-}
 
 async function teardown(browser: Browser) {
   await browser.close();
@@ -117,11 +113,13 @@ async function transpose(page: Page, steps: number) {
   for (let i = 0; i < Math.abs(steps); i++) {
     await page.click(selector);
   }
+
+  return page;
 }
 
-async function uploadFile(page: Page, filepath: string) {
-  const input = await page.waitForSelector("#songfile");
-  await input!.uploadFile(filepath);
+async function loadFile(page: Page, filepath: string) {
+  const input = (await page.waitForSelector("#songfile"))!;
+  return await input.uploadFile(filepath);
 }
 
 async function enableFeature(page: Page, flag: FeatureFlagKeysType) {
@@ -139,4 +137,19 @@ async function getChordClasses(page: Page) {
       (es): string[][] => es.map((e) => Object.values(e.classList)),
     );
   return chords;
+}
+
+async function screenshotOnSuccess(page: Page) {
+  const filename = path.join(screenshotsPath, `test-success.png`);
+  return await page.screenshot({ path: filename });
+}
+
+async function screenshotOnFailure(page: Page) {
+  const filename = path.join(
+    screenshotsPath,
+    `test-failure-${time().now().getSeconds()}.png`,
+  );
+  log.info(`🚨 test failure screenshot saved to: ${filename}`);
+
+  return await page.screenshot({ path: filename });
 }

@@ -6,10 +6,10 @@ unit_test_files=$(filter-out $(browser_test_files),$(test_files))
 deno_allows=--allow-env --allow-net --allow-read --allow-run --allow-write
 
 build: deps typecheck
-	deno run $(deno_allows) build/build.ts build
+	deno run $(deno_allows) build_config/build.ts build
 
 watch: deps
-	deno run $(deno_allows) build/build.ts watch
+	deno run $(deno_allows) build_config/build.ts watch
 
 lint:
 	deno lint *.ts "**/*.ts" --ignore=node_modules,parser/grammar.ohm-bundle.d.ts
@@ -32,7 +32,7 @@ browser_test: $(browser_test_files)
 	deno test $(deno_allows) $^
 
 clean:
-	rm -rf index.css index.css.map index.js index.js.map node_modules test-failure*.png
+	rm -rf build/* node_modules test-*.png
 
 deps:
 	npm install --save-exact --save-dev --prefix=.

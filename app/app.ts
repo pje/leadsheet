@@ -144,9 +144,12 @@ function renderBars(
 
       previousChord = chordish;
       previousChordColorClass = colorClass;
-      return `<div class="chord ${
-        state.settings.featureFlags.colorChords.enabled && colorClass
-      }">${result}</div>`;
+      const classes = [
+        "chord",
+        `${state.settings.featureFlags.colorChords.enabled && colorClass}`,
+        `sibling-count-${bar.chords.length - 1}`,
+      ];
+      return `<div class="${classes.join(" ")}">${result}</div>`;
     });
 
     const staffClasses = [

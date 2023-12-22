@@ -7,13 +7,20 @@ const grammarFile = "./parser/grammar.ohm";
 const denoFmtIgnore = "// deno-fmt-ignore-file\n";
 
 const options: BuildOptions = {
-  logLevel: "info",
-  entryPoints: ["index.ts"],
-  target: "chrome58",
-  outdir: ".",
-  metafile: true,
   bundle: true,
+  entryPoints: ["index.ts", "index.css"],
+  loader: {
+    ".eot": "file",
+    ".svg": "file",
+    ".ttf": "file",
+    ".woff": "file",
+    ".woff2": "file",
+  },
+  logLevel: "info",
+  metafile: true,
+  outdir: "build",
   sourcemap: true,
+  target: "chrome58",
 };
 
 async function build() {

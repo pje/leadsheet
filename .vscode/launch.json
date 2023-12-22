@@ -5,18 +5,24 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "request": "launch",
-      "name": "Debug tests",
-      "type": "node",
+      "attachSimplePort": 9229,
       "cwd": "${workspaceFolder}",
-      "runtimeExecutable": "deno",
+      "name": "Debug tests",
+      "protocol": "inspector",
+      "request": "launch",
       "runtimeArgs": [
         "test",
         "--inspect-brk",
+        "--allow-env",
+        "--allow-net",
         "--allow-read",
+        "--allow-run",
+        "--allow-write",
         "${file}"
       ],
-      "attachSimplePort": 9229
+      "runtimeExecutable": "deno",
+      "type": "node",
+      "smartStep": true,
     },
     {
       "name": "Extension",
