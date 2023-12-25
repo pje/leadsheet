@@ -212,67 +212,12 @@ html {
       container-type: size;
       container-name: staff;
       display: flex;
+      justify-content: space-between;
       font-family: "Noto Music";
       height: var(--staff-height);
       border-block-end: none;
       border-top: solid;
       border-top-width: 1px;
-
-      .clef {
-        position: relative;
-        top: -31cqh;
-        font-size: 96cqh;
-      }
-
-      .key-signature {
-        letter-spacing: -4cqh;
-
-        .accidental {
-          position: relative;
-          font-size: 80cqh;
-
-          &.f {
-            top: calc(var(--high-f-top) + calc(var(--staff-line-height) * 0));
-          }
-
-          &.c {
-            top: calc(var(--high-g-top) + calc(var(--staff-line-height) * 2));
-          }
-
-          &.g.sharp {
-            top: calc(var(--high-g-top) + calc(var(--staff-line-height) * 0));
-          }
-
-          &.g.flat {
-            top: calc(var(--high-f-top) + calc(var(--staff-line-height) * 3));
-          }
-
-          &.d {
-            top: calc(var(--high-f-top) + calc(var(--staff-line-height) * 1));
-          }
-
-          &.a {
-            top: calc(var(--high-g-top) + calc(var(--staff-line-height) * 3));
-          }
-
-          &.e {
-            top: calc(var(--high-g-top) + calc(var(--staff-line-height) * 1));
-          }
-
-          &.b {
-            top: calc(var(--high-f-top) + calc(var(--staff-line-height) * 2));
-          }
-        }
-      }
-
-      .time-signature {
-        position: relative;
-        top: -12cqh;
-        margin-inline-start: 18cqh;
-        font-size: 71cqh;
-        line-height: 51cqh;
-        font-weight: bold;
-      }
 
       @media (prefers-color-scheme: light) {
         border-color: #111;
@@ -292,55 +237,116 @@ html {
             transparent 25%);
       }
 
-      & .actual-barline-double-open {
-        font-size: 100cqh;
-        position: relative;
-        top: -39cqh;
-        /* content: 𝄆 */
+      .frontmatter {
+        display: flex;
+        margin-inline-end: 10cqh;
+        font-family: "Noto Music";
+
+        .clef {
+          position: relative;
+          top: -31cqh;
+          font-size: 96cqh;
+        }
+
+        .key-signature {
+          display: flex;
+          letter-spacing: -4cqh;
+
+          .accidental {
+            position: relative;
+            font-size: 80cqh;
+
+            &.f {
+              top: calc(var(--high-f-top) + calc(var(--staff-line-height) * 0));
+            }
+
+            &.c {
+              top: calc(var(--high-g-top) + calc(var(--staff-line-height) * 2));
+            }
+
+            &.g.sharp {
+              top: calc(var(--high-g-top) + calc(var(--staff-line-height) * 0));
+            }
+
+            &.g.flat {
+              top: calc(var(--high-f-top) + calc(var(--staff-line-height) * 3));
+            }
+
+            &.d {
+              top: calc(var(--high-f-top) + calc(var(--staff-line-height) * 1));
+            }
+
+            &.a {
+              top: calc(var(--high-g-top) + calc(var(--staff-line-height) * 3));
+            }
+
+            &.e {
+              top: calc(var(--high-g-top) + calc(var(--staff-line-height) * 1));
+            }
+
+            &.b {
+              top: calc(var(--high-f-top) + calc(var(--staff-line-height) * 2));
+            }
+          }
+        }
+
+        .time-signature {
+          position: relative;
+          top: -12cqh;
+          margin-inline-start: 18cqh;
+          font-size: 71cqh;
+          line-height: 51cqh;
+          font-weight: bold;
+        }
       }
 
-      & .actual-barline-double-close {
-        font-size: 100cqh;
-        position: relative;
-        top: -39cqh;
-        /* content: 𝄇 */
+      .content {
+        width: 100%;
+        display: flex;
       }
 
-      &.barline-single-close {
+      & .barline-single-close {
         border-right-style: solid;
         border-right-width: 1.5px;
       }
 
-      &.barline-double-open {
-        border-inline-start-style: double;
-        border-inline-start-width: 8.5px;
-      }
-
-      &.barline-double-close {
-        border-right-style: double;
-        border-right-width: 8.5px;
-      }
-
-      &.barline-repeat-close {
-        border-right-style: double;
-        border-right-width: 8.5px;
-
+      & .barline-double-open {
+        font-size: 100cqh;
         &::after {
-          content: ":";
-          line-height: 2.2rem;
-          font-size: 2.7rem;
-          left: 430cqh;
+          position: relative;
+          top: -40cqh;
+          right: -6cqh;
+          content: "𝄁";
         }
       }
 
-      &.barline-repeat-open {
-        border-inline-start-style: double;
-        border-inline-start-width: 8.5px;
-
+      & .barline-double-close {
+        font-size: 100cqh;
         &::after {
-          content: ":";
-          line-height: 2.2rem;
-          font-size: 2.7rem;
+          position: relative;
+          top: -40cqh;
+          right: -6cqh;
+          content: "𝄂";
+        }
+      }
+
+      & .barline-repeat-close {
+        font-size: 100cqh;
+        &::after {
+          position: relative;
+          top: -40cqh;
+          right: -6cqh;
+          content: "𝄇";
+        }
+      }
+
+      & .barline-repeat-open {
+        font-size: 100cqh;
+        &::after {
+          position: relative;
+          top: -40cqh;
+          left: -6cqh;
+          content: "𝄆";
         }
       }
     }

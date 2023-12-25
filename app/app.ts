@@ -119,7 +119,7 @@ function renderBars(
   song: Readonly<Song>,
   rootElement: HTMLElement = document.getElementById("root")!,
 ) {
-  let previousChord: Chordish = new NoChord();
+  let previousChord: Chordish | undefined = undefined;
   let previousChordColorClass: ChordishQuality = "no-chord";
   let previousSection: string | undefined = undefined;
 
@@ -138,9 +138,13 @@ function renderBars(
         result = _formatChordName(chordish);
       } else {
         colorClass = _getColorClass(chordish);
-        result = formattedChordName === _formatChordName(previousChord)
-          ? RepeatedChordSymbol
-          : formattedChordName;
+        if (previousChord) {
+          result = formattedChordName === _formatChordName(previousChord)
+            ? RepeatedChordSymbol
+            : formattedChordName;
+        } else {
+          result = formattedChordName;
+        }
       }
 
       previousChord = chordish;
@@ -153,11 +157,12 @@ function renderBars(
       return `<div class="${classes.join(" ")}">${result}</div>`;
     });
 
-    const staffClasses = [
-      "staff",
-      _getBarlineClass(bar.openBarline, "open"),
-      _getBarlineClass(bar.closeBarline, "close"),
-    ];
+    const staffClasses = ["staff"];
+    const barlineOpenClass = _getBarlineClass(bar.openBarline, "open");
+    const barlineCloseClass = _getBarlineClass(bar.closeBarline, "close");
+
+    const barlineOpen = `<div class=${barlineOpenClass}></div>`;
+    const barlineClose = `<div class=${barlineCloseClass}></div>`;
 
     const sectionNameElement = bar.name && previousSection !== bar.name
       ? `<div class="section-name">${bar.name}</div>`
@@ -168,6 +173,9 @@ function renderBars(
     ${chords.join("")}
   </div>
   <div class="${staffClasses.join(" ")}">
+    ${barlineOpen}
+    <div class="content"></div>
+    ${barlineClose}
   </div>
 </div>`;
 
@@ -205,21 +213,22 @@ function renderClefAndSignatures(
 
   const clef = "𝄞";
 
-  const staffElements = `
+  const frontmatter = `<div class="frontmatter">
   <div class="clef treble">${clef}</div>
   ${keySignatureEl}
   <div class="time-signature">
     <div class="numerator">${numerator}</div>
     <div class="slash" hidden>/</div>
     <div class="denominator">${denominator}</div>
-  </div>`;
+  </div>
+</div>`;
 
   const firstBarStaffElement = rootElement.querySelector(
     ".bar:first-child .staff",
   )!;
   firstBarStaffElement.insertAdjacentHTML(
     "afterbegin",
-    staffElements,
+    frontmatter,
   );
   firstBarStaffElement.classList.add("flex-row", "flex-justify-start");
 }
