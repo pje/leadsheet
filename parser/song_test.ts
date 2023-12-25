@@ -1,9 +1,9 @@
-import { Chord, Dominant, Major, Minor } from "../theory/chord.ts";
+import { Chord, Dom9, Maj, Min7 } from "../theory/chord.ts";
 import { MetadataKeys, Song } from "./song.ts";
 import { assertEquals, bar } from "../test_utils.ts";
 import { Key, KeyFlavorMajor, KeyFlavorMinor } from "../theory/key.ts";
 import { Letter } from "../theory/letter.ts";
-import { Alteration } from "../theory/chord/alteration.ts";
+import { Add6, Add9 } from "../theory/chord/alteration.ts";
 
 const songFixture = new Song(
   [
@@ -11,8 +11,8 @@ const songFixture = new Song(
       openBarline: "||",
       closeBarline: "|",
       chords: [
-        new Chord("C", Minor, 7),
-        new Chord("F", Minor, 7),
+        new Chord("C", Min7),
+        new Chord("F", Min7),
       ],
       name: "Verse",
     },
@@ -20,8 +20,8 @@ const songFixture = new Song(
       openBarline: "|",
       closeBarline: "||",
       chords: [
-        new Chord("Bb", Major, 6, new Alteration("add", 9)),
-        new Chord("Eb", Dominant, 9),
+        new Chord("Bb", Maj, Add6, Add9),
+        new Chord("Eb", Dom9),
       ],
       name: "Chorus",
     },

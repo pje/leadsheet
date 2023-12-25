@@ -12,17 +12,22 @@ import {
 } from "./grammar.ohm-bundle.js";
 import { zip } from "../lib/array.ts";
 import {
-  Augmented,
+  Add6,
+  Aug,
   Chord,
-  Diminished,
-  Dominant,
-  type Extent,
-  Major,
-  Minor,
-  MinorMajor,
+  Dim,
+  Dim7,
+  Dom7,
+  ExtendableTetrad,
+  Extent,
+  Maj,
+  Maj7,
+  Min,
+  Min7,
+  Min7b5,
   Power,
   type Quality,
-  Suspended,
+  Triad,
 } from "../theory/chord.ts";
 import {
   type Bar,
@@ -38,14 +43,33 @@ import {
 import { Err, Ok, type Result } from "../lib/result.ts";
 import { Key } from "../theory/key.ts";
 import { type Letter } from "../theory/letter.ts";
-import { Alteration } from "../theory/chord/alteration.ts";
+import {
+  Add,
+  Add9,
+  type Alteration,
+  Everything,
+  Lower,
+  No,
+  Over,
+  Raise,
+  Sus,
+  Sus4,
+} from "../theory/chord/alteration.ts";
 
 interface FlavorNode extends NNode {
-  eval?(): [Quality, Extent, ...Array<Alteration>]; // has to be optional because of Typescript interface limitations
+  eval?(): [Quality, Array<Alteration>]; // has to be optional because of Typescript interface limitations
 }
 
 interface QualityNode extends NNode {
-  eval?(): [Quality, Extent, Array<Alteration>]; // has to be optional because of Typescript interface limitations
+  eval?(): [Quality, Array<Alteration>]; // has to be optional because of Typescript interface limitations
+}
+
+interface TriadQualityNode extends NNode {
+  eval?(): [Triad, Array<Alteration>]; // has to be optional because of Typescript interface limitations
+}
+
+interface ExtendedQualityNode extends NNode {
+  eval?(): ExtendableTetrad; // has to be optional because of Typescript interface limitations
 }
 
 interface AlterationsNode extends INode {
@@ -63,8 +87,12 @@ interface ExtentNode extends Node {
 }
 
 class ChordActions implements ChordActionDict<void> {
-  chord = (root: NNode, flavor: FlavorNode) =>
-    new Chord(root.eval(), ...(flavor.eval!()));
+  chord = (rootN: NNode, flavorNode: FlavorNode) => {
+    const root = rootN.eval();
+    const [quality, alterations] = flavorNode.eval!();
+    const c = new Chord(root, quality, ...alterations);
+    return c;
+  };
 
   root = (root: NNode, accidentals: INode) =>
     [
@@ -74,24 +102,11 @@ class ChordActions implements ChordActionDict<void> {
 
   flavor = (
     qualityNode: QualityNode,
-    extentNode: ExtentNode,
-    alterationsNode: AlterationsNode,
-  ) => {
-    const [q, e, a]: [
-      Quality | undefined,
-      Extent | undefined,
-      Alteration[],
-    ] = qualityNode.eval!();
-
-    const e2: [Extent | undefined] = extentNode.child(0)?.eval();
-
-    const alterations: Alteration[] = alterationsNode.children.flatMap((a) =>
-      a.isIteration()
-        ? a.children.flatMap((a2: AlterNode) => a2.eval!())
-        : a.eval!()
-    );
-
-    return [q, e2 || e, ...(a || []), ...alterations];
+    alterationsNodes: AlterationsNode,
+  ): [Quality, Array<Alteration>] => {
+    const [q, as] = qualityNode.eval!();
+    const alterations = alterationsNodes.children.map((a) => a.eval!());
+    return [q, [...as, ...alterations]];
   };
 
   #evalPassthrough = (n: NNode) => n.eval();
@@ -107,46 +122,75 @@ class ChordActions implements ChordActionDict<void> {
   three = (_: NNode) => 3;
   two = (_: NNode) => 2;
 
-  #qualityPassthrough =
-    (quality: Quality) => (_: NNode) => [quality, undefined, []];
-  quality = this.#evalPassthrough;
-  augmented = this.#qualityPassthrough(Augmented);
-  diminished = this.#qualityPassthrough(Diminished);
-  major = this.#qualityPassthrough(Major);
+  #qualityPassthrough = (q: Quality) => (_: NNode) => [q, []];
+  quality = (triadQN: TriadQualityNode, maybeExtendedQN: INode) => {
+    const [triadQ, as]: [Triad, Array<Alteration>] = triadQN.eval!();
+    const extendedQualityNode = <
+      | ExtendedQualityNode
+      | undefined
+    > maybeExtendedQN
+      .child(0);
+
+    const extendedQ = extendedQualityNode?.eval!();
+
+    const result: Quality = extendedQ
+      ? { ...extendedQ, triad: triadQ.triad }
+      : triadQ;
+
+    return [result, [...as]];
+  };
+  augTriad = this.#qualityPassthrough(Aug);
+  dimTriad = this.#qualityPassthrough(Dim);
+  majTriad = this.#qualityPassthrough(Maj);
+  minTriad = this.#qualityPassthrough(Min);
   power = this.#qualityPassthrough(Power);
-  minor = this.#qualityPassthrough(Minor);
-  sus = this.#qualityPassthrough(Suspended);
-  dominant = (_0: NNode) => [Dominant, 7, []];
-  half_diminished = (_0: NNode) => [Minor, 7, [new Alteration("lower", 5)]];
-  minor_major = this.#qualityPassthrough(MinorMajor);
+  majX = (_0: NNode, extentNode: ExtentNode): ExtendableTetrad => {
+    const extent = extentNode.eval!();
+    return { ...Maj7, extent };
+  };
+  minX = (_0: NNode, extentNode: ExtentNode): ExtendableTetrad => {
+    const extent = extentNode.eval!();
+    return { ...Min7, extent };
+  };
+  domX = (extentNode: ExtentNode): ExtendableTetrad => {
+    const extent = extentNode.eval!();
+    return { ...Dom7, extent };
+  };
+  explicitDomX = (_0: NNode, maybeExtentNode: INode): ExtendableTetrad => {
+    const extentNode = <ExtentNode | undefined> maybeExtentNode.child(0);
+    const extent = extentNode?.eval!();
+    return extent ? { ...Dom7, extent } : Dom7;
+  };
+  dimX = (_0: NNode, extentNode: ExtentNode): ExtendableTetrad => {
+    const extent = extentNode.eval!();
+    return { ...Dim7, extent };
+  };
+  hdimX = (_0: TNode, maybeExtentNode: INode) => {
+    const extentNode = <ExtentNode | undefined> maybeExtentNode.child(0);
+    const extent = extentNode?.eval!();
+    return extent ? { ...Min7b5, extent } : Min7b5;
+  };
 
   alteration = (arg0: NNode) => arg0.eval();
-  alteration_no_parens = (arg0: NNode) => arg0.eval();
-
-  alter_raise = (_0: NNode, arg1: Node) => new Alteration("raise", arg1.eval());
-  alter_lower = (_0: NNode, arg1: Node) => new Alteration("lower", arg1.eval());
-  alter_major = (_0: NNode, arg1: Node) => new Alteration("major", arg1.eval());
-  alter_minor = (_0: NNode, arg1: Node) => new Alteration("minor", arg1.eval());
-  alter_add = (_0: NNode, _1: INode, arg2: Node) =>
-    new Alteration("add", arg2.eval());
-  alter_omit = (_0: NNode, _a: INode, arg2: Node) =>
-    new Alteration("omit", arg2.eval());
-  alter_compound = (_0: TNode, arg1: Node) =>
-    new Alteration("compound", arg1.eval());
-  alter_suspend = (_0: NNode, arg1: INode) =>
-    new Alteration("suspend", arg1.eval());
-  alter_suspend_implicit_4 = (_0: NNode) => new Alteration("suspend", 4);
-  alter_everything_implicit_7 = (_0: NNode) => new Alteration("everything", 7);
-  alter_implicit_add_9 = (_0: TNode, _1: TNode) => new Alteration("add", 9);
-  alter_everything = (_0: TNode, arg1: INode) =>
-    new Alteration("everything", arg1.eval());
+  alter = (arg0: AlterNode) => arg0.eval!();
+  alter_raise = (_0: NNode, arg1: Node) => Raise(arg1.eval());
+  alter_lower = (_0: NNode, arg1: Node) => Lower(arg1.eval());
+  alter_add = (_0: NNode, _1: INode, arg2: Node) => Add(arg2.eval());
+  alter_omit = (_0: NNode, _a: INode, arg2: Node) => No(arg2.eval());
+  alter_compound = (_0: TNode, arg1: Node) => Over(arg1.eval());
+  alter_suspend = (_0: NNode, arg1: INode) => Sus(arg1.eval());
+  alter_suspend_implicit_4 = (_0: NNode) => Sus4;
+  alter_everything_implicit_7 = (_0: NNode) => Everything(7);
+  alter_add_6 = (_0: NNode) => Add6;
+  alter_add_6_add_9 = (_0: TNode, _1: NNode) => Add9;
+  alter_everything = (_0: TNode, arg1: INode) => Everything(arg1.eval());
   alteration_in_parens = (
     _0: TNode,
     _1: INode,
-    arg2: NNode,
+    arg2: AlterNode,
     _3: INode,
     _4: TNode,
-  ) => arg2.eval();
+  ) => arg2.eval!();
 }
 
 class SongActions extends ChordActions implements SongActionDict<void> {

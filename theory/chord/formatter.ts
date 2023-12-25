@@ -12,17 +12,31 @@ import {
   AlterSuspend,
   type Kind,
 } from "./alteration.ts";
-import { Extent } from "./extent.ts";
+import { AlterableDegree } from "./extent.ts";
 import {
-  Augmented,
-  Diminished,
-  Dominant,
-  Major,
-  Minor,
-  MinorMajor,
-  Power,
+  Aug6,
+  Aug7ID,
+  AugID,
+  Dim7ID,
+  DimID,
+  DimM7ID,
+  Dom7ID,
+  DyadID,
+  ExtendableTetradID,
+  Maj6,
+  Maj7ID,
+  Maj7S5ID,
+  MajID,
+  Min6,
+  Min7ID,
+  MinID,
+  MinMaj7ID,
+  MinXb5ID,
+  PowerID,
   type Quality,
-  Suspended,
+  QualityID,
+  TertianTriadID,
+  TetradID,
 } from "./quality.ts";
 
 import { Letter } from "../letter.ts";
@@ -32,16 +46,14 @@ export type ChordFormatter = {
   format: (c: Readonly<Chord>) => string;
 
   tonic: (t: Readonly<Letter>) => string;
-  quality: (q: Readonly<Quality>) => string;
-  extent: (e: Readonly<Extent>) => string;
+  quality: (q: Quality) => string;
   alterations: (as: Array<Alteration>) => string;
 
   symbols: {
     quality: {
-      [K in Quality]: string;
-    };
-    extent: {
-      [K in Extent]: string;
+      [K in QualityID]: K extends ExtendableTetradID
+        ? (e: AlterableDegree) => string
+        : string;
     };
     alteration: {
       [K in Kind]: string;
@@ -54,50 +66,45 @@ export class DefaultChordFormatter implements ChordFormatter {
     return [
       this.tonic(c.tonic),
       this.quality(c.quality),
-      this.extent(c.extent),
       this.alterations(c.alterations),
     ].join("");
   }
 
   format(c: Readonly<Chord>): string {
-    switch (c.quality) {
-      case Major: {
-        let q = this.quality(c.quality);
-        let e = this.extent(c.extent);
-        const as = [...c.alterations];
-        switch (c.extent) {
-          case 6: {
-            const i = as.findIndex((a) => a.isAdd9());
-            if (i >= 0) {
-              as.splice(i, 1);
-              q = "6/9"; // we want "C6/9" instead of "C6(add 9)"
-              e = "";
-            } else {
-              q = ""; // we want "C6" instead of "CM6"
-            }
-            break;
-          }
-          case undefined:
-            q = ""; // we want "C" instead of "CM"
-            break;
-          default:
-            q = "M"; // we want CM9
+    if (
+      !c.quality.tetrad &&
+      (c.quality.triad === MajID || c.quality.triad === MinID)
+    ) {
+      let q = this.quality(c.quality);
+      const as = [...c.alterations];
+      const s_i = as.findIndex((a) => a.isAdd6());
+      if (s_i >= 0) {
+        as.splice(s_i, 1);
+        q += "6"; // we want "C6" or "Cm6"
+        const n_i = as.findIndex((a) => a.isAdd9());
+        if (n_i >= 0) {
+          as.splice(n_i, 1);
+          q += "/9"; // we want "C6/9" instead of "C6(add 9)"
         }
-        return [this.tonic(c.tonic), q, e, this.alterations(as)].join("");
       }
-      default:
-        return this.#format(c);
+      return [this.tonic(c.tonic), q, this.alterations(as)].join("");
     }
+
+    return this.#format(c);
   }
 
   tonic(t: Readonly<Letter>) {
     return `${t}`;
   }
-  quality(q: Readonly<Quality>) {
-    return this.symbols.quality[q];
-  }
-  extent(e: Readonly<Extent> | undefined) {
-    return e ? `${e}` : "";
+  quality(q: Readonly<Quality>): string {
+    const key = q.tetrad
+      ? <TetradID> `${q.triad}${q.tetrad}`
+      : q.triad
+      ? <TertianTriadID> q.triad
+      : <DyadID> (q.dyad!);
+
+    const value = this.symbols.quality[key];
+    return typeof value === "function" ? value(q.extent!) : value;
   }
   alterations(as: Array<Alteration>) {
     return as.map((a) =>
@@ -107,25 +114,23 @@ export class DefaultChordFormatter implements ChordFormatter {
 
   symbols: ChordFormatter["symbols"] = {
     quality: {
-      [Augmented]: "+" as const,
-      [Diminished]: "o" as const,
-      [Dominant]: "" as const,
-      [Major]: "M" as const,
-      [Minor]: "m" as const,
-      [MinorMajor]: "mM" as const,
-      [Power]: "5" as const,
-      [Suspended]: "sus" as const,
-    },
-    extent: {
-      2: "2",
-      4: "4",
-      5: "5",
-      6: "6",
-      7: "7",
-      8: "8",
-      9: "9",
-      11: "11",
-      13: "13",
+      [AugID]: "+",
+      [DimID]: "o",
+      [MajID]: "",
+      [MinID]: "m",
+      [Dom7ID]: (x: AlterableDegree) => `${x}`,
+      [Maj7ID]: (x: AlterableDegree) => `M${x}`,
+      [Min7ID]: (x: AlterableDegree) => `m${x}`,
+      [Aug7ID]: (x: AlterableDegree) => `+${x}`,
+      [Dim7ID]: (x: AlterableDegree) => `o${x}`,
+      [DimM7ID]: (x: AlterableDegree) => `oM${x}`,
+      [Maj7S5ID]: (x: AlterableDegree) => `+M${x}`,
+      [MinXb5ID]: (x: AlterableDegree) => `m${x}b5`,
+      [MinMaj7ID]: (x: AlterableDegree) => `mM${x}`,
+      [Maj6]: `M6`,
+      [Min6]: `m6`,
+      [Aug6]: `+6`,
+      [PowerID]: "5",
     },
     alteration: {
       [AlterRaise]: SharpSymbol,

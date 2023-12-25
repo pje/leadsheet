@@ -13,7 +13,7 @@ Chord {
 
   root = noteLetter accidental?
 
-  flavor = quality extent? alteration*
+  flavor = quality alteration*
 
   noteLetter =
     | caseInsensitive<"A">
@@ -52,16 +52,120 @@ Chord {
   natural =
     | "♮"
 
+  quality = triadQuality extendedQuality?
+
+  triadQuality =
+    | dimTriad
+    | augTriad
+    | majTriad
+    | minTriad
+    | power
+
+  majTriad = majQuality
+
+  majQuality =
+    | explicitMajTriad
+    | implicitMajQuality
+
+  explicitMajTriad =
+    | maj ~(extent)
+
+  implicitMajQuality =
+    | ~(min | dim | aug | five | hdim)
+
+  minTriad = minQuality
+
+  minQuality =
+    | explicitMinTriad
+    | implicitMinTriad
+
+  explicitMinTriad =
+    | min ~(extent)
+
+  implicitMinTriad =
+    | ~(maj | end | extent | six | dim | aug | five | hdim)
+
+  dimTriad = dimQuality
+
+  dimQuality =
+    | explicitDimTriad
+    | implicitDimTriad
+
+  explicitDimTriad =
+    | dim ~(extent)
+
+  implicitDimTriad =
+    | &(dim | hdim)
+
+  extendedQuality =
+    | majX | minX | domQuality | dimX | hdimX
+
+  domQuality =
+    | domX
+    | explicitDomX
+
+  min =
+    | caseInsensitive<"minor">
+    | caseInsensitive<"min">
+    | "-"
+    | "⁻"
+    | minor_lowercase_m
+
+  minor_lowercase_m = | ("m" | "ᵐ") ~ "a"
+
+  power = five
+
+  hdimX = | hdim extent?
+
+  maj =
+    | caseInsensitive<"major">
+    | caseInsensitive<"maj">
+    | "M"
+    | "ᴹ"
+    | "Δ"
+
+  dom =
+    | caseInsensitive<"dominant">
+    | caseInsensitive<"dom">
+
+  aug =
+    | caseInsensitive<"augmented">
+    | caseInsensitive<"aug">
+    | "+"
+    | "⁺"
+
+  dim =
+    | caseInsensitive<"diminished">
+    | caseInsensitive<"dim">
+    | "o"
+    | "°"
+
+  hdim =
+    | caseInsensitive<"ø">
+
+  augTriad =
+    | aug
+
+  majX =
+    | maj extent
+
+  minX =
+    | min extent
+
+  domX =
+    | ~(dim | maj | min) extent
+
+  explicitDomX =
+    | dom extent?
+
+  dimX =
+    | dim extent
+
   extent =
-    | thirteen
-    | eleven
-    | nine
     | seven
-    | six
-    | five
-    | four
-    | three
-    | two
+    | nine
+    | eleven
+    | thirteen
 
   thirteen = | "13" | "¹³"
   eleven = | "11" | "¹¹"
@@ -73,136 +177,54 @@ Chord {
   three = | "3" | "³"
   two = | "2" | "²"
 
-  quality =
-    | sus
-    | minor_major
-    | augmented
-    | diminished
-    | dominant
-    | half_diminished
-    | minor
-    | power
-    | major
+  alterable_degree = two | three | four | five | six | extent
 
-  sus =
-    | caseInsensitive<"sus">
-
-  minor_major =
-    | minor_major_with_parens
-    | caseInsensitive<"minmaj">
-    | "mM"
-    | "mΔ"
-    | "-Δ"
-    | "m/M"
-
-  minor_major_with_parens =
-    | minor "(" major extent ")"
-
-  augmented =
-    | caseInsensitive<"augmented">
-    | caseInsensitive<"aug">
+  alteration_symbol =
+    | "Δ"
     | "+"
     | "⁺"
-
-  diminished =
-    | caseInsensitive<"diminished">
-    | caseInsensitive<"dim">
     | "o"
     | "°"
-
-  dominant =
-    | caseInsensitive<"dominant">
-    | caseInsensitive<"dom">
-    | implicitDominant
-
-  implicitDominant =
-    | &caseInsensitive<"alt"> // `Calt` implies a dominant 7
-    | &(seven | nine | eleven | thirteen)
-
-  half_diminished =
-    | caseInsensitive<"ø">
-
-  minor =
-    | caseInsensitive<"minor">
-    | caseInsensitive<"min">
     | "-"
     | "⁻"
-    | minor_lowercase_m
+    | caseInsensitive<"ø">
 
-  minor_lowercase_m = | ("m" | "ᵐ") ~ "a"
-
-  power =
-    | implicitPower
-
-  implicitPower = &(five)
-
-  major =
-    | caseInsensitive<"major">
-    | caseInsensitive<"maj">
-    | "M"
-    | "ᴹ"
-    | "Δ"
-    | implicitMajor
-
-  // NB this must be the last quality we try to match because it will *always* match
-  implicitMajor = &(three | six | "")
+  alt = caseInsensitive<"alt">
 
   alteration =
     | alteration_in_parens
-    | alteration_no_parens
+    | alter
 
-  alteration_no_parens =
-    | alter_raise<extent>          // e.g. #11,
-    | alter_lower<extent>          // e.g. b13,
-    | alter_major<extent>          // e.g. M13, Δ13
-    | alter_minor<extent>          // e.g. M7
-    | alter_suspend<(two | four)>  // e.g. sus2, sus4
-    | alter_compound<root>         // e.g. C/G
-    | alter_implicit_add_9         // e.g. 6/9 (only intended to handle 6/9 chords)
-    | alter_suspend_implicit_4     // e.g. sus
-    | alter_add<extent>            // e.g. add 5, add5
-    | alter_omit<extent>           // e.g. no 5, no5, omit 5, omit5
-    | alter_everything<seven>      // e.g. alt7
-    | alter_everything_implicit_7  // e.g. alt
+  alter =
+    | alter_raise<alterable_degree> // e.g. #11
+    | alter_lower<alterable_degree> // e.g. b13
+    | alter_suspend<(two | four)>   // e.g. sus2, sus4
+    | alter_compound<root>          // e.g. C/G
+    | alter_add_6                   // e.g. C6
+    | alter_add_6_add_9             // e.g. C6/9
+    | alter_suspend_implicit_4      // e.g. sus
+    | alter_add<alterable_degree>   // e.g. add 5, add5
+    | alter_omit<alterable_degree>  // e.g. no 5, no5, omit 5, omit5
+    | alter_everything<seven>       // e.g. alt7
+    | alter_everything_implicit_7   // e.g. alt
 
-  alter_raise<T> =
-    | sharp T
-
-  alter_lower<T> =
-    | flat T
-
-  alter_major<T> =
-    | major T
-
-  alter_minor<T> =
-    | minor T
-
+  alter_raise<T> = sharp T
+  alter_lower<T> = flat T
   alter_add<T> =
     | caseInsensitive<"add"> spaceNoNL* T
-
   alter_omit<T> =
     | caseInsensitive<"no"> spaceNoNL* T
     | caseInsensitive<"omit"> spaceNoNL* T
 
-  alter_compound<T> =
-    | "/" T
+  alter_compound<T> = | "/" T
+  alter_add_6 = six
+  alter_add_6_add_9 = "/" nine
+  alter_suspend<T> = | caseInsensitive<"sus"> T
+  alter_suspend_implicit_4 = | alter_suspend<"">
+  alter_everything<T> = | alt T
+  alter_everything_implicit_7 = | alter_everything<"">
 
-  alter_implicit_add_9 =
-    | "/" nine
-
-  alter_suspend<T> =
-    | caseInsensitive<"sus"> T
-
-  alter_suspend_implicit_4 =
-    | alter_suspend<"">
-
-  alter_everything<T> =
-    | "alt" T
-
-  alter_everything_implicit_7 =
-    | alter_everything<"">
-
-  alteration_in_parens = "(" spaceNoNL? alteration_no_parens spaceNoNL? ")"
+  alteration_in_parens = "(" spaceNoNL? alter spaceNoNL? ")"
 
   newline = "\r"? "\n"
   spaceNoNL = ~newline "\x00".."\x20"

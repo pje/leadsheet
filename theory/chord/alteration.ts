@@ -52,6 +52,9 @@ export class Alteration {
     }
   }
 
+  public isAdd6() {
+    return this.kind === AlterAdd && this.target === 6;
+  }
   public isAdd9() {
     return this.kind === AlterAdd && this.target === 9;
   }
@@ -77,3 +80,16 @@ export const AlterOmit = "omit" as const;
 export const AlterCompound = "compound" as const;
 export const AlterSuspend = "suspend" as const;
 export const AlterEverything = "everything" as const;
+
+// convenience instances
+export const Add6 = new Alteration("add", 6);
+export const Add9 = new Alteration("add", 9);
+export const Sus = (a: 2 | 4) => new Alteration("suspend", a);
+export const Sus2 = new Alteration("suspend", 2);
+export const Sus4 = new Alteration("suspend", 4);
+export const Over = (l: Letter) => new Alteration("compound", l);
+export const Raise = (e: Extent) => new Alteration("raise", e);
+export const Lower = (e: Extent) => new Alteration("lower", e);
+export const Add = (e: Extent) => new Alteration("add", e);
+export const No = (e: Extent) => new Alteration("omit", e);
+export const Everything = (e: Extent) => new Alteration("everything", e);

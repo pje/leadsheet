@@ -59,7 +59,7 @@ Deno.test("index.html renders via file:// protocol", async () => {
     await enableFeature(page, colorChords);
 
     const firstChordsClasses = (await getChordClasses(page))[1]!;
-    assertArrayIncludes(firstChordsClasses, ["minmaj"]);
+    assertArrayIncludes(firstChordsClasses, ["min"]);
 
     await screenshotOnSuccess(page);
   } catch (e) {

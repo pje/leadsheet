@@ -1,8 +1,7 @@
 import { type Letter, transposeLetter } from "./letter.ts";
 import { type FlatOrSharpSymbol } from "./notation.ts";
 import { type Alteration } from "./chord/alteration.ts";
-import { type Extent } from "./chord/extent.ts";
-import { Major, type Quality } from "./chord/quality.ts";
+import { Maj, type Quality } from "./chord/quality.ts";
 export * from "./chord/alteration.ts";
 export * from "./chord/extent.ts";
 export * from "./chord/quality.ts";
@@ -12,18 +11,15 @@ export class Chord {
 
   public tonic: Letter;
   public quality: Quality;
-  public extent?: Extent;
   public alterations: Array<Alteration>;
 
   constructor(
     tonic?: Letter,
     quality?: Quality,
-    extent?: Extent,
     ...alterations: Array<Alteration>
   ) {
     this.tonic = tonic || "C";
-    this.quality = quality || Major;
-    if (extent) this.extent = extent;
+    this.quality = quality || Maj;
     this.alterations = alterations;
   }
 
@@ -42,12 +38,15 @@ export class Chord {
   }
 
   // returns a new Chord, value-identical to this one
-  dup(): Chord {
+  dup(args?: {
+    tonic?: Letter;
+    quality?: Quality;
+    alterations?: Array<Alteration>;
+  }): Chord {
     return new Chord(
-      this.tonic,
-      this.quality,
-      this.extent,
-      ...(this.alterations || []),
+      args?.tonic || this.tonic,
+      args?.quality || this.quality,
+      ...(args?.alterations ? args.alterations : this.alterations),
     );
   }
 

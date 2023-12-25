@@ -7,8 +7,8 @@ import {
 import {
   Chord,
   ChordTypeName,
-  Major,
-  Minor,
+  Maj,
+  Min,
   type Quality,
 } from "../theory/chord.ts";
 import { Key, KeyFlavorMajor, KeyFlavorMinor } from "../theory/key.ts";
@@ -165,9 +165,9 @@ export class Song {
     const { quality, tonic } = c.type === OptionalChordTypeName ? c.chord : c;
 
     switch (quality) {
-      case Minor:
+      case Min:
         return new Key(tonic, KeyFlavorMinor);
-      case Major:
+      case Maj:
       default:
         return new Key(tonic, KeyFlavorMajor);
     }

@@ -13,8 +13,6 @@ import {
 import {
   type Barline,
   type Chordish,
-  type ChordishQuality,
-  NoChord,
   NoChordTypeName,
   OptionalChordTypeName,
   RepeatedChordSymbol,
@@ -24,9 +22,18 @@ import {
 } from "../parser/song.ts";
 import { type State } from "./state.ts";
 import { Key, SigAccidental, SigAccidentalToSymbol } from "../theory/key.ts";
-import { ChordTypeName, type Extent } from "../theory/chord.ts";
+import {
+  type AlterableDegree,
+  AugID,
+  type Chord,
+  ChordTypeName,
+  DimID,
+  MajID,
+  MinID,
+  PowerID,
+} from "../theory/chord.ts";
 import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
-import { type Alteration } from "../theory/chord/alteration.ts";
+import { type Alteration, AlterSuspend } from "../theory/chord/alteration.ts";
 import { partition } from "../lib/array.ts";
 import { DefaultChordFormatter } from "../theory/chord/formatter.ts";
 
@@ -120,7 +127,7 @@ function renderBars(
   rootElement: HTMLElement = document.getElementById("root")!,
 ) {
   let previousChord: Chordish | undefined = undefined;
-  let previousChordColorClass: ChordishQuality = "no-chord";
+  let previousChordColorClass: ColorClass = "no-chord";
   let previousSection: string | undefined = undefined;
 
   const songElement = rootElement.querySelector("#song")!;
@@ -130,7 +137,7 @@ function renderBars(
     const chords = bar.chords.map((chordish) => {
       const formattedChordName = _formatChordName(chordish);
 
-      let colorClass: ChordishQuality;
+      let colorClass: ColorClass;
       let result: string;
 
       if (chordish.type === RepeatPreviousChordTypeName) {
@@ -331,7 +338,9 @@ const FancyHTMLFormatter = class extends DefaultChordFormatter {
 
     if (parenable.length < 2) return super.alterations(as);
 
-    parenable.sort((a, b) => <Extent> b.target - <Extent> a.target);
+    parenable.sort((a, b) =>
+      <AlterableDegree> b.target - <AlterableDegree> a.target
+    );
 
     const fractionalContent = parenable.map((a) => {
       return `<span>${a.print()}</span>`;
@@ -355,18 +364,35 @@ function _formatChordName(c: Readonly<Chordish>): string {
 
 type ChordishWithoutRepeats = Exclude<Chordish, RepeatPreviousChord>;
 
-function _getColorClass(c: Readonly<ChordishWithoutRepeats>): ChordishQuality {
+function _getColorClass(c: Readonly<ChordishWithoutRepeats>): ColorClass {
   const { type } = c;
 
   switch (type) {
     case NoChordTypeName:
       return "no-chord";
     case OptionalChordTypeName:
-      return c.chord.quality;
+      return _getColorClassForChord(c.chord);
     case ChordTypeName:
-      return c.quality;
+      return _getColorClassForChord(c);
     default:
       nonexhaustiveSwitchGuard(type);
+  }
+}
+
+function _getColorClassForChord(c: Readonly<Chord>): ColorClass {
+  if (c.quality.dyad) return c.quality.dyad;
+  const triad = c.quality.triad!;
+  switch (triad) {
+    case MajID:
+      if (c.quality.tetrad === MinID) return "dom";
+      if (c.alterations.some((a) => a.kind === AlterSuspend)) return "sus";
+      return MajID;
+    case MinID:
+    case AugID:
+    case DimID:
+      return triad;
+    default:
+      nonexhaustiveSwitchGuard(triad);
   }
 }
 
@@ -403,6 +429,16 @@ function _loadDefaultSong(): Song | undefined {
     return result.value;
   }
 }
+
+type ColorClass =
+  | typeof AugID
+  | typeof DimID
+  | typeof MajID
+  | typeof MinID
+  | typeof PowerID
+  | "dom"
+  | "no-chord"
+  | "sus";
 
 const defaultSongRaw = `title: Chelsea Bridge
 title: Chelsea Bridge

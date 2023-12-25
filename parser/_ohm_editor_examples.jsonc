@@ -1,0 +1,260 @@
+// "Application"
+//   -> "Local Storage"
+//   -> "https://ohmjs.org"
+//   -> Key[examples]
+//   -> "Value"
+//   -> [right click -> "Edit 'Value'" -> paste this file]
+[
+  {
+    "text": "C",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "Cm",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "C13",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "Cm11",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "CM9",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "C+",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "Co",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "Csus4",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "CmM7",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "C7#5",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "C9(#11)(no5)",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "CoM7",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "C # major",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": false
+  },
+  {
+    "text": "Cm11#13(no 3)",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "C6",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "Cm6",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "C6/9",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "Cmaj",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "Cmin9",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "Co7",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "title: foo\n\n// X\n| A |\n\n// Y\n| B |\n| C | // Z\n| D |\n",
+    "startRule": "Song",
+    "selectedGrammar": "Song",
+    "shouldMatch": true
+  },
+  {
+    "text": "C7#5",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "A+7#9(no3)",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "C5",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "Aø7",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "C°⁷",
+    "startRule": "chord",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "Cdom",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "",
+    "startRule": "Song",
+    "selectedGrammar": "Song",
+    "shouldMatch": false
+  },
+  {
+    "text": "title: foo\n\n// X\n| A |\n\n// Y\n| B |\n| C | // Z\n| D |\n",
+    "startRule": "Song",
+    "selectedGrammar": "Song",
+    "shouldMatch": true
+  },
+  {
+    "text": "C9(#11)(no5)",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "C6/9",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "C7sus",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "title: Example\n\nIntro:\n| A :2x|||: B |\n\nVerse:\n| E/B |\n",
+    "startRule": "Song",
+    "selectedGrammar": "Song",
+    "shouldMatch": true
+  },
+  {
+    "text": "CoM7",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "C # major",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": false
+  },
+  {
+    "text": "C 9",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": false
+  },
+  {
+    "text": "| (C7) |",
+    "startRule": "Song",
+    "selectedGrammar": "Song",
+    "shouldMatch": true
+  },
+  {
+    "text": "C13",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "C",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "Cm11#13(no 3)",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "Cmaj",
+    "startRule": "",
+    "selectedGrammar": "Chord",
+    "shouldMatch": true
+  },
+  {
+    "text": "Cø7",
+    "startRule": "",
+    "selectedGrammar": "Song",
+    "shouldMatch": true
+  }
+]

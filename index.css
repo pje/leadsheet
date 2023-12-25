@@ -428,9 +428,6 @@ html {
         &.min {
           color: var(--bright-blue);
         }
-        &.minmaj {
-          color: var(--neutral-aqua);
-        }
         &.no-chord {
           color: inherit;
         }
