@@ -4,13 +4,16 @@ year: 1941
 sig: 4/4
 key: Bbm
 
+| N.C. |
+
 A:
-|: Bbm6 | Abm6 | Bbm6 | Abm6 | Bb9 |
-| Ebm7 | Ab7 | DbM7 | % :|
+|: BbmM7 | AbmM7 | BbmM7 AbmM7 | Bb7 |
+| Ebm9 | Ab13 | Db6 | % (C7) (B7) :|
 
 B:
-| B13 | B7(b13)(b9) | EM7 E6 | F#m7 B7(b13)(b9) | E7 | AM7 C7 | G6 | Gm6 | Db9 C9 B9 Bb9 ||
+| F#m7 B7 | EM7 C#m7 | F#m7 B7(b9)(#5) | Bm7 E7 |
+| AM7 (Am7) (D7) | GM7 | Gm C9 | Db7(#11) (C7) (B7) ||
 
-A:
-| Bbm6 | Abm6 | Bbm6 | Abm6 | Bb9 |
-| Ebm7 | Ab7 | DbM7 | % ||
+C:
+| BbmM7 | AbmM7 | BbmM7 AbmM7 | Bb7 |
+| Ebm9 | Ab13 | Db6 | % (C7) (B7) ||

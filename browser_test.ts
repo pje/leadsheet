@@ -47,19 +47,19 @@ Deno.test("index.html renders via file:// protocol", async () => {
     assertEquals("Chelsea Bridge", await getTitle(page));
     assertEquals("Billy Strayhorn", await getArtist(page));
     assertEquals("Bbm", await getKey(page));
-    assertEquals("Bbm6", (await getChords(page))[0]);
+    assertEquals("BbmM7", (await getChords(page))[1]);
     assertEquals("0", await getTransposedAmount(page));
 
     await transpose(page, -3);
 
     assertEquals("Gm", await getKey(page));
-    assertEquals("Gm6", (await getChords(page))[0]);
+    assertEquals("GmM7", (await getChords(page))[1]);
     assertEquals("-3", await getTransposedAmount(page));
 
     await enableFeature(page, colorChords);
 
-    const firstChordsClasses = (await getChordClasses(page))[0]!;
-    assertArrayIncludes(firstChordsClasses, ["min"]);
+    const firstChordsClasses = (await getChordClasses(page))[1]!;
+    assertArrayIncludes(firstChordsClasses, ["minmaj"]);
 
     await screenshotOnSuccess(page);
   } catch (e) {
