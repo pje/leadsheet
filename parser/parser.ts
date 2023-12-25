@@ -40,9 +40,31 @@ import { Key } from "../theory/key.ts";
 import { type Letter } from "../theory/letter.ts";
 import { Alteration } from "../theory/chord/alteration.ts";
 
+interface FlavorNode extends NNode {
+  eval?(): [Quality, Extent, ...Array<Alteration>]; // has to be optional because of Typescript interface limitations
+}
+
+interface QualityNode extends NNode {
+  eval?(): [Quality, Extent, Array<Alteration>]; // has to be optional because of Typescript interface limitations
+}
+
+interface AlterationsNode extends INode {
+  eval?(): Array<Alteration>; // has to be optional because of Typescript interface limitations
+  children: Array<AlterNode>;
+  isIteration(): boolean;
+}
+
+interface AlterNode extends NNode {
+  eval?(): Alteration; // has to be optional because of Typescript interface limitations
+}
+
+interface ExtentNode extends Node {
+  eval?(): Extent;
+}
+
 class ChordActions implements ChordActionDict<void> {
-  chord = (root: NNode, flavor: NNode) =>
-    new Chord(root.eval(), ...(flavor.eval()));
+  chord = (root: NNode, flavor: FlavorNode) =>
+    new Chord(root.eval(), ...(flavor.eval!()));
 
   root = (root: NNode, accidentals: INode) =>
     [
@@ -50,20 +72,26 @@ class ChordActions implements ChordActionDict<void> {
       normalizeAccidentals(accidentals.sourceString),
     ].join("");
 
-  flavor = (qualityNode: NNode, extentNode: INode, alterationsNodes: INode) => {
+  flavor = (
+    qualityNode: QualityNode,
+    extentNode: ExtentNode,
+    alterationsNode: AlterationsNode,
+  ) => {
     const [q, e, a]: [
       Quality | undefined,
       Extent | undefined,
       Alteration[],
-    ] = qualityNode.eval();
+    ] = qualityNode.eval!();
 
     const e2: [Extent | undefined] = extentNode.child(0)?.eval();
 
-    const alterations: Alteration[] = alterationsNodes.children.map((a) =>
-      a.isIteration() ? a.children.flatMap((a2) => a2.eval()) : a.eval()
+    const alterations: Alteration[] = alterationsNode.children.flatMap((a) =>
+      a.isIteration()
+        ? a.children.flatMap((a2: AlterNode) => a2.eval!())
+        : a.eval!()
     );
 
-    return [q, e2 || e, ...a, ...alterations];
+    return [q, e2 || e, ...(a || []), ...alterations];
   };
 
   #evalPassthrough = (n: NNode) => n.eval();
