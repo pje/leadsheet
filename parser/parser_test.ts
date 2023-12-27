@@ -4,31 +4,7 @@ import {
 } from "https://deno.land/std@0.209.0/assert/mod.ts";
 import { ParseChord, ParseSong } from "./parser.ts";
 import { type Letter } from "../theory/letter.ts";
-import {
-  Add6,
-  Aug,
-  Aug7,
-  Chord,
-  Dim,
-  Dim7,
-  DimM7,
-  Dom11,
-  Dom13,
-  Dom7,
-  Dom9,
-  Maj,
-  Maj11,
-  Maj13,
-  Maj7,
-  Min,
-  Min11,
-  Min13,
-  Min7,
-  Min7b5,
-  Min9,
-  MinMaj9,
-  Power,
-} from "../theory/chord.ts";
+import { Chord } from "../theory/chord.ts";
 import {
   assertEquals,
   bar,
@@ -38,6 +14,7 @@ import {
 import { Song } from "./song.ts";
 import { Key } from "../theory/key.ts";
 import {
+  Add6,
   Add9,
   Everything,
   Lower,
@@ -47,6 +24,25 @@ import {
   Sus2,
   Sus4,
 } from "../theory/chord/alteration.ts";
+import { Power } from "../theory/chord/quality/dyad.ts";
+import { Aug7, DimM7 } from "../theory/chord/quality/nontertian_tetrad.ts";
+import {
+  Dim7,
+  Dom11,
+  Dom13,
+  Dom7,
+  Dom9,
+  Maj11,
+  Maj13,
+  Maj7,
+  Min11,
+  Min13,
+  Min7,
+  Min7b5,
+  Min9,
+  MinMaj9,
+} from "../theory/chord/quality/tertian_tetrad.ts";
+import { Aug, Dim, Maj, Min } from "../theory/chord/quality/tertian_triad.ts";
 
 const songsDir = "./leadsheets";
 const rawSongs: Array<{ name: string; contents: string }> = [];

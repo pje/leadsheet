@@ -24,18 +24,22 @@ import { type State } from "./state.ts";
 import { Key, SigAccidental, SigAccidentalToSymbol } from "../theory/key.ts";
 import {
   type AlterableDegree,
-  AugID,
   type Chord,
   ChordTypeName,
-  DimID,
-  MajID,
-  MinID,
-  PowerID,
+  identifyDyad,
+  identifyTriad,
 } from "../theory/chord.ts";
 import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
-import { type Alteration, AlterSuspend } from "../theory/chord/alteration.ts";
+import { type Alteration, Sus2, Sus4 } from "../theory/chord/alteration.ts";
 import { partition } from "../lib/array.ts";
 import { DefaultChordFormatter } from "../theory/chord/formatter.ts";
+import { DyadID, type as DyadType } from "../theory/chord/quality/dyad.ts";
+import {
+  TertianTriadID,
+  type as TriadType,
+} from "../theory/chord/quality/tertian_triad.ts";
+import { type as TetradType } from "../theory/chord/quality/tertian_tetrad.ts";
+import { Major, Minor } from "../theory/interval.ts";
 
 const state: State = {
   song: undefined,
@@ -127,7 +131,7 @@ function renderBars(
   rootElement: HTMLElement = document.getElementById("root")!,
 ) {
   let previousChord: Chordish | undefined = undefined;
-  let previousChordColorClass: ColorClass = "no-chord";
+  let previousChordColorClass: ColorClass = CCNoChord;
   let previousSection: string | undefined = undefined;
 
   const songElement = rootElement.querySelector("#song")!;
@@ -369,7 +373,7 @@ function _getColorClass(c: Readonly<ChordishWithoutRepeats>): ColorClass {
 
   switch (type) {
     case NoChordTypeName:
-      return "no-chord";
+      return CCNoChord;
     case OptionalChordTypeName:
       return _getColorClassForChord(c.chord);
     case ChordTypeName:
@@ -380,19 +384,22 @@ function _getColorClass(c: Readonly<ChordishWithoutRepeats>): ColorClass {
 }
 
 function _getColorClassForChord(c: Readonly<Chord>): ColorClass {
-  if (c.quality.dyad) return c.quality.dyad;
-  const triad = c.quality.triad!;
-  switch (triad) {
-    case MajID:
-      if (c.quality.tetrad === MinID) return "dom";
-      if (c.alterations.some((a) => a.kind === AlterSuspend)) return "sus";
-      return MajID;
-    case MinID:
-    case AugID:
-    case DimID:
-      return triad;
+  const { quality: q } = c;
+  const { type } = q;
+
+  switch (type) {
+    case DyadType:
+      return identifyDyad(q);
+    case TriadType:
+    case TetradType: {
+      if (q.third === Major && q.seventh === Minor) return CCDom;
+      if (c.alterations.includes(Sus2) || c.alterations.includes(Sus4)) {
+        return CCSus;
+      }
+      return identifyTriad(q) || CCNoChord;
+    }
     default:
-      nonexhaustiveSwitchGuard(triad);
+      nonexhaustiveSwitchGuard(type);
   }
 }
 
@@ -431,24 +438,33 @@ function _loadDefaultSong(): Song | undefined {
 }
 
 type ColorClass =
-  | typeof AugID
-  | typeof DimID
-  | typeof MajID
-  | typeof MinID
-  | typeof PowerID
-  | "dom"
-  | "no-chord"
-  | "sus";
+  | TertianTriadID
+  | DyadID
+  | typeof CCDom
+  | typeof CCNoChord
+  | typeof CCSus;
+
+const CCDom = "dom" as const;
+const CCNoChord = "no-chord" as const;
+const CCSus = "sus" as const;
 
 const defaultSongRaw = `title: Chelsea Bridge
-title: Chelsea Bridge
 artist: Billy Strayhorn
 year: 1941
 sig: 4/4
 key: Bbm
+
+| N.C. |
+
 A:
-|: Bbm6 | Abm6 | Bbm6 | Abm6 | Bb9 | Ebm7 | Ab7 | DbM7 | % :|
+|: BbmM7 | AbmM7 | BbmM7 AbmM7 | Bb7 |
+| Ebm9 | Ab13 | Db6 | % (C7) (B7) :|
+
 B:
-| B13 | B7(b13)(b9) | EM7 E6 | F#m7 B7(b13)(b9) | E7 | AM7 C7 | G6 | Gm6 | Db9 C9 B9 Bb9 ||
-A:
-| Bbm6 | Abm6 | Bbm6 | Abm6 | Bb9 | Ebm7 | Ab7 | DbM7 | % ||`;
+| F#m7 B7 | EM7 C#m7 | F#m7 B7(b9)(#5) | Bm7 E7 |
+| AM7 (Am7) (D7) | GM7 | Gm C9 | Db7(#11) (C7) (B7) ||
+
+C:
+| BbmM7 | AbmM7 | BbmM7 AbmM7 | Bb7 |
+| Ebm9 | Ab13 | Db6 | % (C7) (B7) ||
+`;

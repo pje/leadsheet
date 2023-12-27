@@ -1,34 +1,30 @@
 import { type FlatOrSharpSymbol, SharpSymbol } from "./notation.ts";
 import { assertNotEquals } from "https://deno.land/std@0.209.0/assert/assert_not_equals.ts";
 import { assertEquals } from "../test_utils.ts";
+import { Chord } from "./chord.ts";
+import { Add6, Add9, No, Over, Raise, Sus2, Sus4 } from "./chord/alteration.ts";
+import { DefaultChordFormatterInstance } from "./chord/formatter.ts";
+import { Power } from "./chord/quality/dyad.ts";
+import { Aug7, DimM7 } from "./chord/quality/nontertian_tetrad.ts";
 import {
-  Aug,
-  Aug7,
-  Chord,
-  Dim,
   Dim7,
-  DimM7,
   Dom11,
   Dom13,
   Dom7,
   Dom9,
-  Maj,
   Maj11,
   Maj13,
   Maj7,
   Maj7S5,
   Maj9,
-  Min,
   Min11,
   Min13,
   Min7,
   Min7b5,
   Min9,
   MinMaj7,
-  Power,
-} from "./chord.ts";
-import { Add6, Add9, No, Over, Raise, Sus2, Sus4 } from "./chord/alteration.ts";
-import { DefaultChordFormatterInstance } from "./chord/formatter.ts";
+} from "./chord/quality/tertian_tetrad.ts";
+import { Aug, Dim, Maj, Min } from "./chord/quality/tertian_triad.ts";
 
 Deno.test("===", async (t) => {
   const a1 = new Chord("A", Maj, Raise(11));

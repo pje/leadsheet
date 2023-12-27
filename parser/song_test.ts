@@ -1,9 +1,15 @@
-import { Chord, Dom9, Maj, Min7 } from "../theory/chord.ts";
+import { Chord } from "../theory/chord.ts";
 import { MetadataKeys, Song } from "./song.ts";
 import { assertEquals, bar } from "../test_utils.ts";
-import { Key, KeyFlavorMajor, KeyFlavorMinor } from "../theory/key.ts";
+import {
+  Key,
+  Major as KeyFlavorMajor,
+  Minor as KeyFlavorMinor,
+} from "../theory/key.ts";
 import { Letter } from "../theory/letter.ts";
 import { Add6, Add9 } from "../theory/chord/alteration.ts";
+import { Dom9, Min7 } from "../theory/chord/quality/tertian_tetrad.ts";
+import { Maj } from "../theory/chord/quality/tertian_triad.ts";
 
 const songFixture = new Song(
   [

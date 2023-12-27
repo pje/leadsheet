@@ -1,11 +1,4 @@
-import {
-  AccidentalList,
-  Key,
-  KeyFlavorMajor,
-  KeyFlavorMinor,
-  Major,
-  Minor,
-} from "./key.ts";
+import { AccidentalList, Key, Major, Minor } from "./key.ts";
 import { assertEquals } from "../test_utils.ts";
 import { FlatOrSharpSymbol, FlatSymbol, SharpSymbol } from "./notation.ts";
 import { Letter } from "./letter.ts";
@@ -100,7 +93,7 @@ Deno.test("constructor: conventionalizes Letters (explicit minor)", async (t) =>
 
 Deno.test(Key.prototype.transpose.name, async (t) => {
   const cases = new Map<[Key, number], Key>([
-    [[new Key("A", KeyFlavorMajor), 1], new Key("A#", KeyFlavorMajor)],
+    [[new Key("A", Major), 1], new Key("A#", Major)],
     [
       [new Key("A", someUnknownKeyName), 2],
       new Key("B", someUnknownKeyName),
@@ -116,12 +109,12 @@ Deno.test(Key.prototype.transpose.name, async (t) => {
 
 Deno.test(Key.prototype.accidentalPreference.name, async (t) => {
   const cases = new Map<Key, FlatOrSharpSymbol | undefined>([
-    [new Key("C", KeyFlavorMajor), undefined],
-    [new Key("A", KeyFlavorMinor), undefined],
-    [new Key("A", KeyFlavorMajor), SharpSymbol],
-    [new Key("C", KeyFlavorMinor), FlatSymbol],
-    [new Key("G#", KeyFlavorMinor), SharpSymbol], // G#m
-    [new Key("Ab", KeyFlavorMinor), SharpSymbol], // G#m is more conventional than Abm (five sharps vs six flats), so we should pick G#m
+    [new Key("C", Major), undefined],
+    [new Key("A", Minor), undefined],
+    [new Key("A", Major), SharpSymbol],
+    [new Key("C", Minor), FlatSymbol],
+    [new Key("G#", Minor), SharpSymbol], // G#m
+    [new Key("Ab", Minor), SharpSymbol], // G#m is more conventional than Abm (five sharps vs six flats), so we should pick G#m
     [new Key("A", someUnknownKeyName), undefined], // better to show no sharps or flats if we don't explicitly know the scale
   ]);
 
@@ -134,13 +127,13 @@ Deno.test(Key.prototype.accidentalPreference.name, async (t) => {
 
 Deno.test(Key.prototype.signature.name, async (t) => {
   const cases = new Map<Key, AccidentalList>([
-    [new Key("C", KeyFlavorMajor), []],
-    [new Key("A", KeyFlavorMinor), []],
-    [new Key("A", KeyFlavorMajor), ["F#", "C#", "G#"]],
-    [new Key("F#", KeyFlavorMinor), ["F#", "C#", "G#"]],
-    [new Key("C", KeyFlavorMinor), ["Bb", "Eb", "Ab"]],
-    [new Key("G#", KeyFlavorMinor), ["F#", "C#", "G#", "D#", "A#"]], // G#m
-    [new Key("Ab", KeyFlavorMinor), ["F#", "C#", "G#", "D#", "A#"]], // G#m is more conventional than Abm (five sharps vs six flats), so we should pick G#m
+    [new Key("C", Major), []],
+    [new Key("A", Minor), []],
+    [new Key("A", Major), ["F#", "C#", "G#"]],
+    [new Key("F#", Minor), ["F#", "C#", "G#"]],
+    [new Key("C", Minor), ["Bb", "Eb", "Ab"]],
+    [new Key("G#", Minor), ["F#", "C#", "G#", "D#", "A#"]], // G#m
+    [new Key("Ab", Minor), ["F#", "C#", "G#", "D#", "A#"]], // G#m is more conventional than Abm (five sharps vs six flats), so we should pick G#m
 
     [new Key("A", someUnknownKeyName), []], // better to show no sharps or flats if we don't explicitly know the scale
   ]);

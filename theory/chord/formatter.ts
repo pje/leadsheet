@@ -13,34 +13,34 @@ import {
   type Kind,
 } from "./alteration.ts";
 import { AlterableDegree } from "./extent.ts";
-import {
-  Aug6,
-  Aug7ID,
-  AugID,
-  Dim7ID,
-  DimID,
-  DimM7ID,
-  Dom7ID,
-  DyadID,
-  ExtendableTetradID,
-  Maj6,
-  Maj7ID,
-  Maj7S5ID,
-  MajID,
-  Min6,
-  Min7ID,
-  MinID,
-  MinMaj7ID,
-  MinXb5ID,
-  PowerID,
-  type Quality,
-  QualityID,
-  TertianTriadID,
-  TetradID,
-} from "./quality.ts";
-
+import { identify, type Quality, QualityID } from "./quality.ts";
 import { Letter } from "../letter.ts";
 import { FlatSymbol, SharpSymbol } from "../notation.ts";
+import {
+  Dim7_id,
+  Dom7_id,
+  ExtendableTetradID,
+  Maj7_id,
+  Maj7S5_id,
+  Min7_id,
+  Min7b5_id,
+  MinMaj7_id,
+} from "./quality/tertian_tetrad.ts";
+import {
+  Aug_id,
+  Dim_id,
+  Maj_id,
+  Min_id,
+  type as TriadType,
+} from "./quality/tertian_triad.ts";
+import { Power_id } from "./quality/dyad.ts";
+import {
+  Aug6_id,
+  Aug7_id,
+  DimM7_id,
+  Maj6_id,
+  Min6_id,
+} from "./quality/nontertian_tetrad.ts";
 
 export type ChordFormatter = {
   format: (c: Readonly<Chord>) => string;
@@ -71,10 +71,7 @@ export class DefaultChordFormatter implements ChordFormatter {
   }
 
   format(c: Readonly<Chord>): string {
-    if (
-      !c.quality.tetrad &&
-      (c.quality.triad === MajID || c.quality.triad === MinID)
-    ) {
+    if (c.quality.type === TriadType) {
       let q = this.quality(c.quality);
       const as = [...c.alterations];
       const s_i = as.findIndex((a) => a.isAdd6());
@@ -97,12 +94,7 @@ export class DefaultChordFormatter implements ChordFormatter {
     return `${t}`;
   }
   quality(q: Readonly<Quality>): string {
-    const key = q.tetrad
-      ? <TetradID> `${q.triad}${q.tetrad}`
-      : q.triad
-      ? <TertianTriadID> q.triad
-      : <DyadID> (q.dyad!);
-
+    const key = identify(q);
     const value = this.symbols.quality[key];
     return typeof value === "function" ? value(q.extent!) : value;
   }
@@ -114,23 +106,23 @@ export class DefaultChordFormatter implements ChordFormatter {
 
   symbols: ChordFormatter["symbols"] = {
     quality: {
-      [AugID]: "+",
-      [DimID]: "o",
-      [MajID]: "",
-      [MinID]: "m",
-      [Dom7ID]: (x: AlterableDegree) => `${x}`,
-      [Maj7ID]: (x: AlterableDegree) => `M${x}`,
-      [Min7ID]: (x: AlterableDegree) => `m${x}`,
-      [Aug7ID]: (x: AlterableDegree) => `+${x}`,
-      [Dim7ID]: (x: AlterableDegree) => `o${x}`,
-      [DimM7ID]: (x: AlterableDegree) => `oM${x}`,
-      [Maj7S5ID]: (x: AlterableDegree) => `+M${x}`,
-      [MinXb5ID]: (x: AlterableDegree) => `m${x}b5`,
-      [MinMaj7ID]: (x: AlterableDegree) => `mM${x}`,
-      [Maj6]: `M6`,
-      [Min6]: `m6`,
-      [Aug6]: `+6`,
-      [PowerID]: "5",
+      [Aug_id]: "+",
+      [Dim_id]: "o",
+      [Maj_id]: "",
+      [Min_id]: "m",
+      [Maj7_id]: (x: AlterableDegree) => `M${x}`,
+      [Dom7_id]: (x: AlterableDegree) => `${x}`,
+      [Min7_id]: (x: AlterableDegree) => `m${x}`,
+      [Aug7_id]: (x: AlterableDegree) => `+${x}`,
+      [Dim7_id]: (x: AlterableDegree) => `o${x}`,
+      [DimM7_id]: (x: AlterableDegree) => `oM${x}`,
+      [Maj7S5_id]: (x: AlterableDegree) => `+M${x}`,
+      [Min7b5_id]: (x: AlterableDegree) => `m${x}b5`,
+      [MinMaj7_id]: (x: AlterableDegree) => `mM${x}`,
+      [Maj6_id]: `M6`,
+      [Min6_id]: `m6`,
+      [Aug6_id]: `+6`,
+      [Power_id]: "5",
     },
     alteration: {
       [AlterRaise]: SharpSymbol,

@@ -13,7 +13,7 @@ export class Key {
   public flavor: KeyFlavor;
 
   constructor(tonic: Letter, flavor?: KeyFlavor) {
-    this.flavor = flavor ? canonicalizeFlavor(flavor) : KeyFlavorMajor;
+    this.flavor = flavor ? canonicalizeFlavor(flavor) : Major;
     this.tonic = conventionalize(tonic, this.flavor);
   }
 
@@ -116,11 +116,9 @@ export type Mode =
   | typeof Aeolian
   | typeof Locrian;
 
-export const KeyFlavorMajor = "M" as const;
-export const KeyFlavorMinor = "m" as const;
 export type KeyFlavor =
-  | typeof KeyFlavorMajor
-  | typeof KeyFlavorMinor
+  | typeof Major
+  | typeof Minor
   | Mode
   | string;
 

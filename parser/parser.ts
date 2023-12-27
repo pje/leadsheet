@@ -11,24 +11,7 @@ import {
   type SongActionDict,
 } from "./grammar.ohm-bundle.js";
 import { zip } from "../lib/array.ts";
-import {
-  Add6,
-  Aug,
-  Chord,
-  Dim,
-  Dim7,
-  Dom7,
-  ExtendableTetrad,
-  Extent,
-  Maj,
-  Maj7,
-  Min,
-  Min7,
-  Min7b5,
-  Power,
-  type Quality,
-  Triad,
-} from "../theory/chord.ts";
+import { Add6, Chord, Extent, type Quality, Triad } from "../theory/chord.ts";
 import {
   type Bar,
   type Barline,
@@ -55,6 +38,25 @@ import {
   Sus,
   Sus4,
 } from "../theory/chord/alteration.ts";
+import { Power } from "../theory/chord/quality/dyad.ts";
+import {
+  Dim7,
+  Dom7,
+  ExtendableTetrad,
+  Maj7,
+  Min7,
+  Min7b5,
+  type as TetradType,
+} from "../theory/chord/quality/tertian_tetrad.ts";
+import { Diminished, Major, Minor } from "../theory/interval.ts";
+import { Aug, Dim, Maj, Min } from "../theory/chord/quality/tertian_triad.ts";
+import { pick } from "../lib/object.ts";
+
+interface SeventhPlusQuality {
+  seventh: typeof Major | typeof Minor | typeof Diminished;
+  type: typeof TetradType;
+  extent: Extent;
+}
 
 interface FlavorNode extends NNode {
   eval?(): [Quality, Array<Alteration>]; // has to be optional because of Typescript interface limitations
@@ -69,7 +71,7 @@ interface TriadQualityNode extends NNode {
 }
 
 interface ExtendedQualityNode extends NNode {
-  eval?(): ExtendableTetrad; // has to be optional because of Typescript interface limitations
+  eval?(): SeventhPlusQuality; // has to be optional because of Typescript interface limitations
 }
 
 interface AlterationsNode extends INode {
@@ -123,43 +125,42 @@ class ChordActions implements ChordActionDict<void> {
   two = (_: NNode) => 2;
 
   #qualityPassthrough = (q: Quality) => (_: NNode) => [q, []];
-  quality = (triadQN: TriadQualityNode, maybeExtendedQN: INode) => {
-    const [triadQ, as]: [Triad, Array<Alteration>] = triadQN.eval!();
-    const extendedQualityNode = <
-      | ExtendedQualityNode
-      | undefined
-    > maybeExtendedQN
-      .child(0);
-
-    const extendedQ = extendedQualityNode?.eval!();
-
-    const result: Quality = extendedQ
-      ? { ...extendedQ, triad: triadQ.triad }
-      : triadQ;
-
-    return [result, [...as]];
+  quality = (
+    triadQN: TriadQualityNode,
+    maybeExtendedQN: INode,
+  ): [Quality, Alteration[]] => {
+    const [triad, as]: [Triad, Array<Alteration>] = triadQN.eval!();
+    const eqn: ExtendedQualityNode | undefined = maybeExtendedQN.child(0);
+    const extendedQ: SeventhPlusQuality | undefined = eqn?.eval!();
+    const result = extendedQ
+      ? {
+        ...triad,
+        ...extendedQ,
+      }
+      : { ...triad };
+    return [<Quality> result, [...as]];
   };
   augTriad = this.#qualityPassthrough(Aug);
   dimTriad = this.#qualityPassthrough(Dim);
   majTriad = this.#qualityPassthrough(Maj);
   minTriad = this.#qualityPassthrough(Min);
   power = this.#qualityPassthrough(Power);
-  majX = (_0: NNode, extentNode: ExtentNode): ExtendableTetrad => {
+  majX = (_0: NNode, extentNode: ExtentNode): SeventhPlusQuality => {
     const extent = extentNode.eval!();
-    return { ...Maj7, extent };
+    return { ...pick(Maj7, "seventh", "type"), extent };
   };
-  minX = (_0: NNode, extentNode: ExtentNode): ExtendableTetrad => {
+  minX = (_0: NNode, extentNode: ExtentNode): SeventhPlusQuality => {
     const extent = extentNode.eval!();
-    return { ...Min7, extent };
+    return { ...pick(Min7, "seventh", "type"), extent };
   };
-  domX = (extentNode: ExtentNode): ExtendableTetrad => {
+  domX = (extentNode: ExtentNode): SeventhPlusQuality => {
     const extent = extentNode.eval!();
-    return { ...Dom7, extent };
+    return { ...pick(Dom7, "seventh", "type"), extent };
   };
-  explicitDomX = (_0: NNode, maybeExtentNode: INode): ExtendableTetrad => {
+  explicitDomX = (_0: NNode, maybeExtentNode: INode): SeventhPlusQuality => {
     const extentNode = <ExtentNode | undefined> maybeExtentNode.child(0);
     const extent = extentNode?.eval!();
-    return extent ? { ...Dom7, extent } : Dom7;
+    return { ...pick(Dom7, "seventh", "type"), extent: extent || 7 };
   };
   dimX = (_0: NNode, extentNode: ExtentNode): ExtendableTetrad => {
     const extent = extentNode.eval!();

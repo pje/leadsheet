@@ -1,7 +1,8 @@
 import { type Letter, transposeLetter } from "./letter.ts";
 import { type FlatOrSharpSymbol } from "./notation.ts";
 import { type Alteration } from "./chord/alteration.ts";
-import { Maj, type Quality } from "./chord/quality.ts";
+import { type Quality } from "./chord/quality.ts";
+import { Maj } from "./chord/quality/tertian_triad.ts";
 export * from "./chord/alteration.ts";
 export * from "./chord/extent.ts";
 export * from "./chord/quality.ts";

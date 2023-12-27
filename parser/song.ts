@@ -4,15 +4,10 @@ import {
   ChordFormatter,
   DefaultChordFormatterInstance,
 } from "../theory/chord/formatter.ts";
-import {
-  Chord,
-  ChordTypeName,
-  Maj,
-  Min,
-  type Quality,
-} from "../theory/chord.ts";
-import { Key, KeyFlavorMajor, KeyFlavorMinor } from "../theory/key.ts";
+import { Chord, ChordTypeName, type Quality } from "../theory/chord.ts";
+import { Key, Major as MajorKey, Minor as MinorKey } from "../theory/key.ts";
 import { FlatOrSharpSymbol, SharpSymbol } from "../theory/notation.ts";
+import { Minor } from "../theory/interval.ts";
 
 export const MetadataKeys = [
   "title",
@@ -162,15 +157,9 @@ export class Song {
     if (this.key) return this.key;
     const c = this.getFirstChord()!;
     if (c === undefined) return undefined;
-    const { quality, tonic } = c.type === OptionalChordTypeName ? c.chord : c;
-
-    switch (quality) {
-      case Min:
-        return new Key(tonic, KeyFlavorMinor);
-      case Maj:
-      default:
-        return new Key(tonic, KeyFlavorMajor);
-    }
+    const chord = c.type === OptionalChordTypeName ? c.chord : c;
+    const keyFlavor = (chord.quality.third === Minor) ? MinorKey : MajorKey;
+    return new Key(chord.tonic, keyFlavor);
   }
 
   // TODO: use a real signature class. could parser do this?
