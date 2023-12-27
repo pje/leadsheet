@@ -106,12 +106,7 @@ type enumerated5ths = `${typeof Major | typeof Minor}${
   | typeof Sharp
   | typeof Perfect}`;
 
-const humanReadable5ths: {
-  [K in enumerated5ths]: K extends
-    `${typeof Major}${typeof Flat}` | `${typeof Minor}${typeof Sharp}`
-    ? undefined
-    : TertianTriadID;
-} = {
+const humanReadable5ths: Record<enumerated5ths, undefined | TertianTriadID> = {
   [`${Major}${Perfect}` as const]: "maj" as const,
   [`${Major}${Flat}` as const]: undefined, // totally theoretical, not used
   [`${Major}${Sharp}` as const]: "aug" as const,
@@ -125,7 +120,7 @@ type enumerated7ths = `${TertianTriadID}${
   | typeof Major
   | typeof Minor}`;
 
-const humanReadable7ths: { [K in enumerated7ths]: QualityID } = {
+const humanReadable7ths: Record<enumerated7ths, QualityID> = {
   [`${Maj_id}${Major}` as const]: Maj7_id,
   [`${Maj_id}${Minor}` as const]: Dom7_id,
   [`${Maj_id}${Diminished}` as const]: Maj6_id,
