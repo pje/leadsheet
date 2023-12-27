@@ -1,8 +1,7 @@
-import { Major, Minor } from "../../interval.ts";
-import { Extent } from "../extent.ts";
-import { Aug, Dim, Maj, Min } from "./tertian_triad.ts";
-
-export const type = "tetrad" as const;
+import { Major, Minor } from "../../../interval.ts";
+import { Extent } from "../../extent.ts";
+import { Aug, Dim, Maj, Min } from "../triad.ts";
+import { type } from "./tertian.ts";
 
 // Tetrads constructed by stacking intervals OTHER than thirds.
 //

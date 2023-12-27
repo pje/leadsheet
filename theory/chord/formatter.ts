@@ -16,31 +16,29 @@ import { AlterableDegree } from "./extent.ts";
 import { identify, type Quality, QualityID } from "./quality.ts";
 import { Letter } from "../letter.ts";
 import { FlatSymbol, SharpSymbol } from "../notation.ts";
-import {
-  Dim7_id,
-  Dom7_id,
-  ExtendableTetradID,
-  Maj7_id,
-  Maj7Sh5_id,
-  Min7_id,
-  Min7Fl5_id,
-  MinMaj7_id,
-} from "./quality/tertian_tetrad.ts";
+import { Power_id } from "./quality/dyad.ts";
 import {
   Aug_id,
   Dim_id,
   Maj_id,
   Min_id,
   type as TriadType,
-} from "./quality/tertian_triad.ts";
-import { Power_id } from "./quality/dyad.ts";
+} from "./quality/triad.ts";
 import {
   Aug7_id,
+  Dim7_id,
   DimM7_id,
+  Dom7_id,
+  ExtendableTetradID,
   Maj6_id,
   Maj6Sh5_id,
+  Maj7_id,
+  Maj7Sh5_id,
   Min6_id,
-} from "./quality/nontertian_tetrad.ts";
+  Min7_id,
+  Min7Fl5_id,
+  MinMaj7_id,
+} from "./quality/tetrad.ts";
 
 export type ChordFormatter = {
   format: (c: Readonly<Chord>) => string;

@@ -1,7 +1,6 @@
-import { Diminished, Major, Minor } from "../../interval.ts";
-import { type Extent } from "../extent.ts";
-import { Aug7, Aug7_id, type DimM7, DimM7_id } from "./nontertian_tetrad.ts";
-import { Aug, Dim, Maj, Min } from "./tertian_triad.ts";
+import { Diminished, Major, Minor } from "../../../interval.ts";
+import { type Extent } from "../../extent.ts";
+import { Aug, Dim, Maj, Min } from "../triad.ts";
 
 export const type = "tetrad" as const;
 
@@ -42,17 +41,6 @@ export const Min7_id = "min7" as const;
 export const Maj7Sh5_id = "maj7#5" as const;
 export const Min7Fl5_id = "min7b5" as const;
 export const Dim7_id = "dim7" as const;
-
-// All the qualities where it makes sense to talk about "extent" (7|9|11|13 versions)
-export type ExtendableTetradID =
-  | TertianTetradID
-  | typeof Aug7_id
-  | typeof DimM7_id;
-
-export type ExtendableTetrad =
-  | TertianTetrad
-  | typeof Aug7
-  | typeof DimM7;
 
 // convenience consts for all the extensions of the most common tetrads
 export const Maj9 = { ...Maj7, extent: 9 } as const;

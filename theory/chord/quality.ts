@@ -1,28 +1,10 @@
-import { DyadID, Power_id, type as DyadType } from "./quality/dyad.ts";
 import { Diminished, Flat, Major, Minor, Perfect, Sharp } from "../interval.ts";
 import {
-  Aug7_id,
-  DimM7_id,
-  Maj6_id,
-  Maj6Sh5_id,
-  Min6_id,
-  type NontertianTetrad,
-  type NontertianTetradID,
-} from "./quality/nontertian_tetrad.ts";
-import {
-  Dim7_id,
-  Dom7_id,
-  type ExtendableTetrad,
-  Maj7_id,
-  Maj7Sh5_id,
-  Min7_id,
-  Min7Fl5_id,
-  MinMaj7_id,
-  type TertianTetrad,
-  type TertianTetradID,
-  type as TetradType,
-} from "./quality/tertian_tetrad.ts";
-import { type Dyad } from "./quality/dyad.ts";
+  type Dyad,
+  DyadID,
+  Power_id,
+  type as DyadType,
+} from "./quality/dyad.ts";
 import {
   Aug,
   Aug_id,
@@ -35,7 +17,27 @@ import {
   type TertianTriad,
   type TertianTriadID,
   type as TriadType,
-} from "./quality/tertian_triad.ts";
+} from "./quality/triad.ts";
+import {
+  Aug7_id,
+  Dim7_id,
+  DimM7_id,
+  Dom7_id,
+  type ExtendableTetrad,
+  Maj6_id,
+  Maj6Sh5_id,
+  Maj7_id,
+  Maj7Sh5_id,
+  Min6_id,
+  Min7_id,
+  Min7Fl5_id,
+  MinMaj7_id,
+  type NontertianTetrad,
+  type NontertianTetradID,
+  type TertianTetrad,
+  type TertianTetradID,
+  type as TetradType,
+} from "./quality/tetrad.ts";
 import { nonexhaustiveSwitchGuard } from "../../lib/switch.ts";
 
 export type Quality =

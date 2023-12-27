@@ -25,7 +25,7 @@ import {
   Sus4,
 } from "../theory/chord/alteration.ts";
 import { Power } from "../theory/chord/quality/dyad.ts";
-import { Aug7, DimM7 } from "../theory/chord/quality/nontertian_tetrad.ts";
+import { Aug7, DimM7 } from "../theory/chord/quality/tetrad/nontertian.ts";
 import {
   Dim7,
   Dom11,
@@ -41,8 +41,8 @@ import {
   Min7Fl5,
   Min9,
   MinMaj9,
-} from "../theory/chord/quality/tertian_tetrad.ts";
-import { Aug, Dim, Maj, Min } from "../theory/chord/quality/tertian_triad.ts";
+} from "../theory/chord/quality/tetrad/tertian.ts";
+import { Aug, Dim, Maj, Min } from "../theory/chord/quality/triad.ts";
 
 const songsDir = "./leadsheets";
 const rawSongs: Array<{ name: string; contents: string }> = [];

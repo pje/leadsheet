@@ -8,8 +8,8 @@ import {
 } from "../theory/key.ts";
 import { Letter } from "../theory/letter.ts";
 import { Add6, Add9 } from "../theory/chord/alteration.ts";
-import { Dom9, Min7 } from "../theory/chord/quality/tertian_tetrad.ts";
-import { Maj } from "../theory/chord/quality/tertian_triad.ts";
+import { Dom9, Min7 } from "../theory/chord/quality/tetrad/tertian.ts";
+import { Maj } from "../theory/chord/quality/triad.ts";
 
 const songFixture = new Song(
   [

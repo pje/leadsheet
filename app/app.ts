@@ -37,8 +37,8 @@ import { DyadID, type as DyadType } from "../theory/chord/quality/dyad.ts";
 import {
   TertianTriadID,
   type as TriadType,
-} from "../theory/chord/quality/tertian_triad.ts";
-import { type as TetradType } from "../theory/chord/quality/tertian_tetrad.ts";
+} from "../theory/chord/quality/triad.ts";
+import { type as TetradType } from "../theory/chord/quality/tetrad.ts";
 import { Major, Minor } from "../theory/interval.ts";
 
 const state: State = {

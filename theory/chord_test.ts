@@ -5,7 +5,7 @@ import { Chord } from "./chord.ts";
 import { Add6, Add9, No, Over, Raise, Sus2, Sus4 } from "./chord/alteration.ts";
 import { DefaultChordFormatterInstance } from "./chord/formatter.ts";
 import { Power } from "./chord/quality/dyad.ts";
-import { Aug7, DimM7 } from "./chord/quality/nontertian_tetrad.ts";
+import { Aug7, DimM7 } from "./chord/quality/tetrad/nontertian.ts";
 import {
   Dim7,
   Dom11,
@@ -23,8 +23,8 @@ import {
   Min7Fl5,
   Min9,
   MinMaj7,
-} from "./chord/quality/tertian_tetrad.ts";
-import { Aug, Dim, Maj, Min } from "./chord/quality/tertian_triad.ts";
+} from "./chord/quality/tetrad/tertian.ts";
+import { Aug, Dim, Maj, Min } from "./chord/quality/triad.ts";
 
 Deno.test("===", async (t) => {
   const a1 = new Chord("A", Maj, Raise(11));
