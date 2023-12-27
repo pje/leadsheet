@@ -64,8 +64,6 @@ export type Tetrad =
 
 export type NonextendableQualities = Exclude<Quality, ExtendableTetrad>;
 
-// export function identify(q: Readonly<Dyad>): DyadID;
-// export function identify(q: Readonly<TertianTriad>): TertianTriadID;
 export function identify(q: Readonly<Quality>): QualityID {
   switch (q.type) {
     case DyadType:
