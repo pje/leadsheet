@@ -39,19 +39,17 @@ import {
   Sus4,
 } from "../theory/chord/alteration.ts";
 import { Power } from "../theory/chord/quality/dyad.ts";
-import {
-  ExtendableTetrad,
-  type as TetradType,
-} from "../theory/chord/quality/tetrad.ts";
+import { Aug, Dim, Maj, Min } from "../theory/chord/quality/triad.ts";
 import {
   Dim7,
   Dom7,
+  type ExtendableTetrad,
   Maj7,
   Min7,
   Min7Fl5,
-} from "../theory/chord/quality/tetrad/tertian.ts";
+  type type as TetradType,
+} from "../theory/chord/quality/tetrad.ts";
 import { Diminished, Major, Minor } from "../theory/interval.ts";
-import { Aug, Dim, Maj, Min } from "../theory/chord/quality/triad.ts";
 import { pick } from "../lib/object.ts";
 
 interface SeventhPlusQuality {
