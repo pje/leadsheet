@@ -49,7 +49,7 @@ import {
   Min7Fl5,
   type type as TetradType,
 } from "../theory/chord/quality/tetrad.ts";
-import { Diminished, Major, Minor } from "../theory/interval.ts";
+import { type Diminished, type Major, type Minor } from "../theory/interval.ts";
 import { pick } from "../lib/object.ts";
 
 interface SeventhPlusQuality {

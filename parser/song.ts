@@ -1,10 +1,10 @@
 import { groupsOf } from "../lib/array.ts";
 import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
 import {
-  ChordFormatter,
+  type ChordFormatter,
   DefaultChordFormatterInstance,
 } from "../theory/chord/formatter.ts";
-import { Chord, ChordTypeName, type Quality } from "../theory/chord.ts";
+import { type Chord, ChordTypeName, type Quality } from "../theory/chord.ts";
 import { Key, Major as MajorKey, Minor as MinorKey } from "../theory/key.ts";
 import { FlatOrSharpSymbol, SharpSymbol } from "../theory/notation.ts";
 import { Minor } from "../theory/interval.ts";
