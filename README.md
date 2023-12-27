@@ -1,6 +1,6 @@
 # leadsheet
 <div align="center">
-  <img width="575" alt="screenshot" src="https://github.com/pje/leadsheet/assets/319655/07b521cd-c87a-42ed-9057-86c365f7e89b">
+  <img width="575" alt="screenshot" src="https://github.com/pje/leadsheet/assets/319655/d5195a0b-1925-42c3-9eaf-c5ef7c80ef72">
 </div>
 
 ```bash
