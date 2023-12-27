@@ -4,7 +4,7 @@
 //   valid: "CM9(no 5)", "Cm7(#4)"
 // invalid: "CM7(no 1)"
 //
-export type AlterableDegree = 2 | 4 | 5 | 6 | 7 | 8 | 9 | 11 | 13;
+export type AlterableDegree = 2 | 3 | 4 | 5 | 6 | Extent;
 
 // Degrees that define an *extended tertian chord*
 //

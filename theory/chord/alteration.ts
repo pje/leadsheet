@@ -1,14 +1,13 @@
 import { nonexhaustiveSwitchGuard } from "../../lib/switch.ts";
 import { Letter, transposeLetter } from "../letter.ts";
 import { FlatOrSharpSymbol } from "../notation.ts";
-
-type Extent = 2 | 3 | 4 | 5 | 6 | 7 | 9 | 11 | 13;
+import { AlterableDegree } from "./extent.ts";
 
 export class Alteration {
   public kind: Kind;
-  public target: Letter | Extent;
+  public target: Letter | AlterableDegree;
 
-  constructor(kind: Kind, target: Letter | Extent) {
+  constructor(kind: Kind, target: Letter | AlterableDegree) {
     this.kind = kind;
     this.target = target;
   }
@@ -88,8 +87,9 @@ export const Sus = (a: 2 | 4) => new Alteration("suspend", a);
 export const Sus2 = new Alteration("suspend", 2);
 export const Sus4 = new Alteration("suspend", 4);
 export const Over = (l: Letter) => new Alteration("compound", l);
-export const Raise = (e: Extent) => new Alteration("raise", e);
-export const Lower = (e: Extent) => new Alteration("lower", e);
-export const Add = (e: Extent) => new Alteration("add", e);
-export const No = (e: Extent) => new Alteration("omit", e);
-export const Everything = (e: Extent) => new Alteration("everything", e);
+export const Raise = (e: AlterableDegree) => new Alteration("raise", e);
+export const Lower = (e: AlterableDegree) => new Alteration("lower", e);
+export const Add = (e: AlterableDegree) => new Alteration("add", e);
+export const No = (e: AlterableDegree) => new Alteration("omit", e);
+export const Everything = (e: AlterableDegree) =>
+  new Alteration("everything", e);
