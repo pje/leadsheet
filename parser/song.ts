@@ -1,13 +1,23 @@
 import { groupsOf } from "../lib/array.ts";
 import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
-import {
-  type ChordFormatter,
-  DefaultChordFormatterInstance,
-} from "../theory/chord/formatter.ts";
-import { type Chord, ChordTypeName, type Quality } from "../theory/chord.ts";
+import { DefaultChordFormatterInstance } from "../theory/chord/formatter.ts";
+import { type Chord, ChordTypeName } from "../theory/chord.ts";
 import { Key, Major as MajorKey, Minor as MinorKey } from "../theory/key.ts";
-import { FlatOrSharpSymbol, SharpSymbol } from "../theory/notation.ts";
+import { SharpSymbol } from "../theory/notation.ts";
 import { Minor } from "../theory/interval.ts";
+import {
+  Chordish,
+  NoChordTypeName,
+  OptionalChord,
+  OptionalChordTypeName,
+  RepeatedChordSymbol,
+  RepeatPreviousChordTypeName,
+  SongChordTypeName,
+} from "./song/chordish.ts";
+import { Barline } from "./song/barline.ts";
+
+export * from "./song/chordish.ts";
+export * from "./song/barline.ts";
 
 export const TitleKey = "title" as const;
 export const ArtistKey = "artist" as const;
@@ -187,71 +197,6 @@ export class Song {
   }
 }
 
-export const SongChordTypeName = "chord" as const;
-export const OptionalChordTypeName = "optionalChord" as const;
-export const NoChordTypeName = "noChord" as const;
-export const RepeatPreviousChordTypeName = "repeatPreviousChord" as const;
-
-export class OptionalChord {
-  public type = OptionalChordTypeName;
-  public chord: Chord;
-
-  constructor(chord: Chord) {
-    this.chord = chord;
-  }
-
-  dup() {
-    return new OptionalChord(this.chord.dup());
-  }
-
-  transpose(halfSteps: number, flatsOrSharps: FlatOrSharpSymbol) {
-    return new OptionalChord(this.chord.transpose(halfSteps, flatsOrSharps));
-  }
-
-  print(formatter: ChordFormatter = DefaultChordFormatterInstance): string {
-    return `(${this.chord.print(formatter)})`;
-  }
-}
-
-export class NoChord {
-  public type = NoChordTypeName;
-
-  dup() {
-    return new NoChord();
-  }
-
-  print(): string {
-    return "N.C.";
-  }
-}
-
-export class RepeatPreviousChord {
-  public type = RepeatPreviousChordTypeName;
-
-  dup() {
-    return new RepeatPreviousChord();
-  }
-
-  print(): string {
-    return RepeatedChordSymbol;
-  }
-}
-
-export type Chordish =
-  | Chord
-  | OptionalChord
-  | NoChord
-  | RepeatPreviousChord;
-
-export type ChordishQuality = Quality | "no-chord";
-export const RepeatedChordSymbol = "%";
-export const AllRepeatedChordSymbols = [
-  RepeatedChordSymbol,
-  "/",
-  "-",
-  "𝄎",
-];
-
 export const UnknownKey = "?" as const;
 
 export type Bar = {
@@ -260,20 +205,3 @@ export type Bar = {
   closeBarline: Barline;
   name: string | undefined;
 };
-
-export type Barline =
-  | typeof SingleBarline
-  | typeof DoubleBarline
-  | OpenBarlineWithRepeats
-  | CloseBarlineWithRepeats;
-
-type OpenBarlineWithRepeats = `${singleOrDoubleBarline}${howMany | ""}:`;
-type CloseBarlineWithRepeats = `:${howMany | ""}${singleOrDoubleBarline}`;
-type howMany = `${number}${"x" | ""}`;
-
-const DoubleBarline = "||";
-const SingleBarline = "|";
-
-type singleOrDoubleBarline =
-  | typeof DoubleBarline
-  | typeof SingleBarline;
