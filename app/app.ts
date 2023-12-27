@@ -29,7 +29,7 @@ import {
   identifyTriad,
 } from "../theory/chord.ts";
 import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
-import { type Alteration, Sus2, Sus4 } from "../theory/chord/alteration.ts";
+import { type Alteration, AlterSuspend } from "../theory/chord/alteration.ts";
 import { partition } from "../lib/array.ts";
 import { DefaultChordFormatter } from "../theory/chord/formatter.ts";
 import { DyadID, type as DyadType } from "../theory/chord/quality/dyad.ts";
@@ -398,12 +398,11 @@ function _getColorClassForChord(c: Readonly<Chord>): ColorClass {
   switch (type) {
     case DyadType:
     case TriadType:
+      if (c.alterations.some((a) => a.kind === AlterSuspend)) return CCSus;
       return identifyTriad(q);
     case TetradType: {
       if (q.third === Major && q.seventh === Minor) return CCDom;
-      if (c.alterations.includes(Sus2) || c.alterations.includes(Sus4)) {
-        return CCSus;
-      }
+      if (c.alterations.some((a) => a.kind === AlterSuspend)) return CCSus;
       return identifyTriad(q) || CCNoChord;
     }
     default:
