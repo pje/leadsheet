@@ -22,14 +22,7 @@ export const Min_id = "min" as const;
 
 const common = { type, seventh: undefined, extent: undefined };
 
-// Mm ♪ ←Maj3→ ♪ ←min3→ ♪ : {0 4 7}
 export const Maj = { ...common, third: Major, fifth: Perfect } as const;
-
-// mM ♪ ←min3→ ♪ ←Maj3→ ♪ : {0 3 7}
 export const Min = { ...common, third: Minor, fifth: Perfect } as const;
-
-// MM ♪ ←Maj3→ ♪ ←Maj3→ ♪ : {0 4 8}
 export const Aug = { ...common, third: Major, fifth: Sharp } as const;
-
-// mm ♪ ←min3→ ♪ ←min3→ ♪ : {0 3 6}
 export const Dim = { ...common, third: Minor, fifth: Flat } as const;
