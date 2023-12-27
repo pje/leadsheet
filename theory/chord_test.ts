@@ -15,12 +15,12 @@ import {
   Maj11,
   Maj13,
   Maj7,
-  Maj7S5,
+  Maj7Sh5,
   Maj9,
   Min11,
   Min13,
   Min7,
-  Min7b5,
+  Min7Fl5,
   Min9,
   MinMaj7,
 } from "./chord/quality/tertian_tetrad.ts";
@@ -110,8 +110,8 @@ Deno.test(Chord.prototype.print.name, async (t) => {
 
     [new Chord("A", Dim7), "Ao7"],
     [new Chord("A", DimM7), "AoM7"],
-    [new Chord("A", Maj7S5), "A+M7"],
-    [new Chord("A", Min7b5), "Am7b5"],
+    [new Chord("A", Maj7Sh5), "A+M7"],
+    [new Chord("A", Min7Fl5), "Am7b5"],
     [new Chord("A", MinMaj7), "AmM7"],
 
     [new Chord("A", Power), "A5"],

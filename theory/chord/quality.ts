@@ -1,11 +1,23 @@
 import { DyadID, Power_id, type as DyadType } from "./quality/dyad.ts";
 import { Diminished, Flat, Major, Minor, Perfect, Sharp } from "../interval.ts";
 import {
+  Aug7_id,
+  DimM7_id,
+  Maj6_id,
+  Maj6Sh5_id,
+  Min6_id,
   type NontertianTetrad,
   type NontertianTetradID,
 } from "./quality/nontertian_tetrad.ts";
 import {
+  Dim7_id,
+  Dom7_id,
   type ExtendableTetrad,
+  Maj7_id,
+  Maj7Sh5_id,
+  Min7_id,
+  Min7Fl5_id,
+  MinMaj7_id,
   type TertianTetrad,
   type TertianTetradID,
   type as TetradType,
@@ -76,9 +88,6 @@ export function identifyDyad(q: Readonly<Dyad>): DyadID {
   }
 }
 
-// export function identifyTriad(
-//   q: Readonly<TertianTriad>,
-// ): TertianTriadID | undefined;
 export function identifyTriad(
   q: Readonly<TertianTriad | TertianTetrad | NontertianTetrad>,
 ): TertianTriadID | undefined {
@@ -117,16 +126,16 @@ type enumerated7ths = `${TertianTriadID}${
   | typeof Minor}`;
 
 const humanReadable7ths: { [K in enumerated7ths]: QualityID } = {
-  [`${Maj_id}${Major}` as const]: "maj7" as const,
-  [`${Maj_id}${Minor}` as const]: "dom7" as const,
-  [`${Maj_id}${Diminished}` as const]: "maj6" as const,
-  [`${Min_id}${Major}` as const]: "minmaj7" as const,
-  [`${Min_id}${Minor}` as const]: "min7" as const,
-  [`${Min_id}${Diminished}` as const]: "min6" as const,
-  [`${Aug_id}${Major}` as const]: "maj7#5" as const,
-  [`${Aug_id}${Minor}` as const]: "7#5" as const,
-  [`${Aug_id}${Diminished}` as const]: "6#5" as const, // Aug6?
-  [`${Dim_id}${Major}` as const]: "dimM7" as const,
-  [`${Dim_id}${Minor}` as const]: "min7b5" as const,
-  [`${Dim_id}${Diminished}` as const]: "dim7" as const,
+  [`${Maj_id}${Major}` as const]: Maj7_id,
+  [`${Maj_id}${Minor}` as const]: Dom7_id,
+  [`${Maj_id}${Diminished}` as const]: Maj6_id,
+  [`${Min_id}${Major}` as const]: MinMaj7_id,
+  [`${Min_id}${Minor}` as const]: Min7_id,
+  [`${Min_id}${Diminished}` as const]: Min6_id,
+  [`${Aug_id}${Major}` as const]: Maj7Sh5_id,
+  [`${Aug_id}${Minor}` as const]: Aug7_id,
+  [`${Aug_id}${Diminished}` as const]: Maj6Sh5_id,
+  [`${Dim_id}${Major}` as const]: DimM7_id,
+  [`${Dim_id}${Minor}` as const]: Min7Fl5_id,
+  [`${Dim_id}${Diminished}` as const]: Dim7_id,
 };

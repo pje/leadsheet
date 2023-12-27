@@ -1,5 +1,4 @@
 export {
-  DoubleFlatSymbol as Diminished,
   FlatSymbol as Flat,
   NaturalSymbol as Perfect,
   SharpSymbol as Sharp,
@@ -7,3 +6,5 @@ export {
 
 export const Major = "M" as const;
 export const Minor = "m" as const;
+
+export const Diminished = "°" as const;

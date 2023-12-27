@@ -1,6 +1,6 @@
 import { Diminished, Major, Minor } from "../../interval.ts";
 import { type Extent } from "../extent.ts";
-import { Aug7, type DimM7 } from "./nontertian_tetrad.ts";
+import { Aug7, Aug7_id, type DimM7, DimM7_id } from "./nontertian_tetrad.ts";
 import { Aug, Dim, Maj, Min } from "./tertian_triad.ts";
 
 export const type = "tetrad" as const;
@@ -12,8 +12,8 @@ export type TertianTetrad =
   | typeof Dom7
   | typeof MinMaj7
   | typeof Min7
-  | typeof Maj7S5
-  | typeof Min7b5
+  | typeof Maj7Sh5
+  | typeof Min7Fl5
   | typeof Dim7;
 
 const common = { type, extent: 7 as Extent };
@@ -22,8 +22,8 @@ export const Maj7 = { ...Maj, ...common, seventh: Major } as const;
 export const Dom7 = { ...Maj, ...common, seventh: Minor } as const;
 export const MinMaj7 = { ...Min, ...common, seventh: Major } as const;
 export const Min7 = { ...Min, ...common, seventh: Minor } as const;
-export const Maj7S5 = { ...Aug, ...common, seventh: Major } as const;
-export const Min7b5 = { ...Dim, ...common, seventh: Minor } as const;
+export const Maj7Sh5 = { ...Aug, ...common, seventh: Major } as const;
+export const Min7Fl5 = { ...Dim, ...common, seventh: Minor } as const;
 export const Dim7 = { ...Dim, ...common, seventh: Diminished } as const;
 
 export type TertianTetradID =
@@ -31,23 +31,23 @@ export type TertianTetradID =
   | typeof Dom7_id
   | typeof MinMaj7_id
   | typeof Min7_id
-  | typeof Maj7S5_id
-  | typeof Min7b5_id
+  | typeof Maj7Sh5_id
+  | typeof Min7Fl5_id
   | typeof Dim7_id;
 
 export const Maj7_id = "maj7" as const;
 export const Dom7_id = "dom7" as const;
 export const MinMaj7_id = "minmaj7" as const;
 export const Min7_id = "min7" as const;
-export const Maj7S5_id = "maj7#5" as const;
-export const Min7b5_id = "min7b5" as const;
+export const Maj7Sh5_id = "maj7#5" as const;
+export const Min7Fl5_id = "min7b5" as const;
 export const Dim7_id = "dim7" as const;
 
 // All the qualities where it makes sense to talk about "extent" (7|9|11|13 versions)
 export type ExtendableTetradID =
   | TertianTetradID
-  | `7#5` // typeof Aug7.id
-  | `dimM7`; // typeof DimM7.id;
+  | typeof Aug7_id
+  | typeof DimM7_id;
 
 export type ExtendableTetrad =
   | TertianTetrad

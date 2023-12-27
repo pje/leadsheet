@@ -45,7 +45,7 @@ import {
   ExtendableTetrad,
   Maj7,
   Min7,
-  Min7b5,
+  Min7Fl5,
   type as TetradType,
 } from "../theory/chord/quality/tertian_tetrad.ts";
 import { Diminished, Major, Minor } from "../theory/interval.ts";
@@ -169,7 +169,7 @@ class ChordActions implements ChordActionDict<void> {
   hdimX = (_0: TNode, maybeExtentNode: INode) => {
     const extentNode = <ExtentNode | undefined> maybeExtentNode.child(0);
     const extent = extentNode?.eval!();
-    return extent ? { ...Min7b5, extent } : Min7b5;
+    return extent ? { ...Min7Fl5, extent } : Min7Fl5;
   };
 
   alteration = (arg0: NNode) => arg0.eval();

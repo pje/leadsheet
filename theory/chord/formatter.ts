@@ -21,9 +21,9 @@ import {
   Dom7_id,
   ExtendableTetradID,
   Maj7_id,
-  Maj7S5_id,
+  Maj7Sh5_id,
   Min7_id,
-  Min7b5_id,
+  Min7Fl5_id,
   MinMaj7_id,
 } from "./quality/tertian_tetrad.ts";
 import {
@@ -35,10 +35,10 @@ import {
 } from "./quality/tertian_triad.ts";
 import { Power_id } from "./quality/dyad.ts";
 import {
-  Aug6_id,
   Aug7_id,
   DimM7_id,
   Maj6_id,
+  Maj6Sh5_id,
   Min6_id,
 } from "./quality/nontertian_tetrad.ts";
 
@@ -116,12 +116,12 @@ export class DefaultChordFormatter implements ChordFormatter {
       [Aug7_id]: (x: AlterableDegree) => `+${x}`,
       [Dim7_id]: (x: AlterableDegree) => `o${x}`,
       [DimM7_id]: (x: AlterableDegree) => `oM${x}`,
-      [Maj7S5_id]: (x: AlterableDegree) => `+M${x}`,
-      [Min7b5_id]: (x: AlterableDegree) => `m${x}b5`,
+      [Maj7Sh5_id]: (x: AlterableDegree) => `+M${x}`,
+      [Min7Fl5_id]: (x: AlterableDegree) => `m${x}b5`,
       [MinMaj7_id]: (x: AlterableDegree) => `mM${x}`,
       [Maj6_id]: `M6`,
       [Min6_id]: `m6`,
-      [Aug6_id]: `+6`,
+      [Maj6Sh5_id]: `+6`,
       [Power_id]: "5",
     },
     alteration: {
