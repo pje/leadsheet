@@ -268,6 +268,9 @@ function renderMetadata(
 function loadSong(song: Song): Song {
   state.song = song;
   setTransposedAmount(0);
+  if (song.title) {
+    setDocumentTitle(`${song.title} | Leadsheet`);
+  }
   renderSong(song, document.getElementById("root")!);
   return song;
 }
@@ -287,6 +290,12 @@ function fetchLoadedSongFromLocalStorage(): Song | undefined {
   } else {
     return result.value;
   }
+}
+
+// TODO: Action
+function setDocumentTitle(str: string) {
+  const titleNode = document.querySelector("title");
+  if (titleNode) titleNode.innerText = str;
 }
 
 // TODO: Action

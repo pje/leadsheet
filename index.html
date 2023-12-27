@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <title>Leadsheet</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="build/index.css" />
     <script charset="utf-8" src="build/index.js"></script>
@@ -9,9 +10,9 @@
   <body id="root">
     <div id="toolbar">
       <input type="file" id="songfile" name="songfile" />
-      <details id="settings"></details>
+      <details id="settings"><summary>Settings</summary></details>
     </div>
-    <div id="metadata">
+    <header id="metadata">
       <h1 class="title"> </h1>
       <div class="byline">
         <div class="artist"> </div>
@@ -26,11 +27,10 @@
         </div>
         <output id="transposed-steps" class="hidden">0</output>
       </div>
-    </div>
-
-    <div id="song"></div>
-    <div id="footer">
+    </header>
+    <main id="song"></main>
+    <footer>
       <div id="fine">𝇟</div>
-    </div>
+    </footer>
   </body>
 </html>
