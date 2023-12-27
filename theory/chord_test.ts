@@ -132,3 +132,18 @@ Deno.test(Chord.prototype.print.name, async (t) => {
     );
   }
 });
+
+// Deno.test(TypeMap.name, async (t) => {
+//   const cases = new Map<Chord, QualityID>([
+//     [new Chord("A", Maj), Maj_id],
+//     [new Chord("A", Object.assign({}, Maj)), Maj_id],
+//     [new Chord("A", Power), Power_id],
+//   ]);
+
+//   for (const [chord, expected] of cases) {
+//     await t.step(
+//       `"${JSON.stringify(chord)}" should typeMap to "${expected}"`,
+//       () => assertEquals(expected, TypeMap(chord.quality)),
+//     );
+//   }
+// });

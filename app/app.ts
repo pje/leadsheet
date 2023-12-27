@@ -26,7 +26,6 @@ import {
   type AlterableDegree,
   type Chord,
   ChordTypeName,
-  identifyDyad,
   identifyTriad,
 } from "../theory/chord.ts";
 import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
@@ -389,8 +388,8 @@ function _getColorClassForChord(c: Readonly<Chord>): ColorClass {
 
   switch (type) {
     case DyadType:
-      return identifyDyad(q);
     case TriadType:
+      return identifyTriad(q);
     case TetradType: {
       if (q.third === Major && q.seventh === Minor) return CCDom;
       if (c.alterations.includes(Sus2) || c.alterations.includes(Sus4)) {

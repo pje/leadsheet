@@ -12,6 +12,7 @@
       "npm:skott@^0.31.3": "npm:skott@0.31.3_fp-ts@2.5.0_typescript@5.3.3",
       "npm:stylelint-config-standard@^35.0.0": "npm:stylelint-config-standard@35.0.0_stylelint@16.0.2__@csstools+css-tokenizer@2.2.2__@csstools+css-parser-algorithms@2.4.0___@csstools+css-tokenizer@2.2.2__postcss-selector-parser@6.0.13__postcss@8.4.32",
       "npm:stylelint@^16.0.2": "npm:stylelint@16.0.2_@csstools+css-tokenizer@2.2.2_@csstools+css-parser-algorithms@2.4.0__@csstools+css-tokenizer@2.2.2_postcss-selector-parser@6.0.13_postcss@8.4.32",
+      "npm:ts-pattern@^5.0.1": "npm:ts-pattern@5.0.6",
       "npm:tufte-css@^1.8.0": "npm:tufte-css@1.8.0"
     },
     "npm": {
@@ -2155,6 +2156,10 @@
           "typescript": "typescript@5.3.3"
         }
       },
+      "ts-pattern@5.0.6": {
+        "integrity": "sha512-Y+jOjihlFriWzcBjncPCf2/am+Hgz7LtsWs77pWg5vQQKLQj07oNrJryo/wK2G0ndNaoVn2ownFMeoeAuReu3Q==",
+        "dependencies": {}
+      },
       "tslib@2.6.2": {
         "integrity": "sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==",
         "dependencies": {}
@@ -2586,6 +2591,23 @@
     "https://deno.land/x/denoflate@1.2.1/pkg/denoflate_bg.wasm.js": "d581956245407a2115a3d7e8d85a9641c032940a8e810acbd59ca86afd34d44d",
     "https://deno.land/x/esbuild@v0.19.10/mod.js": "49e5dc6ff0bedd7214ef846e16ab19c8e713e38e854aca7821c091860a1774f7",
     "https://deno.land/x/esbuild@v0.19.9/mod.js": "251e3754a4b33ceb3c814bb7236571a1b41d71b544b55313c2bd524f4d855a70",
+    "https://deno.land/x/fuzzy_octo_guacamole@v5.0.1/index.ts": "6db3ef06edf4bafaf7fe1e0aac2028112a873b095f3d7013648ebe5c302a516c",
+    "https://deno.land/x/fuzzy_octo_guacamole@v5.0.1/internals/helpers.ts": "1fd392d6e9564cdec778c4cfab57b45dfbbe6bfc36c1beae38621f2ff466293f",
+    "https://deno.land/x/fuzzy_octo_guacamole@v5.0.1/internals/symbols.ts": "e0f69c01c15a8db83967c2aa2f6b1ea3cffac99be44761cc0b711f74a8659371",
+    "https://deno.land/x/fuzzy_octo_guacamole@v5.0.1/is-matching.ts": "710a7f80743850134036fadb99bc347ee5c363399b62518685df130d3aef8ffb",
+    "https://deno.land/x/fuzzy_octo_guacamole@v5.0.1/match.ts": "9987671aeeded1ab2de027bc8c4957846c404c0ac747e02b7bbdfabf4731fe49",
+    "https://deno.land/x/fuzzy_octo_guacamole@v5.0.1/mod.ts": "882e3724ca160624f934070ead4633e971f81a90dcedc03a428f20769e96307b",
+    "https://deno.land/x/fuzzy_octo_guacamole@v5.0.1/patterns.ts": "ce6296a666fd2e3e2744c589d895f3e17e07fc0591732e83384578cf0da8b1a0",
+    "https://deno.land/x/fuzzy_octo_guacamole@v5.0.1/types/BuildMany.ts": "452b8228020c9d824fe90444167d228044abe3535981d9a26c5d6827c22a5a82",
+    "https://deno.land/x/fuzzy_octo_guacamole@v5.0.1/types/DeepExclude.ts": "c44d2083e6c74f86787028bc06b5a1801313d4b5084328f185437d0b05372c2b",
+    "https://deno.land/x/fuzzy_octo_guacamole@v5.0.1/types/DistributeUnions.ts": "c7d625ac849409ec41cd61c06727435fe52d3a6d3ce9385642c1ef8c99142f8a",
+    "https://deno.land/x/fuzzy_octo_guacamole@v5.0.1/types/ExtractPreciseValue.ts": "ac759a18c10c4e0d2562ebc5a21c8b2f8d6b2c9d403de3318dc25a8f0f8c19bc",
+    "https://deno.land/x/fuzzy_octo_guacamole@v5.0.1/types/FindSelected.ts": "34233f8c9158538148781b172d1341a2edff15e754a4b563ac24219d9085d094",
+    "https://deno.land/x/fuzzy_octo_guacamole@v5.0.1/types/InvertPattern.ts": "7f553b243b3e978502efe9c0c1b3b4d1f2b447256f553305660e9c41e10e6a6e",
+    "https://deno.land/x/fuzzy_octo_guacamole@v5.0.1/types/IsMatching.ts": "60cda08542386b0fc2019f42da87e0e0819fa30f6f3d9bf835087df139fc84ee",
+    "https://deno.land/x/fuzzy_octo_guacamole@v5.0.1/types/Match.ts": "dc26eed6160f585c3513b44ca3b7cdd85c3d005cbcf63ac6bad4a337f0e2ead1",
+    "https://deno.land/x/fuzzy_octo_guacamole@v5.0.1/types/Pattern.ts": "1e1b4b3d2a34d0986949d9e2aaee2d538491375790fc4bee490236e6044a92bc",
+    "https://deno.land/x/fuzzy_octo_guacamole@v5.0.1/types/helpers.ts": "87a1b7dc5a6867800885ca955f8dd7e23187b84d05c9fb6939ce216705e7b895",
     "https://deno.land/x/puppeteer@16.2.0/mod.ts": "52a47aa1850fc0a8255d6c8c462f4ab7e43104d342e6de7bda334221ca8bdcac",
     "https://deno.land/x/puppeteer@16.2.0/src/deno/BrowserFetcher.ts": "6be7a586667b429138994a4955b2339fc58af9b6d08378672c8a2b052045e308",
     "https://deno.land/x/puppeteer@16.2.0/src/deno/BrowserRunner.ts": "a32b6d2df712afce5f0707aabb6fbcd1e9b1b20e90fc5c34daa081960a638e62",

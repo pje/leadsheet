@@ -1,10 +1,7 @@
-import { Diminished, Flat, Major, Minor, Perfect, Sharp } from "../interval.ts";
-import {
-  type Dyad,
-  DyadID,
-  Power_id,
-  type as DyadType,
-} from "./quality/dyad.ts";
+// @deno-types="../../node_modules/ts-pattern/dist/index.d.ts"
+import { match } from "../../node_modules/ts-pattern/dist/index.js";
+
+import { type Dyad, DyadID, Power, Power_id } from "./quality/dyad.ts";
 import {
   Aug,
   Aug_id,
@@ -16,29 +13,39 @@ import {
   Min_id,
   type TertianTriad,
   type TertianTriadID,
-  type as TriadType,
 } from "./quality/triad.ts";
 import {
+  Aug7,
   Aug7_id,
+  Dim7,
   Dim7_id,
+  DimM7,
   DimM7_id,
+  Dom7,
   Dom7_id,
   type ExtendableTetrad,
+  Maj6,
   Maj6_id,
+  Maj6Sh5,
   Maj6Sh5_id,
+  Maj7,
   Maj7_id,
+  Maj7Sh5,
   Maj7Sh5_id,
+  Min6,
   Min6_id,
+  Min7,
   Min7_id,
+  Min7Fl5,
   Min7Fl5_id,
+  MinMaj7,
   MinMaj7_id,
   type NontertianTetrad,
   type NontertianTetradID,
   type TertianTetrad,
   type TertianTetradID,
-  type as TetradType,
 } from "./quality/tetrad.ts";
-import { nonexhaustiveSwitchGuard } from "../../lib/switch.ts";
+import { omit, pick } from "../../lib/object.ts";
 
 export type Quality =
   | TertianTriad
@@ -65,72 +72,39 @@ export type Tetrad =
 export type NonextendableQualities = Exclude<Quality, ExtendableTetrad>;
 
 export function identify(q: Readonly<Quality>): QualityID {
-  switch (q.type) {
-    case DyadType:
-      return identifyDyad(q);
-    case TriadType:
-      return identifyTriad(q) || Maj_id;
-    case TetradType:
-      return humanReadable7ths[
-        `${identifyTriad(q) || Maj_id}${q.seventh || Diminished}`
-      ];
-  }
+  const result = match(q)
+    .returnType<QualityID>()
+    .with(Power, () => Power_id)
+    .with(Maj, () => Maj_id)
+    .with(Min, () => Min_id)
+    .with(Aug, () => Aug_id)
+    .with(Dim, () => Dim_id)
+    .with(omit(Maj7, "extent"), () => Maj7_id)
+    .with(omit(Dom7, "extent"), () => Dom7_id)
+    .with(omit(MinMaj7, "extent"), () => MinMaj7_id)
+    .with(omit(Min7, "extent"), () => Min7_id)
+    .with(omit(Maj7Sh5, "extent"), () => Maj7Sh5_id)
+    .with(omit(Min7Fl5, "extent"), () => Min7Fl5_id)
+    .with(omit(Dim7, "extent"), () => Dim7_id)
+    .with(omit(DimM7, "extent"), () => DimM7_id)
+    .with(omit(Aug7, "extent"), () => Aug7_id)
+    .with(Maj6, () => Maj6_id)
+    .with(Min6, () => Min6_id)
+    .with(Maj6Sh5, () => Maj6Sh5_id)
+    .exhaustive();
+
+  return result;
 }
 
-export function identifyDyad(q: Readonly<Dyad>): DyadID {
-  const { type } = q;
+export function identifyTriad(q: Readonly<Quality>): TertianTriadID | DyadID {
+  const result = match(q)
+    .returnType<TertianTriadID | DyadID>()
+    .with(pick(Power, "third", "fifth", "seventh"), () => Power_id)
+    .with(pick(Maj, "third", "fifth"), () => Maj_id)
+    .with(pick(Min, "third", "fifth"), () => Min_id)
+    .with(pick(Aug, "third", "fifth"), () => Aug_id)
+    .with(pick(Dim, "third", "fifth"), () => Dim_id)
+    .exhaustive();
 
-  switch (type) {
-    case DyadType:
-      return Power_id;
-    default:
-      nonexhaustiveSwitchGuard(type);
-  }
+  return result;
 }
-
-export function identifyTriad(
-  q: Readonly<TertianTriad | TertianTetrad | NontertianTetrad>,
-): TertianTriadID | undefined {
-  const { type, third, fifth } = q;
-  switch (type) {
-    case TriadType:
-    case TetradType:
-      return humanReadable5ths[`${third}${fifth}`];
-    default:
-      nonexhaustiveSwitchGuard(type);
-  }
-}
-
-type enumerated5ths = `${typeof Major | typeof Minor}${
-  | typeof Flat
-  | typeof Sharp
-  | typeof Perfect}`;
-
-const humanReadable5ths: Record<enumerated5ths, undefined | TertianTriadID> = {
-  [`${Major}${Perfect}` as const]: "maj" as const,
-  [`${Major}${Flat}` as const]: undefined, // totally theoretical, not used
-  [`${Major}${Sharp}` as const]: "aug" as const,
-  [`${Minor}${Perfect}` as const]: "min" as const,
-  [`${Minor}${Flat}` as const]: "dim" as const,
-  [`${Minor}${Sharp}` as const]: undefined, // totally theoretical, not used
-};
-
-type enumerated7ths = `${TertianTriadID}${
-  | typeof Diminished
-  | typeof Major
-  | typeof Minor}`;
-
-const humanReadable7ths: Record<enumerated7ths, QualityID> = {
-  [`${Maj_id}${Major}` as const]: Maj7_id,
-  [`${Maj_id}${Minor}` as const]: Dom7_id,
-  [`${Maj_id}${Diminished}` as const]: Maj6_id,
-  [`${Min_id}${Major}` as const]: MinMaj7_id,
-  [`${Min_id}${Minor}` as const]: Min7_id,
-  [`${Min_id}${Diminished}` as const]: Min6_id,
-  [`${Aug_id}${Major}` as const]: Maj7Sh5_id,
-  [`${Aug_id}${Minor}` as const]: Aug7_id,
-  [`${Aug_id}${Diminished}` as const]: Maj6Sh5_id,
-  [`${Dim_id}${Major}` as const]: DimM7_id,
-  [`${Dim_id}${Minor}` as const]: Min7Fl5_id,
-  [`${Dim_id}${Diminished}` as const]: Dim7_id,
-};

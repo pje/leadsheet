@@ -5,6 +5,7 @@
   "dependencies": {
     "@fontsource/noto-music": "^5.0.18",
     "ohm-js": "^17.1.0",
+    "ts-pattern": "^5.0.1",
     "tufte-css": "^1.8.0"
   },
   "devDependencies": {

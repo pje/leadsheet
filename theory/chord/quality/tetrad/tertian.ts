@@ -1,5 +1,5 @@
 import { Diminished, Major, Minor } from "../../../interval.ts";
-import { type Extent } from "../../extent.ts";
+import { Extent } from "../../extent.ts";
 import { Aug, Dim, Maj, Min } from "../triad.ts";
 
 export const type = "tetrad" as const;
