@@ -9,13 +9,20 @@ import { Key, Major as MajorKey, Minor as MinorKey } from "../theory/key.ts";
 import { FlatOrSharpSymbol, SharpSymbol } from "../theory/notation.ts";
 import { Minor } from "../theory/interval.ts";
 
+export const TitleKey = "title" as const;
+export const ArtistKey = "artist" as const;
+export const AlbumKey = "album" as const;
+export const YearKey = "year" as const;
+export const SigKey = "sig" as const;
+export const KeyKey = "key" as const;
+
 export const MetadataKeys = [
-  "title",
-  "artist",
-  "album",
-  "year",
-  "sig",
-  "key",
+  TitleKey,
+  ArtistKey,
+  AlbumKey,
+  YearKey,
+  SigKey,
+  KeyKey,
 ] as const;
 
 export type MetadataKeysType = typeof MetadataKeys[number];
