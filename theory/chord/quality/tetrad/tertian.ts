@@ -15,16 +15,6 @@ export type TertianTetrad =
   | typeof Min7Fl5
   | typeof Dim7;
 
-const common = { type, extent: 7 as Extent };
-
-export const Maj7 = { ...Maj, ...common, seventh: Major } as const;
-export const Dom7 = { ...Maj, ...common, seventh: Minor } as const;
-export const MinMaj7 = { ...Min, ...common, seventh: Major } as const;
-export const Min7 = { ...Min, ...common, seventh: Minor } as const;
-export const Maj7Sh5 = { ...Aug, ...common, seventh: Major } as const;
-export const Min7Fl5 = { ...Dim, ...common, seventh: Minor } as const;
-export const Dim7 = { ...Dim, ...common, seventh: Diminished } as const;
-
 export type TertianTetradID =
   | typeof Maj7_id
   | typeof Dom7_id
@@ -41,6 +31,16 @@ export const Min7_id = "min7" as const;
 export const Maj7Sh5_id = "maj7#5" as const;
 export const Min7Fl5_id = "min7b5" as const;
 export const Dim7_id = "dim7" as const;
+
+const common = { type, extent: 7 as Extent };
+
+export const Maj7 = { ...Maj, ...common, seventh: Major } as const;
+export const Dom7 = { ...Maj, ...common, seventh: Minor } as const;
+export const MinMaj7 = { ...Min, ...common, seventh: Major } as const;
+export const Min7 = { ...Min, ...common, seventh: Minor } as const;
+export const Maj7Sh5 = { ...Aug, ...common, seventh: Major } as const;
+export const Min7Fl5 = { ...Dim, ...common, seventh: Minor } as const;
+export const Dim7 = { ...Dim, ...common, seventh: Diminished } as const;
 
 // convenience consts for all the extensions of the most common tetrads
 export const Maj9 = { ...Maj7, extent: 9 } as const;
