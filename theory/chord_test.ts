@@ -45,6 +45,10 @@ Deno.test("===", async (t) => {
     `"${JSON.stringify(b)}" should !== ${JSON.stringify(a1)}`,
     () => assertNotEquals(b, a1),
   );
+});
+
+Deno.test(Chord.prototype.dup.name, async (t) => {
+  const b = new Chord("B", Maj, Raise(11));
 
   await t.step(
     `"${JSON.stringify(b)}.dup()" should === itself`,

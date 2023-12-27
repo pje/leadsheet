@@ -39,15 +39,11 @@ export class Chord {
   }
 
   // returns a new Chord, value-identical to this one
-  dup(args?: {
-    tonic?: Letter;
-    quality?: Quality;
-    alterations?: Array<Alteration>;
-  }): Chord {
+  dup(): Chord {
     return new Chord(
-      args?.tonic || this.tonic,
-      args?.quality || this.quality,
-      ...(args?.alterations ? args.alterations : this.alterations),
+      this.tonic,
+      this.quality,
+      ...(this.alterations),
     );
   }
 
