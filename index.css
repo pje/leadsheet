@@ -109,7 +109,7 @@ html {
       position: relative;
       font-size: 15pt;
       left: -5px;
-      bottom: 2px;
+      bottom: 0;
       margin-right: -8px;
     }
   }
