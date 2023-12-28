@@ -1,6 +1,6 @@
 import { groupsOf } from "../lib/array.ts";
 import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
-import { DefaultChordFormatterInstance } from "../theory/chord/formatter.ts";
+import { DefaultChordFormatterInstance } from "../formatter/chord/text_formatter.ts";
 import { type Chord, ChordTypeName } from "../theory/chord.ts";
 import { Key, Major as MajorKey, Minor as MinorKey } from "../theory/key.ts";
 import { SharpSymbol } from "../theory/notation.ts";
@@ -10,6 +10,7 @@ import {
   NoChordTypeName,
   OptionalChord,
   OptionalChordTypeName,
+  rehydrate as rehydrateChordish,
   RepeatedChordSymbol,
   RepeatPreviousChordTypeName,
   SongChordTypeName,
@@ -93,17 +94,7 @@ export class Song {
 
   // returns a new Song, value-identical to this one
   dup(): Song {
-    return new Song(
-      [...this.bars],
-      {
-        title: this.title,
-        artist: this.artist,
-        album: this.album,
-        year: this.year,
-        sig: this.sig,
-        key: this.key,
-      },
-    );
+    return new Song([...this.bars], this.metadata());
   }
 
   // pretty-print the song
@@ -170,6 +161,17 @@ export class Song {
     return accumulator;
   }
 
+  private metadata(): Metadata {
+    return {
+      title: this.title,
+      artist: this.artist,
+      album: this.album,
+      year: this.year,
+      sig: this.sig,
+      key: this.key,
+    };
+  }
+
   private guessKey(): Key | undefined {
     if (this.key) return this.key;
     const c = this.getFirstChord()!;
@@ -195,6 +197,24 @@ export class Song {
         c.type === SongChordTypeName || c.type === OptionalChordTypeName,
     );
   }
+}
+
+export function rehydrate(s: Song): Song {
+  s = Object.assign(new Song(s.bars), s);
+
+  if (s.key) {
+    const { tonic, flavor } = s.key;
+    s.key = Object.assign(new Key(tonic, flavor), s.key);
+  }
+
+  if (!s.bars) return s;
+
+  s.bars = s.bars.map((b) => {
+    b.chords = b.chords.map(rehydrateChordish);
+    return b;
+  });
+
+  return s;
 }
 
 export const UnknownKey = "?" as const;

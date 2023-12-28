@@ -1,7 +1,6 @@
 import { unicodeifyMusicalSymbols } from "../app/utils.ts";
 import { ParseSong } from "../parser/parser.ts";
 import {
-  defaultFeatureFlags,
   FeatureFlagKeys,
   type FeatureFlagKeysType,
   render as renderSettings,
@@ -20,18 +19,16 @@ import {
   RepeatPreviousChordTypeName,
   type Song,
 } from "../parser/song.ts";
-import { type State } from "./state.ts";
-import { Key, SigAccidental, SigAccidentalToSymbol } from "../theory/key.ts";
 import {
-  type AlterableDegree,
-  type Chord,
-  ChordTypeName,
-  identifyTriad,
-} from "../theory/chord.ts";
+  EmptyState,
+  getStateFromLocalStorage,
+  saveStateToLocalStorage,
+  type State,
+} from "./state.ts";
+import { Key, SigAccidental, SigAccidentalToSymbol } from "../theory/key.ts";
+import { type Chord, ChordTypeName, identifyTriad } from "../theory/chord.ts";
 import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
-import { type Alteration, AlterSuspend } from "../theory/chord/alteration.ts";
-import { partition } from "../lib/array.ts";
-import { DefaultChordFormatter } from "../theory/chord/formatter.ts";
+import { AlterSuspend } from "../theory/chord/alteration.ts";
 import { DyadID, type as DyadType } from "../theory/chord/quality/dyad.ts";
 import {
   TertianTriadID,
@@ -39,23 +36,18 @@ import {
 } from "../theory/chord/quality/triad.ts";
 import { type as TetradType } from "../theory/chord/quality/tetrad.ts";
 import { Major, Minor } from "../theory/interval.ts";
+import { HTMLFormatter } from "../formatter/chord/html_formatter.ts";
+import { TextFormatter } from "../formatter/chord/text_formatter.ts";
 
-const state: State = {
-  song: undefined,
-  transposedSteps: 0,
-  settings: {
-    featureFlags: defaultFeatureFlags,
-    midiInputDeviceID: undefined,
-  },
-};
+let state: State = EmptyState;
 
 export async function bootstrap() {
+  state = getStateFromLocalStorage();
   state.midiEventListener ||= new TimeEventListener(onBarAdvanced);
 
   await renderSettings(state.settings, state.midiEventListener);
 
-  const lastLoadedSong = fetchLoadedSongFromLocalStorage();
-  loadSong(lastLoadedSong || _loadDefaultSong()!);
+  loadSong(state.song || _loadDefaultSong()!);
 
   document.querySelectorAll("#settings input")!.forEach((el) => {
     el.addEventListener("change", (e: Event) => {
@@ -64,7 +56,16 @@ export async function bootstrap() {
       const enable = !!inputElement.checked;
 
       if (inputElement.name !== "" && FeatureFlagKeys.includes(ffKey)) {
-        state.settings.featureFlags[ffKey].enabled = enable;
+        mutateState(state, "settings", {
+          ...state.settings,
+          featureFlags: {
+            ...state.settings.featureFlags,
+            [ffKey]: {
+              ...state.settings.featureFlags[ffKey],
+              enabled: enable,
+            },
+          },
+        });
       }
 
       if (ffKey === "followMidiClockMessages") {
@@ -107,7 +108,6 @@ export async function bootstrap() {
         if (result.error) {
           console.error(result.error);
         } else {
-          localStorage.setItem("loadedSong", rawSong);
           loadSong(result.value);
         }
       };
@@ -316,30 +316,13 @@ function paintRainbowBanner(
 
 // TODO: Action
 function loadSong(song: Song): Song {
-  state.song = song;
-  setTransposedAmount(0);
+  mutateState(state, "song", song);
+  setTransposedAmount(state.transposedSteps);
   if (song.title) {
     setDocumentTitle(`${song.title} | Leadsheet`);
   }
   renderSong(song, document.getElementById("root")!);
   return song;
-}
-
-// TODO: Action
-function fetchLoadedSongFromLocalStorage(): Song | undefined {
-  const str = localStorage.getItem("loadedSong");
-
-  if (!str?.trim()) {
-    return undefined;
-  }
-
-  const result = ParseSong(str);
-  if (result.error) {
-    console.error(result.error);
-    return undefined;
-  } else {
-    return result.value;
-  }
 }
 
 // TODO: Action
@@ -351,14 +334,14 @@ function setDocumentTitle(str: string) {
 // TODO: Action
 function handleTransposeSong(halfSteps: number): void {
   const transposedSong: Song = state.song!.transpose(halfSteps);
-  state.song = transposedSong;
+  mutateState(state, "song", transposedSong);
   renderSong(transposedSong);
   addTransposedAmount(halfSteps);
 }
 
 // TODO: Action
 function setTransposedAmount(n: number, e = _getTransposedAmountEl()) {
-  state.transposedSteps = n;
+  mutateState(state, "transposedSteps", n);
   e.textContent = `${n > 0 ? "+" : ""}${n}`;
   n == 0 ? e.classList.add("hidden") : e.classList.remove("hidden");
 }
@@ -385,43 +368,26 @@ function onBarAdvanced(c: Readonly<Clock>) {
     );
 }
 
+function mutateState<K extends keyof State, V = State[K]>(
+  s: Readonly<State>,
+  k: K,
+  v: V,
+): void {
+  const newState: State = { ...s, ...{ [k]: v } };
+  state = newState;
+  saveStateToLocalStorage(state);
+}
+
 function _getTransposedAmountEl() {
   return document.getElementById("transposed-steps")!;
 }
 
-const FancyHTMLFormatter = class extends DefaultChordFormatter {
-  override alterations(as: Array<Alteration>) {
-    if (as.length < 2) return super.alterations(as);
-
-    const [parenable, rest] = partition(
-      as,
-      (a: Alteration) => ["lower", "raise", "add", "omit"].includes(a.kind),
-    );
-
-    if (parenable.length < 2) return super.alterations(as);
-
-    parenable.sort((a, b) =>
-      <AlterableDegree> b.target - <AlterableDegree> a.target
-    );
-
-    const fractionalContent = parenable.map((a) => {
-      return `<span>${a.print()}</span>`;
-    });
-
-    return [
-      super.alterations(rest),
-      `<span class="paren-open">(</span>`,
-      `<span class="fractional">${fractionalContent.join("")}</span>`,
-      `<span class="paren-close">)</span>`,
-    ].join("");
-  }
-};
-
 function _formatChordName(c: Readonly<Chordish>): string {
-  const printed = c.print(new FancyHTMLFormatter());
-  return state.settings.featureFlags.unicodeChordSymbols.enabled
-    ? unicodeifyMusicalSymbols(printed)
-    : printed;
+  const formatter = state.settings.featureFlags.unicodeChordSymbols.enabled
+    ? new HTMLFormatter()
+    : new TextFormatter();
+
+  return c.print(formatter);
 }
 
 type ChordishWithoutRepeats = Exclude<Chordish, RepeatPreviousChord>;

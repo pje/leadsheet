@@ -11,3 +11,13 @@ export function omit<T, K extends keyof T>(o: T, ...keys: K[]): Omit<T, K> {
   keys.forEach((k) => delete result[k]);
   return result;
 }
+
+export function compact<T extends object>(o: T): T {
+  const result = {} as T;
+  for (const [k, v] of Object.entries(o)) {
+    if ((v !== undefined) && (v !== null)) {
+      (result as Record<string, unknown>)[k] = v;
+    }
+  }
+  return result;
+}

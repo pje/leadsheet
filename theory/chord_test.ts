@@ -3,7 +3,6 @@ import { assertNotEquals } from "https://deno.land/std@0.209.0/assert/assert_not
 import { assertEquals } from "../test_utils.ts";
 import { Chord } from "./chord.ts";
 import { Add6, Add9, No, Over, Raise, Sus2, Sus4 } from "./chord/alteration.ts";
-import { DefaultChordFormatterInstance } from "./chord/formatter.ts";
 import { Power } from "./chord/quality/dyad.ts";
 import { Aug7, DimM7 } from "./chord/quality/tetrad/nontertian.ts";
 import {
@@ -25,6 +24,7 @@ import {
   MinMaj7,
 } from "./chord/quality/tetrad/tertian.ts";
 import { Aug, Dim, Maj, Min } from "./chord/quality/triad.ts";
+import { DefaultChordFormatterInstance } from "../formatter/chord/text_formatter.ts";
 
 Deno.test("===", async (t) => {
   const a1 = new Chord("A", Maj, Raise(11));

@@ -45,7 +45,7 @@ import {
   type TertianTetrad,
   type TertianTetradID,
 } from "./quality/tetrad.ts";
-import { omit, pick } from "../../lib/object.ts";
+import { compact, omit, pick } from "../../lib/object.ts";
 
 export type Quality =
   | TertianTriad
@@ -74,11 +74,11 @@ export type NonextendableQualities = Exclude<Quality, ExtendableTetrad>;
 export function identify(q: Readonly<Quality>): QualityID {
   const result = match(q)
     .returnType<QualityID>()
-    .with(Power, () => Power_id)
-    .with(Maj, () => Maj_id)
-    .with(Min, () => Min_id)
-    .with(Aug, () => Aug_id)
-    .with(Dim, () => Dim_id)
+    .with(compact(Power), () => Power_id)
+    .with(compact(Maj), () => Maj_id)
+    .with(compact(Min), () => Min_id)
+    .with(compact(Aug), () => Aug_id)
+    .with(compact(Dim), () => Dim_id)
     .with(omit(Maj7, "extent"), () => Maj7_id)
     .with(omit(Dom7, "extent"), () => Dom7_id)
     .with(omit(MinMaj7, "extent"), () => MinMaj7_id)

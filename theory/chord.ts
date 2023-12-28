@@ -1,6 +1,9 @@
 import { type Letter, transposeLetter } from "./letter.ts";
 import { type FlatOrSharpSymbol } from "./notation.ts";
-import { type Alteration } from "./chord/alteration.ts";
+import {
+  type Alteration,
+  rehydrate as rehydrateAlteration,
+} from "./chord/alteration.ts";
 import { type Quality } from "./chord/quality.ts";
 import { Maj } from "./chord/quality/triad.ts";
 export * from "./chord/alteration.ts";
@@ -57,3 +60,9 @@ export const ChordTypeName = "chord" as const;
 type Formatter = {
   format(c: Chord): string;
 };
+
+export function rehydrate(c: Chord): Chord {
+  const c2 = Object.assign(new Chord(c.tonic, c.quality, ...c.alterations), c);
+  c2.alterations = c2.alterations.map(rehydrateAlteration);
+  return c2;
+}

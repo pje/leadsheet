@@ -1,9 +1,18 @@
-import { type Chord, type Quality } from "../../theory/chord.ts";
 import {
-  type ChordFormatter,
-  DefaultChordFormatterInstance,
-} from "../../theory/chord/formatter.ts";
+  type Chord,
+  type Quality,
+  rehydrate as rehydrateChord,
+} from "../../theory/chord.ts";
+import { type ChordFormatter } from "../../formatter/chord_formatter.ts";
+import { DefaultChordFormatterInstance } from "../../formatter/chord/text_formatter.ts";
 import { FlatOrSharpSymbol } from "../../theory/notation.ts";
+import { nonexhaustiveSwitchGuard } from "../../lib/switch.ts";
+
+export type Chordish =
+  | Chord
+  | OptionalChord
+  | NoChord
+  | RepeatPreviousChord;
 
 export const SongChordTypeName = "chord" as const;
 export const OptionalChordTypeName = "optionalChord" as const;
@@ -55,11 +64,22 @@ export class RepeatPreviousChord {
   }
 }
 
-export type Chordish =
-  | Chord
-  | OptionalChord
-  | NoChord
-  | RepeatPreviousChord;
+export function rehydrate(c: Chordish): Chordish {
+  const { type } = c;
+  switch (type) {
+    case "chord":
+      return rehydrateChord(c);
+    case "optionalChord":
+      c.chord = rehydrateChord(c.chord);
+      return Object.assign(new OptionalChord(c.chord), c);
+    case "noChord":
+      return Object.assign(new NoChord(), c);
+    case "repeatPreviousChord":
+      return Object.assign(new RepeatPreviousChord(), c);
+    default:
+      nonexhaustiveSwitchGuard(type);
+  }
+}
 
 export type ChordishQuality = Quality | "no-chord";
 

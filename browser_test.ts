@@ -22,7 +22,7 @@ async function setup() {
   return await puppeteer.launch({
     args: [`--window-size=${width},${height}`],
     defaultViewport: { width, height },
-    // devtools: true, //  uncomment to debug
+    // devtools: true, //  uncomment to debug (and set a breakpoint in vscode!)
     // headless: false, //  uncomment to debug
     // slowMo: 10, // in ms, uncomment to debug
   });
@@ -60,6 +60,15 @@ Deno.test("index.html renders via file:// protocol", async () => {
 
     const firstChordsClasses = (await getChordClasses(page))[1]!;
     assertArrayIncludes(firstChordsClasses, ["min"]);
+
+    // state should persist across page reloads:
+    //   - song, - transposition, - settings, - etc
+    await page.reload();
+
+    assertEquals("Chelsea Bridge", await getTitle(page));
+    assertEquals("Gm", await getKey(page));
+    assertEquals("GmM7", (await getChords(page))[1]);
+    assertEquals("-3", await getTransposedAmount(page));
 
     await screenshotOnSuccess(page);
   } catch (e) {
