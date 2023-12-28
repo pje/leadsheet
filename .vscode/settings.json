@@ -15,6 +15,7 @@
   "css.format.braceStyle": "collapse",
   "css.format.newlineBetweenRules": false,
   "css.format.newlineBetweenSelectors": false,
+  "css.format.spaceAroundSelectorSeparator": true,
   "css.validate": false, // use stylelint instead
   "deno.enable": true,
   "deno.lint": true,

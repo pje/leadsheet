@@ -2,6 +2,7 @@
   "ignoreFiles": "build/*",
   "extends": ["stylelint-config-standard"],
   "rules": {
+    "comment-whitespace-inside": "always",
     "comment-empty-line-before": null,
     "custom-property-empty-line-before": null,
     "font-family-no-missing-generic-family-keyword": null,
