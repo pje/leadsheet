@@ -430,6 +430,7 @@ html {
         font-size: clamp(24px, var(--fullsize), 11rem);
         text-align: center;
         justify-content: center;
+        align-items: flex-end;
 
         .unicode-flat, .unicode-sharp {
           position: relative;
