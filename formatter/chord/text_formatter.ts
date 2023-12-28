@@ -15,7 +15,6 @@ import {
   type Quality,
 } from "../../theory/chord.ts";
 import { type Letter } from "../../theory/letter.ts";
-import { FlatSymbol, SharpSymbol } from "../../theory/notation.ts";
 import { Power_id } from "../../theory/chord/quality/dyad.ts";
 import {
   Aug_id,
@@ -64,8 +63,8 @@ export class TextFormatter implements ChordFormatter {
       [Power_id]: "5",
     },
     alteration: {
-      [AlterRaise]: SharpSymbol,
-      [AlterLower]: FlatSymbol,
+      [AlterRaise]: "#",
+      [AlterLower]: "b",
       [AlterMajor]: "M" as const,
       [AlterMinor]: "m" as const,
       [AlterAdd]: "add" as const,
