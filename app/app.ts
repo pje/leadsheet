@@ -159,10 +159,18 @@ function renderBars(
 
       previousChord = chordish;
       previousChordColorClass = colorClass;
+
+      const size = result.length < 4
+        ? "small"
+        : result.length < 8
+        ? "medium"
+        : "large";
+
       const classes = [
         "chord",
         `${state.settings.featureFlags.colorChords.enabled && colorClass}`,
         `sibling-count-${bar.chords.length - 1}`,
+        size,
       ];
       return `<div class="${classes.join(" ")}">${result}</div>`;
     });
@@ -262,6 +270,48 @@ function renderMetadata(
   metadataElement.querySelector(".artist")!.textContent = song.artist || "";
   metadataElement.querySelector(".album")!.textContent = song.album || "";
   metadataElement.querySelector(".date")!.textContent = song.year || "";
+
+  if (state.settings.featureFlags.rainbowRoad.enabled) {
+    paintRainbowBanner(song);
+  } else {
+    rootElement.querySelector("#rainbow-banner")?.remove();
+  }
+}
+
+function paintRainbowBanner(
+  song: Readonly<Song>,
+  rootElement: HTMLElement = document.getElementById("root")!,
+) {
+  const nBars = song.bars.length;
+  let previousColorClass: ColorClass | undefined = undefined;
+
+  const barSpans = song.bars.flatMap((b) => {
+    const nChords = b.chords.length;
+
+    const chordSpans = b.chords.map((chord) => {
+      const colorClass = chord.type === "repeatPreviousChord"
+        ? previousColorClass || "no-chord"
+        : _getColorClass(chord);
+
+      previousColorClass = colorClass;
+
+      return `<span class="${colorClass}" style="width: ${
+        ((1 / nChords) / nBars) * 100
+      }%;"></span>`;
+    });
+
+    return chordSpans;
+  });
+
+  let bannerEl = rootElement.querySelector("#rainbow-banner");
+  if (!bannerEl) {
+    rootElement.insertAdjacentHTML(
+      "afterbegin",
+      `<div id="rainbow-banner">${barSpans.join("\n")}</div>`,
+    );
+    bannerEl = rootElement.querySelector("#rainbow-banner")!;
+  }
+  bannerEl.innerHTML = barSpans.join("\n");
 }
 
 // TODO: Action

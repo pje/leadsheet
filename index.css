@@ -4,31 +4,18 @@
 @import url("./node_modules/@fontsource/noto-music/music.css");
 
 :root {
-  --light-gray-4: #a89984;
-
-  --neutral-red: #cc241d;
-  --neutral-green: #98971a;
-  --neutral-yellow: #d79921;
-  --neutral-blue: #458588;
-  --neutral-purple: #b16286;
-  --neutral-aqua: #689d6a;
-  --neutral-orange: #d65d0e;
-
-  --faded-red: #9d0006;
-  --faded-green: #79740e;
-  --faded-yellow: #b57614;
-  --faded-blue: #076678;
-  --faded-purple: #8f3f71;
-  --faded-aqua: #427b58;
-  --faded-orange: #af3a03;
-
-  --bright-red: #fb4934;
-  --bright-green: #91981a;
-  --bright-yellow: #fabd2f;
-  --bright-blue: #458588;
-  --bright-purple: #d3869b;
-  --bright-aqua: #8ec07c;
-  --bright-orange: #fe8019;
+  /* https://oklch.com/ */
+  --light-gray: oklch(70% 0.03 076deg);
+  --bright-red: oklch(66% 0.22 030deg);
+  --bright-grn: oklch(65% 0.14 113deg);
+  --bright-ylw: oklch(83% 0.16 083deg);
+  --bright-blu: oklch(58% 0.07 200deg);
+  --bright-prp: oklch(71% 0.10 002deg);
+  --bright-aqu: oklch(76% 0.11 138deg);
+  --bright-org: oklch(70% 0.20 069deg);
+  --bright-red-for-dark: oklch(70% 0.25 032deg);
+  --bright-grn-for-dark: oklch(70% 0.20 128deg);
+  --bright-blu-for-dark: oklch(70% 0.20 224deg);
 
   --staff-line-height: 14px;
   --staff-height: calc(var(--staff-line-height) * 4);
@@ -49,10 +36,12 @@
 }
 
 html {
+  -webkit-font-smoothing: subpixel-antialiased;
   font-size: 100%;
   /* use rem units everywhere now */
 
   body {
+    margin-block: unset;
     width: auto;
     padding-inline: 4vw;
 
@@ -64,6 +53,53 @@ html {
     @media (prefers-color-scheme: dark) {
       background-color: #151515;
       color: #fffdf3;
+    }
+
+    #rainbow-banner {
+      height: 2px;
+      display: flex;
+      margin-block: 8px;
+
+      &>* {
+        height: 100%;
+
+        &.aug {
+          background-color: var(--bright-ylw);
+        }
+        &.dim {
+          background-color: var(--bright-prp);
+        }
+        &.dom {
+          background-color: var(--bright-red);
+
+          @media (prefers-color-scheme: dark) {
+            background-color: var(--bright-red-for-dark);
+          }
+        }
+        &.maj {
+          background-color: var(--bright-grn);
+
+          @media (prefers-color-scheme: dark) {
+            background-color: var(--bright-grn-for-dark);
+          }
+        }
+        &.min {
+          background-color: var(--bright-blu);
+
+          @media (prefers-color-scheme: dark) {
+            background-color: var(--bright-blu-for-dark);
+          }
+        }
+        &.no-chord {
+          background-color: inherit;
+        }
+        &.pow {
+          background-color: var(--light-gray);
+        }
+        &.sus {
+          background-color: var(--bright-org);
+        }
+      }
     }
 
     h1, h2, h3, h4, h5 {
@@ -83,9 +119,9 @@ html {
     }
 
     .key-selector {
-      align-items: center;
       display: flex;
       min-width: 100px;
+      align-items: center;
       justify-content: flex-end;
 
       .transpose-buttons {
@@ -103,14 +139,6 @@ html {
     button.transpose {
       width: 24px;
       font-size: 12px;
-    }
-
-    .unicode-flat, .unicode-sharp {
-      position: relative;
-      font-size: 15pt;
-      left: -5px;
-      bottom: 0;
-      margin-right: -8px;
     }
   }
 }
@@ -387,17 +415,69 @@ html {
       height: calc(var(--staff-height) * 0.5);
       display: flex;
       flex-direction: row;
+      align-items: flex-end;
       justify-content: space-evenly;
-      padding-block-end: 1cqh;
 
       .chord {
-        display: flex;
+        /* --fullsize: 9.25cqw; */
+        --fullsize: clamp(24px, 9.25cqw, 11rem);
+        --shrink-factor: 0;
+
+        display: inline-flex;
         flex-direction: row;
         white-space: nowrap;
         /* this prevents long chord names from breaking into multiple lines */
-        font-size: 100cqh;
+        font-size: clamp(24px, var(--fullsize), 11rem);
         text-align: center;
         justify-content: center;
+
+        .unicode-flat, .unicode-sharp {
+          position: relative;
+          font-size: 7cqw;
+          left: -5px;
+          bottom: 0;
+          margin-right: -8px;
+        }
+
+        /* &.small {
+          &.sibling-count-1 {
+            font-size: calc(var(--fullsize) - calc(var(--fullsize) * calc(var(--shrink-factor) * 0)));
+          }
+          &.sibling-count-2 {
+            font-size: calc(var(--fullsize) - calc(var(--fullsize) * calc(var(--shrink-factor) * 0)));
+          }
+          &.sibling-count-3 {
+            font-size: calc(var(--fullsize) - calc(var(--fullsize) * calc(var(--shrink-factor) * 1)));
+          }
+        } */
+
+        &.medium {
+          --shrink-factor: 0.1;
+
+          &.sibling-count-1 {
+            font-size: calc(var(--fullsize) - calc(var(--fullsize) * calc(var(--shrink-factor) * 0)));
+          }
+          &.sibling-count-2 {
+            font-size: calc(var(--fullsize) - calc(var(--fullsize) * calc(var(--shrink-factor) * 1)));
+          }
+          &.sibling-count-3 {
+            font-size: calc(var(--fullsize) - calc(var(--fullsize) * calc(var(--shrink-factor) * 2)));
+          }
+        }
+
+        &.large {
+          --shrink-factor: 0.125;
+
+          /* &.sibling-count-1 {
+            font-size: calc(var(--fullsize) - calc(var(--fullsize) * calc(var(--shrink-factor) * 0)));
+          } */
+          &.sibling-count-2 {
+            font-size: calc(var(--fullsize) - calc(var(--fullsize) * calc(var(--shrink-factor) * 1)));
+          }
+          &.sibling-count-3 {
+            font-size: calc(var(--fullsize) - calc(var(--fullsize) * calc(var(--shrink-factor) * 2)));
+          }
+        }
 
         .fractional, .paren-open, .paren-close {
           font-weight: normal;
@@ -414,30 +494,56 @@ html {
         }
 
         &.aug {
-          color: var(--bright-yellow);
+          color: var(--bright-ylw);
         }
         &.dim {
-          color: var(--bright-purple);
+          color: var(--bright-prp);
         }
         &.dom {
-          color: var(--neutral-red);
+          color: var(--bright-red);
+
+          @media (prefers-color-scheme: dark) {
+            color: var(--bright-red-for-dark);
+          }
         }
         &.maj {
-          color: var(--bright-green);
+          color: var(--bright-grn);
+
+          @media (prefers-color-scheme: dark) {
+            color: var(--bright-grn-for-dark);
+          }
         }
         &.min {
-          color: var(--bright-blue);
+          color: var(--bright-blu);
+
+          @media (prefers-color-scheme: dark) {
+            color: var(--bright-blu-for-dark);
+          }
         }
         &.no-chord {
           color: inherit;
         }
         &.pow {
-          color: var(--light-gray-4);
+          color: var(--light-gray);
         }
         &.sus {
-          color: var(--bright-orange);
+          color: var(--bright-org);
         }
       }
+    }
+
+    /* bump up the chords in the first bar out of the way of the key signature */
+    .chords:nth-child(1):has(~ .staff .key-signature .e.flat) {
+      margin-bottom: 12px;
+    }
+    .chords:nth-child(1):has(~ .staff .key-signature .d.flat) {
+      margin-bottom: 10px;
+    }
+    .chords:nth-child(1):has(~ .staff .key-signature .f.sharp) {
+      margin-bottom: 15px;
+    }
+    .chords:nth-child(1):has(~ .staff .key-signature .g.sharp) {
+      margin-bottom: 22px;
     }
   }
 }
