@@ -109,6 +109,7 @@ export async function bootstrap() {
           console.error(result.error);
         } else {
           loadSong(result.value);
+          setTransposedAmount(0);
         }
       };
 
