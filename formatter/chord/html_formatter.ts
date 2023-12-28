@@ -6,6 +6,7 @@ import {
   AlterLower,
   AlterOmit,
   AlterRaise,
+  AlterSuspend,
 } from "../../theory/chord.ts";
 import { FlatSymbol, SharpSymbol } from "../../theory/notation.ts";
 import { TextFormatter } from "./text_formatter.ts";
@@ -13,8 +14,8 @@ import { TextFormatter } from "./text_formatter.ts";
 export const HTMLFormatter = class extends TextFormatter {
   override symbols: TextFormatter["symbols"] = {
     ...(new TextFormatter()).symbols,
-    "#": `<span class="unicode-flat">${SharpSymbol}</span>`,
-    "b": `<span class="unicode-flat">${FlatSymbol}</span>`,
+    "#": unicodeify("#"),
+    "b": unicodeify("b"),
   };
   override alterations(as: Array<Alteration>) {
     if (as.length < 2) return super.alterations(as);
@@ -25,7 +26,8 @@ export const HTMLFormatter = class extends TextFormatter {
         return a.kind === AlterLower ||
           a.kind === AlterRaise ||
           a.kind === AlterAdd ||
-          a.kind === AlterOmit;
+          a.kind === AlterOmit ||
+          a.kind === AlterSuspend;
       },
     );
 
@@ -47,3 +49,9 @@ export const HTMLFormatter = class extends TextFormatter {
     ].join("");
   }
 };
+
+function unicodeify(str: "#" | "b"): string {
+  return `<span class="unicode-${str === "#" ? "sharp" : "flat"}">${
+    str === "#" ? SharpSymbol : FlatSymbol
+  }</span>`;
+}

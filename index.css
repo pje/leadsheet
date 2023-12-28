@@ -434,11 +434,28 @@ html {
 
         .unicode-flat, .unicode-sharp {
           position: relative;
-          font-size: 7cqw;
-          left: -5px;
-          bottom: 0;
-          margin-right: -8px;
+          font-family: "Noto Music";
+          font-size: 100%;
+          /* percent here refers to *parent's font size* */
+
+          left: -0.4cqw;
+          /* percent here refers to *the width of the containing block* */
+          bottom: 7.8cqw;
+          margin-right: -3px;
         }
+
+        .unicode-flat {
+          left: unset;
+          bottom: 0;
+          margin-right: unset;
+        }
+
+        .unicode-sharp {
+          left: unset;
+          bottom: 23cqh;
+          margin-right: unset;
+        }
+
 
         /* &.small {
           &.sibling-count-1 {
@@ -484,14 +501,24 @@ html {
           font-weight: normal;
         }
 
+        .paren-open, .paren-close {
+          position: relative;
+          top: -20cqh;
+          font-size: 85%;
+          /* percent here refers to *parent's font size* */
+        }
+
         .fractional {
           align-items: center;
           display: flex;
           flex-direction: column;
-          font-size: 58cqh;
-          line-height: 45cqh;
+          font-size: 70%;
+          /* percent here refers to *parent's font size* */
+          line-height: 68%;
+          /* percent here refers to *its own font size* */
           position: relative;
-          top: 15cqh;
+          top: -26cqh;
+          margin-inline: 0.5cqw;
         }
 
         &.aug {
