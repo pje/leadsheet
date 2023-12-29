@@ -11,7 +11,7 @@ build: deps typecheck
 watch: deps
 	deno run $(deno_allows) build_config/build.ts watch
 
-lint:
+lint: typecheck
 	deno lint *.ts "**/*.ts" --ignore=node_modules,parser/grammar.ohm-bundle.d.ts
 	npx stylelint "**/*.css"
 	deno task detect-cyclic-imports
