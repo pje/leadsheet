@@ -41,7 +41,7 @@ export const defaultFeatureFlags: FeatureFlags = {
     emoji: "🌈",
   },
   [unicodeChordSymbols]: {
-    enabled: false,
+    enabled: true,
     description: `Spell chords using unicode symbols (e.g. D♭⁷ vs Db7)`,
     emoji: "🔠",
   },
