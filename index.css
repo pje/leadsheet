@@ -428,7 +428,6 @@ html {
         white-space: nowrap;
         /* this prevents long chord names from breaking into multiple lines */
         font-size: clamp(24px, var(--fullsize), 11rem);
-        text-align: center;
         justify-content: center;
         align-items: flex-end;
 
@@ -446,16 +445,25 @@ html {
 
         .unicode-flat {
           left: unset;
-          bottom: 0;
+          bottom: 4cqh;
           margin-right: unset;
         }
 
         .unicode-sharp {
           left: unset;
-          bottom: 23cqh;
+          bottom: 12cqh;
           margin-right: unset;
         }
 
+        .extent {
+          font-size: 85%;
+          position: relative;
+          top: -17.5cqh;
+        }
+
+        .deemphasize {
+          font-size: 85%;
+        }
 
         /* &.small {
           &.sibling-count-1 {
