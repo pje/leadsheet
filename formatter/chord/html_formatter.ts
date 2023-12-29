@@ -1,4 +1,4 @@
-import { partition } from "../../lib/array.ts";
+import { compact, groupsOf, partition } from "../../lib/array.ts";
 import {
   type AlterableDegree,
   AlterAdd,
@@ -98,17 +98,19 @@ export const HTMLFormatter = class extends TextFormatter {
       <AlterableDegree> b.target - <AlterableDegree> a.target
     );
 
-    const fractionalContent = parenable.map((a) => {
-      const fn = this.symbols.alteration[a.kind];
-      return `<span>${fn(a.target)}</span>`;
-    });
+    return groupsOf(parenable, 2).flatMap((group) => {
+      const fractionalContent = compact(group).map((a) => {
+        const fn = this.symbols.alteration[a.kind];
+        return `<span>${fn(a.target)}</span>`;
+      });
 
-    return [
-      super.alterations(rest),
-      `<span class="paren-open">(</span>`,
-      `<span class="fractional">${fractionalContent.join("")}</span>`,
-      `<span class="paren-close">)</span>`,
-    ].join("");
+      return [
+        super.alterations(rest),
+        `<span class="paren-open">(</span>`,
+        `<span class="fractional">${fractionalContent.join("")}</span>`,
+        `<span class="paren-close">)</span>`,
+      ].join("");
+    }).join("");
   }
 };
 
