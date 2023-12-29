@@ -465,6 +465,10 @@ html {
           font-size: 85%;
         }
 
+        .slash {
+          letter-spacing: -0.1rem;
+        }
+
         /* &.small {
           &.sibling-count-1 {
             font-size: calc(var(--fullsize) - calc(var(--fullsize) * calc(var(--shrink-factor) * 0)));

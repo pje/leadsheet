@@ -72,7 +72,7 @@ export const HTMLFormatter = class extends TextFormatter {
       [AlterMinor]: (x: Alteration["target"]) => `${sup(m)}${sup(x)}`,
       [AlterAdd]: (x: Alteration["target"]) => `${low("add")}${x}`,
       [AlterOmit]: (x: Alteration["target"]) => `${low("no")}${x}`,
-      [AlterCompound]: (x: Alteration["target"]) => `/${x}`,
+      [AlterCompound]: (x: Alteration["target"]) => `${slash}${x}`,
       [AlterSuspend]: (x: Alteration["target"]) => `${low("sus")}${x}`,
       [AlterEverything]: (x: Alteration["target"]) => `${sup(x)}${low("alt")}`,
     },
@@ -128,3 +128,5 @@ function sup(s: number | string): string {
 function low(s: string): string {
   return `<span class="deemphasize">${s}</span>`;
 }
+
+const slash = `<span class="slash">/</span>` as const;
