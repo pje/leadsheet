@@ -1,4 +1,3 @@
-import { unicodeifyMusicalSymbols } from "../app/utils.ts";
 import { ParseSong } from "../parser/parser.ts";
 import {
   FeatureFlagKeys,
@@ -12,10 +11,7 @@ import {
 import {
   type Barline,
   type Chordish,
-  NoChordTypeName,
-  OptionalChordTypeName,
   RepeatedChordSymbol,
-  RepeatPreviousChord,
   RepeatPreviousChordTypeName,
   type Song,
 } from "../parser/song.ts";
@@ -26,18 +22,10 @@ import {
   type State,
 } from "./state.ts";
 import { Key, SigAccidental, SigAccidentalToSymbol } from "../theory/key.ts";
-import { type Chord, ChordTypeName, identifyTriad } from "../theory/chord.ts";
-import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
-import { AlterSuspend } from "../theory/chord/alteration.ts";
-import { DyadID, type as DyadType } from "../theory/chord/quality/dyad.ts";
-import {
-  TertianTriadID,
-  type as TriadType,
-} from "../theory/chord/quality/triad.ts";
-import { type as TetradType } from "../theory/chord/quality/tetrad.ts";
-import { Major, Minor } from "../theory/interval.ts";
+
 import { HTMLFormatter } from "../formatter/chord/html_formatter.ts";
 import { TextFormatter } from "../formatter/chord/text_formatter.ts";
+import { CCNoChord, colorChordish, ColorClass } from "./utils.ts";
 
 let state: State = EmptyState;
 
@@ -148,7 +136,7 @@ function renderBars(
         colorClass = previousChordColorClass;
         result = _formatChordName(chordish);
       } else {
-        colorClass = _getColorClass(chordish);
+        colorClass = colorChordish(chordish);
         if (previousChord) {
           result = formattedChordName === _formatChordName(previousChord)
             ? RepeatedChordSymbol
@@ -292,7 +280,7 @@ function paintRainbowBanner(
     const chordSpans = b.chords.map((chord) => {
       const colorClass = chord.type === "repeatPreviousChord"
         ? previousColorClass || "no-chord"
-        : _getColorClass(chord);
+        : colorChordish(chord);
 
       previousColorClass = colorClass;
 
@@ -391,42 +379,6 @@ function _formatChordName(c: Readonly<Chordish>): string {
   return c.print(formatter);
 }
 
-type ChordishWithoutRepeats = Exclude<Chordish, RepeatPreviousChord>;
-
-function _getColorClass(c: Readonly<ChordishWithoutRepeats>): ColorClass {
-  const { type } = c;
-
-  switch (type) {
-    case NoChordTypeName:
-      return CCNoChord;
-    case OptionalChordTypeName:
-      return _getColorClassForChord(c.chord);
-    case ChordTypeName:
-      return _getColorClassForChord(c);
-    default:
-      nonexhaustiveSwitchGuard(type);
-  }
-}
-
-function _getColorClassForChord(c: Readonly<Chord>): ColorClass {
-  const { quality: q } = c;
-  const { type } = q;
-
-  switch (type) {
-    case DyadType:
-    case TriadType:
-      if (c.alterations.some((a) => a.kind === AlterSuspend)) return CCSus;
-      return identifyTriad(q);
-    case TetradType: {
-      if (q.third === Major && q.seventh === Minor) return CCDom;
-      if (c.alterations.some((a) => a.kind === AlterSuspend)) return CCSus;
-      return identifyTriad(q) || CCNoChord;
-    }
-    default:
-      nonexhaustiveSwitchGuard(type);
-  }
-}
-
 function _getBarlineClass(
   c: Barline,
   sfx: "open" | "close",
@@ -446,9 +398,7 @@ function _getBarlineClass(
 
 function _formatKeyName(key: Key): string {
   const str = `${key.tonic}${key.flavor}`;
-  return state.settings.featureFlags.unicodeChordSymbols.enabled
-    ? unicodeifyMusicalSymbols(str)
-    : str;
+  return str;
 }
 
 function _loadDefaultSong(): Song | undefined {
@@ -460,17 +410,6 @@ function _loadDefaultSong(): Song | undefined {
     return result.value;
   }
 }
-
-type ColorClass =
-  | TertianTriadID
-  | DyadID
-  | typeof CCDom
-  | typeof CCNoChord
-  | typeof CCSus;
-
-const CCDom = "dom" as const;
-const CCNoChord = "no-chord" as const;
-const CCSus = "sus" as const;
 
 const defaultSongRaw = `title: Chelsea Bridge
 artist: Billy Strayhorn
