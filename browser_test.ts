@@ -11,6 +11,7 @@ import puppeteer, {
 import * as path from "https://deno.land/std@0.209.0/path/mod.ts";
 import { colorChords, FeatureFlagKeysType } from "./app/settings.ts";
 import { assertArrayIncludes } from "https://deno.land/std@0.209.0/assert/assert_array_includes.ts";
+import { normalizeAccidentals } from "./lib/string.ts";
 
 const indexAbsolutePath = path.resolve("./index.html");
 const songFilePath = path.resolve("./leadsheets/chelsea_bridge.leadsheet");
@@ -113,7 +114,7 @@ async function getChords(page: Page) {
       ".chord",
       (es) => es.map((e) => e.textContent).filter(String),
     );
-  return chords;
+  return chords.map(normalizeAccidentals);
 }
 
 async function transpose(page: Page, steps: number) {

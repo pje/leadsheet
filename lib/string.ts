@@ -4,3 +4,7 @@ export function titleCase(s: string): string {
     return `${head?.toUpperCase()}${rest.join("")}`;
   }).join(" ");
 }
+
+export function normalizeAccidentals(str: string): string {
+  return str.replace("♯", "#").replace("♭", "b");
+}

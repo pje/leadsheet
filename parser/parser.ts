@@ -50,6 +50,7 @@ import {
 } from "../theory/chord/quality/tetrad.ts";
 import { type Diminished, type Major, type Minor } from "../theory/interval.ts";
 import { pick } from "../lib/object.ts";
+import { normalizeAccidentals } from "../lib/string.ts";
 
 interface SeventhPlusQuality {
   seventh: typeof Major | typeof Minor | typeof Diminished;
@@ -314,8 +315,4 @@ export function ParseSong(rawSong: string): Result<Song> {
 
 function normalizeLetter(str: string): string {
   return str.toUpperCase();
-}
-
-function normalizeAccidentals(str: string): string {
-  return str.replace("♯", "#").replace("♭", "b");
 }
