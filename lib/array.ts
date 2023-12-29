@@ -1,21 +1,12 @@
-// Returns a matrix of the two arrays (possibly of different lengths).
-//
-// Ignores extra entries!
+// Returns a new array with all undefined/null entries removed.
 //
 // @example
 // ```ts
-//  zip([1, 2], [3, 4, 5])
-//  => [[1, 3], [2, 4]]
+//  compact([1, 2, undefined, 3, null, 4])
+//  => [1, 2, 3, 4]
 // ```
-export function zip<T1, T2>(c1: Array<T1>, c2: Array<T2>): Array<[T1, T2]> {
-  const length = Math.min(c1.length, c2.length);
-  const zipped: Array<[T1, T2]> = [];
-
-  for (let i = 0; i < length; i++) {
-    zipped.push([c1[i]!, c2[i]!]);
-  }
-
-  return zipped;
+export function compact<T>(array: Array<T>): Array<NonNullable<T>> {
+  return array.filter(Boolean) as Array<NonNullable<T>>;
 }
 
 // Returns an array of arrays of at most `groupSize`.
@@ -25,11 +16,10 @@ export function zip<T1, T2>(c1: Array<T1>, c2: Array<T2>): Array<[T1, T2]> {
 //  groupsOf([1, 2, 3, 4, 5], 2)
 //  => [[1, 2], [3, 4], [5]]
 // ```
-export function groupsOf<T>(
-  array: Array<T>,
-  groupSize: number,
-): Array<Array<T>> {
-  return array.reduce((resultArray: Array<Array<T>>, item, index) => {
+export function groupsOf<T>(array: T[], groupSize: 2): Array<[T, T?]>;
+export function groupsOf<T>(array: T[], groupSize: number): Array<T[]>;
+export function groupsOf<T>(array: T[], groupSize: number): Array<T[]> {
+  return array.reduce((resultArray: Array<T[]>, item, index) => {
     const groupIndex = Math.floor(index / groupSize);
 
     if (!resultArray[groupIndex]) {
@@ -56,4 +46,24 @@ export function partition<T>(
   const [one, two]: [Array<T>, Array<T>] = [[], []];
   as.forEach((a) => predicate(a) ? one.push(a) : two.push(a));
   return [one, two];
+}
+
+// Returns a matrix of the two arrays (possibly of different lengths).
+//
+// Ignores extra entries!
+//
+// @example
+// ```ts
+//  zip([1, 2], [3, 4, 5])
+//  => [[1, 3], [2, 4]]
+// ```
+export function zip<T1, T2>(c1: Array<T1>, c2: Array<T2>): Array<[T1, T2]> {
+  const length = Math.min(c1.length, c2.length);
+  const zipped: Array<[T1, T2]> = [];
+
+  for (let i = 0; i < length; i++) {
+    zipped.push([c1[i]!, c2[i]!]);
+  }
+
+  return zipped;
 }
