@@ -8,15 +8,34 @@ import {
   AlterRaise,
   AlterSuspend,
 } from "../../theory/chord.ts";
+import {
+  Aug_id,
+  Dim_id,
+  Maj_id,
+  Min_id,
+} from "../../theory/chord/quality/triad.ts";
 import { FlatSymbol, SharpSymbol } from "../../theory/notation.ts";
 import { TextFormatter } from "./text_formatter.ts";
 
 export const HTMLFormatter = class extends TextFormatter {
-  override symbols: TextFormatter["symbols"] = {
+  override symbols = {
     ...(new TextFormatter()).symbols,
     "#": unicodeify("#"),
     "b": unicodeify("b"),
+    quality: {
+      ...(new TextFormatter()).symbols.quality,
+      [Aug_id]: "⁺" as const,
+      [Dim_id]: "°" as const,
+      [Maj_id]: "" as const,
+      [Min_id]: "m" as const,
+    },
+    alteration: {
+      ...(new TextFormatter()).symbols.alteration,
+      [AlterRaise]: (x: Alteration["target"]) => `${unicodeify("#")}${x}`,
+      [AlterLower]: (x: Alteration["target"]) => `${unicodeify("b")}${x}`,
+    },
   };
+
   override alterations(as: Array<Alteration>) {
     if (as.length < 2) return super.alterations(as);
 
@@ -38,7 +57,8 @@ export const HTMLFormatter = class extends TextFormatter {
     );
 
     const fractionalContent = parenable.map((a) => {
-      return `<span>${a.print()}</span>`;
+      const fn = this.symbols.alteration[a.kind];
+      return `<span>${fn(a.target)}</span>`;
     });
 
     return [

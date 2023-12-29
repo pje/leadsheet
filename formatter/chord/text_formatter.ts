@@ -63,15 +63,15 @@ export class TextFormatter implements ChordFormatter {
       [Power_id]: "5",
     },
     alteration: {
-      [AlterRaise]: "#",
-      [AlterLower]: "b",
-      [AlterMajor]: "M" as const,
-      [AlterMinor]: "m" as const,
-      [AlterAdd]: "add" as const,
-      [AlterOmit]: "no" as const,
-      [AlterCompound]: "/" as const,
-      [AlterSuspend]: "sus" as const,
-      [AlterEverything]: "alt" as const,
+      [AlterRaise]: (x: Alteration["target"]) => `#${x}`,
+      [AlterLower]: (x: Alteration["target"]) => `b${x}`,
+      [AlterMajor]: (x: Alteration["target"]) => `M${x}`,
+      [AlterMinor]: (x: Alteration["target"]) => `m${x}`,
+      [AlterAdd]: (x: Alteration["target"]) => `add${x}`,
+      [AlterOmit]: (x: Alteration["target"]) => `no${x}`,
+      [AlterCompound]: (x: Alteration["target"]) => `/${x}`,
+      [AlterSuspend]: (x: Alteration["target"]) => `sus${x}`,
+      [AlterEverything]: (x: Alteration["target"]) => `alt${x}`,
     },
   };
 
@@ -104,9 +104,13 @@ export class TextFormatter implements ChordFormatter {
     return typeof value === "function" ? value(q.extent!) : value;
   }
   alterations(as: Array<Alteration>) {
-    return as.map((a) =>
-      a.kind === AlterAdd || a.kind === AlterOmit ? `(${a.print()})` : a.print()
-    ).join("");
+    return as.map((a) => {
+      const fn = this.symbols.alteration[a.kind];
+      const printed = fn(a.target);
+      return a.kind === AlterAdd || a.kind === AlterOmit
+        ? `(${printed})`
+        : printed;
+    }).join("");
   }
 
   #format(c: Readonly<Chord>): string {

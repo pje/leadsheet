@@ -99,11 +99,11 @@ export function identify(q: Readonly<Quality>): QualityID {
 export function identifyTriad(q: Readonly<Quality>): TertianTriadID | DyadID {
   const result = match(q)
     .returnType<TertianTriadID | DyadID>()
-    .with(pick(Power, "third", "fifth", "seventh"), () => Power_id)
     .with(pick(Maj, "third", "fifth"), () => Maj_id)
     .with(pick(Min, "third", "fifth"), () => Min_id)
     .with(pick(Aug, "third", "fifth"), () => Aug_id)
     .with(pick(Dim, "third", "fifth"), () => Dim_id)
+    .with(pick(Power, "fifth"), () => Power_id)
     .exhaustive();
 
   return result;

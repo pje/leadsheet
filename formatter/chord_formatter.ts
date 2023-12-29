@@ -21,7 +21,7 @@ export type ChordFormatter = {
         : string;
     };
     alteration: {
-      [K in Kind]: string;
+      [K in Kind]: (e: Alteration["target"]) => string;
     };
   };
 };
