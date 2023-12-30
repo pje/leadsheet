@@ -2,9 +2,10 @@
   "ignoreFiles": "build/*",
   "extends": ["stylelint-config-standard"],
   "rules": {
-    "comment-whitespace-inside": "always",
     "comment-empty-line-before": null,
+    "comment-whitespace-inside": "always",
     "custom-property-empty-line-before": null,
+    "declaration-block-no-redundant-longhand-properties": null,
     "font-family-no-missing-generic-family-keyword": null,
     "media-feature-range-notation": "prefix",
     "rule-empty-line-before": null
