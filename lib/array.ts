@@ -32,6 +32,26 @@ export function groupsOf<T>(array: T[], groupSize: number): Array<T[]> {
   }, []);
 }
 
+// Returns true if all `elements` appear in `array` at least once.
+//
+// @example
+// ```ts
+//  includesAll(["foo", "bar", "baz"], "foo", "bar")
+//  => true
+//
+//  includesAll(["foo", "bar", "baz"], "foo", "qux")
+//  => false
+// ```
+export function includesAll<T>(
+  array: Array<T>,
+  ...elements: Array<T>
+): boolean {
+  for (const e of elements) {
+    if (!array.includes(e)) return false;
+  }
+  return true;
+}
+
 // Split an array into two arrays based on `predicate`'s return value.
 //
 // @example

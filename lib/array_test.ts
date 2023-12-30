@@ -1,4 +1,4 @@
-import { compact, groupsOf, partition, zip } from "./array.ts";
+import { compact, groupsOf, includesAll, partition, zip } from "./array.ts";
 import { assertEquals } from "../test_utils.ts";
 
 Deno.test(compact.name, () => {
@@ -20,6 +20,15 @@ Deno.test(groupsOf.name, () => {
 
   const result5 = groupsOf(a, 5);
   assertEquals([["a", "b", "c", "d", "e"]], result5);
+});
+
+Deno.test(includesAll.name, () => {
+  const a = ["foo", "bar", "baz"];
+  const result = includesAll(a, "foo", "bar");
+  assertEquals(true, result);
+
+  const result2 = includesAll(a, "foo", "qux");
+  assertEquals(false, result2);
 });
 
 Deno.test(partition.name, () => {
