@@ -1,8 +1,18 @@
 import { assertEquals } from "../../test_utils.ts";
-import { Alteration } from "./alteration.ts";
+import {
+  Add6,
+  Add9,
+  Alteration,
+  equals,
+  isAdd9,
+  sort,
+  Sus2,
+  Sus4,
+  uniq,
+} from "./alteration.ts";
 import { SharpSymbol } from "../notation.ts";
 
-Deno.test(Alteration.prototype.isAdd9.name, async (t) => {
+Deno.test(isAdd9.name, async (t) => {
   const cases = new Map<Alteration, boolean>(
     [
       [new Alteration("add", 9), true],
@@ -13,7 +23,7 @@ Deno.test(Alteration.prototype.isAdd9.name, async (t) => {
     ],
   );
   for (const [alteration, expected] of cases) {
-    const result = alteration.isAdd9();
+    const result = isAdd9(alteration);
     await t.step(
       `${alteration.print()} should be ${expected}`,
       () => assertEquals(expected, result),
@@ -40,5 +50,61 @@ Deno.test(Alteration.prototype.transpose.name, async (t) => {
     await t.step(`${printed} ${halfSteps} shouldBe ${expected.print()}`, () => {
       assertEquals(expected, alteration.transpose(halfSteps, SharpSymbol));
     });
+  }
+});
+
+Deno.test(equals.name, async (t) => {
+  const maj9 = new Alteration("major", 9);
+
+  const cases = new Map<[Alteration, Alteration], boolean>(
+    [
+      [[Add6, Add6], true],
+      [[Sus4, Sus4], true],
+      [[Add6, Add9], false],
+      [[maj9, Add9], false],
+    ],
+  );
+
+  for (const [[a1, a2], expected] of cases) {
+    await t.step(
+      `${JSON.stringify(a1)} should${expected ? "" : " not"} === ${
+        JSON.stringify(a2)
+      }`,
+      () => {
+        assertEquals(expected, equals(a1, a2));
+      },
+    );
+  }
+});
+
+Deno.test(sort.name, async (t) => {
+  const cases = new Map<Array<Alteration>, Array<Alteration>>([
+    [[], []],
+    [[Add6], [Add6]],
+    [[Add6, Sus2, Add9, Sus4], [Sus4, Sus2, Add9, Add6]],
+  ]);
+
+  for (const [input, expected] of cases) {
+    await t.step(
+      `${JSON.stringify(input)} should sort to as ${JSON.stringify(expected)}`,
+      () => assertEquals(expected, sort(input)),
+    );
+  }
+});
+
+Deno.test(uniq.name, async (t) => {
+  const cases = new Map<Alteration[], Alteration[]>(
+    [
+      [[Sus2], [Sus2]],
+      [[Sus2, Sus2], [Sus2]],
+      [[Add6, Sus2, Add6, Add9, Sus4, Add9], [Sus4, Sus2, Add9, Add6]],
+    ],
+  );
+
+  for (const [input, expected] of cases) {
+    await t.step(
+      `${JSON.stringify(input)} should uniqify as ${JSON.stringify(expected)}`,
+      () => assertEquals(expected, uniq(input)),
+    );
   }
 });
