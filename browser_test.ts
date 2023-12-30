@@ -12,6 +12,7 @@ import * as path from "https://deno.land/std@0.209.0/path/mod.ts";
 import { colorChords, FeatureFlagKeysType } from "./app/settings.ts";
 import { assertArrayIncludes } from "https://deno.land/std@0.209.0/assert/assert_array_includes.ts";
 import { normalizeAccidentals } from "./lib/string.ts";
+import { NaturalNumber } from "./lib/types.ts";
 
 const indexAbsolutePath = path.resolve("./index.html");
 const songFilePath = path.resolve("./leadsheets/chelsea_bridge.leadsheet");
@@ -29,52 +30,75 @@ async function setup() {
   });
 }
 
-Deno.test("index.html renders via file:// protocol", async () => {
+Deno.test("index.html", async (t) => {
   const browser = await setup();
   const page = await browser.newPage();
-
-  page
-    .on("console", (message) =>
-      log.error(
-        `${message.type().slice(0, 3).toUpperCase()} ${message.text()}`,
-      ))
-    .on("pageerror", ({ message }) => {
-      log.error(message);
-      throw new Error(message);
-    });
+  setUpPageListeners(page);
 
   try {
     await page.goto(`file://${indexAbsolutePath}`);
 
-    await loadFile(page, songFilePath);
+    await t.step(`renders via file:// protocol`, async () => {
+      assertEquals("Chelsea Bridge", await getTitle(page));
+      assertEquals("Billy Strayhorn", await getArtist(page));
+      assertEquals(0, await getTransposedAmount(page));
+      assertEquals("Bbm", await getKey(page));
+      assertEquals("BbmM7", (await getChords(page))[1]);
+    });
 
-    assertEquals("Chelsea Bridge", await getTitle(page));
-    assertEquals("Billy Strayhorn", await getArtist(page));
-    assertEquals("Bbm", await getKey(page));
-    assertEquals("BbmM7", (await getChords(page))[1]);
-    assertEquals("0", await getTransposedAmount(page));
+    await t.step(`file upload`, async () => {
+      await loadFile(page, songFilePath);
 
-    await transpose(page, -3);
+      assertEquals("Chelsea Bridge", await getTitle(page));
+      assertEquals("Billy Strayhorn", await getArtist(page));
+      assertEquals(0, await getTransposedAmount(page));
+      assertEquals("Bbm", await getKey(page));
+      assertEquals("BbmM7", (await getChords(page))[1]);
 
-    assertEquals("Gm", await getKey(page));
-    assertEquals("GmM7", (await getChords(page))[1]);
-    assertEquals("-3", await getTransposedAmount(page));
+      await screenshotOnSuccess(page);
+    });
 
-    await enableFeature(page, colorChords);
+    await t.step(`transpose buttons`, async () => {
+      await clickTransposeDown(page, 1);
 
-    const firstChordsClasses = (await getChordClasses(page))[1]!;
-    assertArrayIncludes(firstChordsClasses, ["min"]);
+      assertEquals(-1, await getTransposedAmount(page));
+      assertEquals("Am", await getKey(page));
+      assertEquals("AmM7", (await getChords(page))[1]);
 
-    // state should persist across page reloads:
-    //   - song, - transposition, - settings, - etc
-    await page.reload();
+      await clickTransposeUp(page, 1);
 
-    assertEquals("Chelsea Bridge", await getTitle(page));
-    assertEquals("Gm", await getKey(page));
-    assertEquals("GmM7", (await getChords(page))[1]);
-    assertEquals("-3", await getTransposedAmount(page));
+      assertEquals(0, await getTransposedAmount(page));
+      assertEquals("Bbm", await getKey(page));
+      assertEquals("BbmM7", (await getChords(page))[1]);
+    });
 
-    await screenshotOnSuccess(page);
+    await t.step(`settings: toggle features`, async () => {
+      await enableFeature(page, colorChords);
+
+      const firstChordsClasses = (await getChordClasses(page))[1]!;
+      assertArrayIncludes(firstChordsClasses, ["min"]);
+    });
+
+    await t.step(
+      `state is persisted across page reloads: song transposition`,
+      async () => {
+        await page.goto(`file://${indexAbsolutePath}`);
+        await loadFile(page, songFilePath);
+        assertEquals(0, await getTransposedAmount(page));
+        assertEquals("Bbm", await getKey(page));
+
+        await clickTransposeDown(page, 1);
+        assertEquals(-1, await getTransposedAmount(page));
+        assertEquals("Am", await getKey(page));
+        assertEquals("AmM7", (await getChords(page))[1]);
+
+        await page.reload();
+
+        assertEquals(-1, await getTransposedAmount(page));
+        assertEquals("Am", await getKey(page));
+        assertEquals("AmM7", (await getChords(page))[1]);
+      },
+    );
   } catch (e) {
     await screenshotOnFailure(page);
     throw e;
@@ -106,9 +130,9 @@ async function getKey(page: Page) {
 }
 
 async function getTransposedAmount(page: Page) {
-  const outputSelector = await page.waitForSelector("#metadata output");
+  const outputSelector = await page.waitForSelector("#transposed-steps");
   const amount: string = await outputSelector!.evaluate((e) => e!.textContent);
-  return amount;
+  return parseInt(amount);
 }
 
 async function getChords(page: Page) {
@@ -120,7 +144,17 @@ async function getChords(page: Page) {
   return chords.map(normalizeAccidentals);
 }
 
-async function transpose(page: Page, steps: number) {
+async function clickTransposeUp(page: Page, times: NaturalNumber) {
+  await _transposeRelativeByClick(page, times * 1);
+  return page;
+}
+
+async function clickTransposeDown(page: Page, times: NaturalNumber) {
+  await _transposeRelativeByClick(page, times * -1);
+  return page;
+}
+
+async function _transposeRelativeByClick(page: Page, steps: number) {
   const selector = `#transpose-${steps > 0 ? "up" : "down"}`;
 
   for (let i = 0; i < Math.abs(steps); i++) {
@@ -150,6 +184,18 @@ async function getChordClasses(page: Page) {
       (es): string[][] => es.map((e) => Object.values(e.classList)),
     );
   return chords;
+}
+
+function setUpPageListeners(page: Page) {
+  page
+    .on("console", (message) =>
+      log.error(
+        `${message.type().slice(0, 3).toUpperCase()} ${message.text()}`,
+      ))
+    .on("pageerror", ({ message }) => {
+      log.error(message);
+      throw new Error(message);
+    });
 }
 
 async function screenshotOnSuccess(page: Page) {
