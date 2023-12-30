@@ -1,13 +1,15 @@
 title: all chord symbols
 
-Qualities:
-| A+ |
-| Ao |
+Triads:
 | A |
 | Am |
-| AM7 |
-| A7 |
-| Am7 |
+| A+ |
+| Ao |
+
+Tetrads:
+| AM7 AM9 AM11 AM13 |
+| A7 A9 A11 A13 |
+| Am7 Am9 Am11 Am13 |
 | A+7 |
 | Ao7 |
 | AoM7 |
@@ -15,9 +17,19 @@ Qualities:
 | Am7b5 |
 | Aø |
 | AmM7 |
+
+Sixths:
 | A6 |
+| A(add6) |
+| A6/9 |
+| A(add6)(add9) |
 | Am6 |
+| Am(add6) |
+| Am6/9 |
+| Am(add6)(add9) |
 | A6#5 |
+
+Dyads:
 | A5 |
 
 Alterations:
