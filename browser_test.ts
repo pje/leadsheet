@@ -38,7 +38,10 @@ Deno.test("index.html renders via file:// protocol", async () => {
       log.error(
         `${message.type().slice(0, 3).toUpperCase()} ${message.text()}`,
       ))
-    .on("pageerror", ({ message }) => log.error(message));
+    .on("pageerror", ({ message }) => {
+      log.error(message);
+      throw new Error(message);
+    });
 
   try {
     await page.goto(`file://${indexAbsolutePath}`);
