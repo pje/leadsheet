@@ -131,6 +131,9 @@ function renderBars(
 
       let colorClass: ColorClass;
       let result: string;
+      const chordIDClass = `id-${
+        chordish.type === ChordTypeName ? identify(chordish) : ""
+      }`;
 
       if (chordish.type === RepeatPreviousChordTypeName) {
         colorClass = previousChordColorClass;
@@ -157,6 +160,7 @@ function renderBars(
 
       const classes = [
         "chord",
+        chordIDClass,
         `${state.settings.featureFlags.colorChords.enabled && colorClass}`,
         `sibling-count-${bar.chords.length - 1}`,
         size,
