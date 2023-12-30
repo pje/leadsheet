@@ -41,7 +41,8 @@ html {
   /* use rem units everywhere now */
 
   body {
-    margin-block: unset;
+    margin-block-start: 0;
+    margin-block-end: 5vh;
     width: auto;
     padding-inline: 4vw;
 
