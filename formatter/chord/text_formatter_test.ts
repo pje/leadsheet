@@ -1,4 +1,3 @@
-// deno-lint-ignore-file no-unused-vars
 import { assertEquals } from "../../test_utils.ts";
 import { Chord } from "../../theory/chord.ts";
 import {
