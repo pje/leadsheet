@@ -10,10 +10,10 @@
   },
   "devDependencies": {
     "@ohm-js/cli": "^2.0.0",
-    "esbuild": "^0.19.10",
+    "esbuild": "^0.19.11",
     "puppeteer": "^21.6.1",
-    "skott": "^0.31.3",
-    "stylelint-config-standard": "^35.0.0",
-    "stylelint": "^16.0.2"
+    "skott": "^0.31.4",
+    "stylelint-config-standard": "^36.0.0",
+    "stylelint": "^16.1.0"
   }
 }
