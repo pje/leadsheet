@@ -10,28 +10,28 @@ import {
   AlterOmit,
   AlterRaise,
   AlterSuspend,
+  canonicalize,
   type Chord,
   identify,
-  type Quality,
 } from "../../theory/chord.ts";
-import { type Letter } from "../../theory/letter.ts";
 import { Power_id } from "../../theory/chord/quality/dyad.ts";
 import {
   Aug_id,
   Dim_id,
   Maj_id,
   Min_id,
-  type as TriadType,
 } from "../../theory/chord/quality/triad.ts";
 import {
   Aug7_id,
   Dim7_id,
   DimM7_id,
   Dom7_id,
+  Maj69_id,
   Maj6_id,
   Maj6Sh5_id,
   Maj7_id,
   Maj7Sh5_id,
+  Min69_id,
   Min6_id,
   Min7_id,
   Min7Fl5_id,
@@ -40,6 +40,12 @@ import {
 import { type ChordFormatter } from "../chord_formatter.ts";
 
 export class TextFormatter implements ChordFormatter {
+  #chord: Chord;
+
+  constructor(c: Readonly<Chord>) {
+    this.#chord = canonicalize(c);
+  }
+
   symbols: ChordFormatter["symbols"] = {
     "#": "#",
     "b": "b",
@@ -57,8 +63,10 @@ export class TextFormatter implements ChordFormatter {
       [Maj7Sh5_id]: (x: AlterableDegree) => `+M${x}`,
       [Min7Fl5_id]: (x: AlterableDegree) => `m${x}b5`,
       [MinMaj7_id]: (x: AlterableDegree) => `mM${x}`,
-      [Maj6_id]: `M6`,
+      [Maj6_id]: `6`,
       [Min6_id]: `m6`,
+      [Maj69_id]: `6/9`,
+      [Min69_id]: `m6/9`,
       [Maj6Sh5_id]: `+6`,
       [Power_id]: "5",
     },
@@ -67,59 +75,43 @@ export class TextFormatter implements ChordFormatter {
       [AlterLower]: (x: Alteration["target"]) => `b${x}`,
       [AlterMajor]: (x: Alteration["target"]) => `M${x}`,
       [AlterMinor]: (x: Alteration["target"]) => `m${x}`,
-      [AlterAdd]: (x: Alteration["target"]) => `add${x}`,
-      [AlterOmit]: (x: Alteration["target"]) => `no${x}`,
+      [AlterAdd]: (x: Alteration["target"]) => `(add${x})`,
+      [AlterOmit]: (x: Alteration["target"]) => `(no${x})`,
       [AlterCompound]: (x: Alteration["target"]) => `/${x}`,
       [AlterSuspend]: (x: Alteration["target"]) => `sus${x}`,
       [AlterEverything]: (x: Alteration["target"]) => `alt${x}`,
     },
   };
 
-  format(c: Readonly<Chord>): string {
-    if (c.quality.type === TriadType) {
-      let q = this.quality(c.quality);
-      const as = [...c.alterations];
-      const s_i = as.findIndex((a) => a.isAdd6());
-      if (s_i >= 0) {
-        as.splice(s_i, 1);
-        q += "6"; // we want "C6" or "Cm6"
-        const n_i = as.findIndex((a) => a.isAdd9());
-        if (n_i >= 0) {
-          as.splice(n_i, 1);
-          q += "/9"; // we want "C6/9" instead of "C6(add 9)"
-        }
-      }
-      return [this.tonic(c.tonic), q, this.alterations(as)].join("");
-    }
-
-    return this.#format(c);
+  format(): string {
+    return this.#format();
   }
 
-  tonic(t: Readonly<Letter>) {
+  tonic() {
+    const t = this.#chord.tonic;
     return t.replace("#", this.symbols["#"]).replace("b", this.symbols["b"]);
   }
-  quality(q: Readonly<Quality>): string {
-    const key = identify(q);
-    const value = this.symbols.quality[key];
-    return typeof value === "function" ? value(q.extent!) : value;
+
+  quality(): string {
+    const qid = identify(this.#chord);
+    const value = this.symbols.quality[qid];
+    return typeof value === "function"
+      ? value(this.#chord.quality.extent!)
+      : value;
   }
+
   alterations(as: Array<Alteration>) {
     return as.map((a) => {
       const fn = this.symbols.alteration[a.kind];
-      const printed = fn(a.target);
-      return a.kind === AlterAdd || a.kind === AlterOmit
-        ? `(${printed})`
-        : printed;
+      return fn(a.target);
     }).join("");
   }
 
-  #format(c: Readonly<Chord>): string {
-    const t = this.tonic(c.tonic);
-    const q = this.quality(c.quality);
-    const a = this.alterations(c.alterations);
+  #format(): string {
+    const t = this.tonic();
+    const q = this.quality();
+    const a = this.alterations(this.#chord.alterations);
 
     return `${t}${q}${a}`;
   }
 }
-
-export const DefaultChordFormatterInstance = new TextFormatter();

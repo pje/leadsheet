@@ -1,6 +1,6 @@
 import { groupsOf } from "../lib/array.ts";
 import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
-import { DefaultChordFormatterInstance } from "../formatter/chord/text_formatter.ts";
+import { TextFormatter } from "../formatter/chord/text_formatter.ts";
 import { type Chord, ChordTypeName } from "../theory/chord.ts";
 import { Key, Major as MajorKey, Minor as MinorKey } from "../theory/key.ts";
 import { SharpSymbol } from "../theory/notation.ts";
@@ -130,7 +130,7 @@ export class Song {
                 line.push(chordish.print());
                 break;
               case ChordTypeName: {
-                const c = chordish.print(DefaultChordFormatterInstance);
+                const c = new TextFormatter(chordish).format();
                 if (c === previousChord) {
                   line.push(RepeatedChordSymbol);
                 } else {

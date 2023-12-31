@@ -5,8 +5,11 @@
 //  compact([1, 2, undefined, 3, null, 4])
 //  => [1, 2, 3, 4]
 // ```
-export function compact<T>(array: Array<T>): Array<NonNullable<T>> {
-  return array.filter(Boolean) as Array<NonNullable<T>>;
+export function compact<T>(array: Array<T | undefined | null>): Array<T> {
+  return array.filter(isPresent);
+}
+function isPresent<T>(t: T | undefined | null): t is T {
+  return t !== undefined && t !== null;
 }
 
 // Returns an array of arrays of at most `groupSize`.
@@ -16,10 +19,10 @@ export function compact<T>(array: Array<T>): Array<NonNullable<T>> {
 //  groupsOf([1, 2, 3, 4, 5], 2)
 //  => [[1, 2], [3, 4], [5]]
 // ```
-export function groupsOf<T>(array: T[], groupSize: 2): Array<[T, T?]>;
-export function groupsOf<T>(array: T[], groupSize: number): Array<T[]>;
-export function groupsOf<T>(array: T[], groupSize: number): Array<T[]> {
-  return array.reduce((resultArray: Array<T[]>, item, index) => {
+export function groupsOf<T>(array: Array<T>, groupSize: 2): Array<[T, T?]>;
+export function groupsOf<T>(array: Array<T>, groupSize: number): Array<T[]>;
+export function groupsOf<T>(array: Array<T>, groupSize: number): Array<T[]> {
+  return array.reduce((resultArray: Array<Array<T>>, item, index) => {
     const groupIndex = Math.floor(index / groupSize);
 
     if (!resultArray[groupIndex]) {
@@ -42,10 +45,7 @@ export function groupsOf<T>(array: T[], groupSize: number): Array<T[]> {
 //  includesAll(["foo", "bar", "baz"], "foo", "qux")
 //  => false
 // ```
-export function includesAll<T>(
-  array: Array<T>,
-  ...elements: Array<T>
-): boolean {
+export function includesAll<T>(array: T[], ...elements: T[]): boolean {
   for (const e of elements) {
     if (!array.includes(e)) return false;
   }
@@ -59,11 +59,19 @@ export function includesAll<T>(
 //  partition([1, 2, 3, 4, 5], (e) => isEven())
 //  => [[2, 4, 6], [1, 3, 5]]
 // ```
+export function partition<T, S extends T>(
+  as: T[],
+  predicate: (a: T) => a is S,
+): [S[], T[]];
 export function partition<T>(
-  as: Array<T>,
+  as: T[],
   predicate: (a: T) => boolean,
-): [Array<T>, Array<T>] {
-  const [one, two]: [Array<T>, Array<T>] = [[], []];
+): [T[], T[]];
+export function partition<T>(
+  as: T[],
+  predicate: (a: T) => boolean,
+): [T[], T[]] {
+  const [one, two]: [T[], T[]] = [[], []];
   as.forEach((a) => predicate(a) ? one.push(a) : two.push(a));
   return [one, two];
 }

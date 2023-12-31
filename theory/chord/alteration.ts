@@ -60,13 +60,14 @@ export function rehydrate(a: Alteration): Alteration {
   return Object.assign(new Alteration(a.kind, a.target), a);
 }
 
-export function isAdd6(a: Alteration) {
-  return a.kind === AlterAdd && a.target === 6;
-}
-
-export function isAdd9(a: Alteration) {
-  return a.kind === AlterAdd && a.target === 9;
-}
+export const isAdd6 = (a: Alteration) => a.kind === AlterAdd && a.target === 6;
+export const isAdd9 = (a: Alteration) => a.kind === AlterAdd && a.target === 9;
+export const isSharp5 = (a: Alteration) =>
+  a.kind === AlterRaise && a.target === 5;
+export const isMin7 = (a: Alteration) =>
+  a.kind === AlterMinor && a.target === 7;
+export const isMaj7 = (a: Alteration) =>
+  a.kind === AlterMajor && a.target === 7;
 
 export function equals(a1: Alteration, a2: Alteration): boolean {
   return a1.kind === a2.kind && a1.target === a2.target;
@@ -75,7 +76,7 @@ export function equals(a1: Alteration, a2: Alteration): boolean {
 // sort by:
 // -  `kind` (alphabetically ascending), then
 // -  `target` (descending)
-export function sort(as: Readonly<Alteration[]>): Alteration[] {
+export function sort<T extends Alteration>(as: Readonly<T[]>): T[] {
   return [...as].sort((a, b) => {
     const manualOrder = sortingOrder[a.kind] - sortingOrder[b.kind];
     if (manualOrder !== 0) return manualOrder;
@@ -90,9 +91,9 @@ export function sort(as: Readonly<Alteration[]>): Alteration[] {
 }
 
 // Returns a new array with all literally duplicate alterations removed
-export function uniq(as: Readonly<Alteration[]>): Alteration[] {
+export function uniq<T extends Alteration>(as: Readonly<T[]>): T[] {
   const result = sort(as);
-  let prev: Alteration | undefined = undefined;
+  let prev: T | undefined = undefined;
 
   return result.filter((a) => {
     const shouldKeep = !prev || !equals(a, prev);
@@ -148,3 +149,5 @@ export const Add9 = Add(9);
 export const No = (e: AlterableDegree) => new Alteration(AlterOmit, e);
 export const Everything = (e: AlterableDegree) =>
   new Alteration(AlterEverything, e);
+export const MakeMaj = (e: AlterableDegree) => new Alteration(AlterMajor, e);
+export const MakeMin = (e: AlterableDegree) => new Alteration(AlterMinor, e);

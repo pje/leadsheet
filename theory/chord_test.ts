@@ -1,30 +1,66 @@
 import { type FlatOrSharpSymbol, SharpSymbol } from "./notation.ts";
 import { assertNotEquals } from "https://deno.land/std@0.209.0/assert/assert_not_equals.ts";
 import { assertEquals } from "../test_utils.ts";
-import { Chord } from "./chord.ts";
-import { Add6, Add9, No, Over, Raise, Sus2, Sus4 } from "./chord/alteration.ts";
-import { Power } from "./chord/quality/dyad.ts";
-import { Aug7, DimM7 } from "./chord/quality/tetrad/nontertian.ts";
+import {
+  canonicalize,
+  Chord,
+  identify,
+  QualityID,
+  QualityIdToQuality,
+} from "./chord.ts";
+import {
+  Add6,
+  Add9,
+  Alteration,
+  AlterMajor,
+  AlterMinor,
+  MakeMaj,
+  Over,
+  Raise,
+} from "./chord/alteration.ts";
+import { Power, Power_id } from "./chord/quality/dyad.ts";
+import {
+  Aug7,
+  Aug7_id,
+  DimM7,
+  DimM7_id,
+  Maj6,
+  Maj69,
+  Maj69_id,
+  Maj6_id,
+  Maj6Sh5,
+  Maj6Sh5_id,
+  Min6,
+  Min69,
+  Min69_id,
+  Min6_id,
+} from "./chord/quality/tetrad/nontertian.ts";
 import {
   Dim7,
-  Dom11,
-  Dom13,
+  Dim7_id,
   Dom7,
-  Dom9,
-  Maj11,
-  Maj13,
+  Dom7_id,
   Maj7,
+  Maj7_id,
   Maj7Sh5,
-  Maj9,
-  Min11,
-  Min13,
+  Maj7Sh5_id,
   Min7,
+  Min7_id,
   Min7Fl5,
-  Min9,
+  Min7Fl5_id,
   MinMaj7,
+  MinMaj7_id,
 } from "./chord/quality/tetrad/tertian.ts";
-import { Aug, Dim, Maj, Min } from "./chord/quality/triad.ts";
-import { DefaultChordFormatterInstance } from "../formatter/chord/text_formatter.ts";
+import {
+  Aug,
+  Aug_id,
+  Dim,
+  Dim_id,
+  Maj,
+  Maj_id,
+  Min,
+  Min_id,
+} from "./chord/quality/triad.ts";
 
 Deno.test("===", async (t) => {
   const a1 = new Chord("A", Maj, Raise(11));
@@ -85,50 +121,129 @@ Deno.test(Chord.prototype.transpose.name, async (t) => {
   }
 });
 
-Deno.test(Chord.prototype.print.name, async (t) => {
-  const cases = new Map<Chord, string>([
-    [new Chord("A", Maj), "A"],
-    [new Chord("A", Min), "Am"],
-    [new Chord("A", Dim), "Ao"],
-    [new Chord("A", Aug), "A+"],
+const tautologies = new Map<Chord, QualityID>([
+  [new Chord("A", Aug), Aug_id],
+  [new Chord("A", Dim), Dim_id],
+  [new Chord("A", Maj), Maj_id],
+  [new Chord("A", Min), Min_id],
+  [new Chord("A", Maj7), Maj7_id],
+  [new Chord("A", Dom7), Dom7_id],
+  [new Chord("A", Min7), Min7_id],
+  [new Chord("A", Aug7), Aug7_id],
+  [new Chord("A", Dim7), Dim7_id],
+  [new Chord("A", DimM7), DimM7_id],
+  [new Chord("A", Maj7Sh5), Maj7Sh5_id],
+  [new Chord("A", Min7Fl5), Min7Fl5_id],
+  [new Chord("A", MinMaj7), MinMaj7_id],
+  [new Chord("A", Maj6), Maj6_id],
+  [new Chord("A", Min6), Min6_id],
+  [new Chord("A", Maj69), Maj69_id],
+  [new Chord("A", Min69), Min69_id],
+  [new Chord("A", Maj6Sh5), Maj6Sh5_id],
+  [new Chord("A", Power), Power_id],
+]);
 
-    [new Chord("A", Dom7), "A7"],
-    [new Chord("A", Dom9), "A9"],
-    [new Chord("A", Dom11), "A11"],
-    [new Chord("A", Dom13), "A13"],
-    [new Chord("A", Maj7), "AM7"],
-    [new Chord("A", Maj9), "AM9"],
-    [new Chord("A", Maj11), "AM11"],
-    [new Chord("A", Maj13), "AM13"],
-    [new Chord("A", Min7), "Am7"],
-    [new Chord("A", Min9), "Am9"],
-    [new Chord("A", Min11), "Am11"],
-    [new Chord("A", Min13), "Am13"],
+const alterationSynonyms = new Map<QualityID, Chord[]>([
+  [
+    Aug7_id,
+    [
+      new Chord("A", Aug, new Alteration(AlterMinor, 7)),
+      new Chord("A", Dom7, Raise(5)),
+    ],
+  ],
+  [
+    Maj7Sh5_id,
+    [
+      new Chord("A", Maj7, Raise(5)),
+      new Chord("A", Aug, new Alteration(AlterMajor, 7)),
+    ],
+  ],
+  [
+    DimM7_id,
+    [
+      new Chord("A", Dim, new Alteration(AlterMajor, 7)),
+    ],
+  ],
+  [
+    Maj6_id,
+    [
+      new Chord("A", Maj, Add6),
+    ],
+  ],
+  [
+    Maj69_id,
+    [
+      new Chord("A", Maj, Add6, Add9),
+    ],
+  ],
+  [
+    Min6_id,
+    [
+      new Chord("A", Min, Add6),
+    ],
+  ],
+  [
+    Min69_id,
+    [
+      new Chord("A", Min, Add6, Add9),
+    ],
+  ],
+  [
+    MinMaj7_id,
+    [
+      new Chord("A", Min, MakeMaj(7)),
+    ],
+  ],
+]);
 
-    [new Chord("A", Aug7), "A+7"],
-    [new Chord("A", MinMaj7), "AmM7"],
-
-    [new Chord("A", Dim7), "Ao7"],
-    [new Chord("A", DimM7), "AoM7"],
-    [new Chord("A", Maj7Sh5), "A+M7"],
-    [new Chord("A", Min7Fl5), "Am7b5"],
-    [new Chord("A", MinMaj7), "AmM7"],
-
-    [new Chord("A", Power), "A5"],
-
-    [new Chord("A", Maj, Add6), "A6"],
-    [new Chord("A", Min, Add6), "Am6"],
-    [new Chord("A", Maj, Add6, Add9), "A6/9"],
-
-    [new Chord("A", Maj, Sus2), "Asus2"],
-    [new Chord("A", Maj, Sus4), "Asus4"],
-    [new Chord("A", Aug7, Raise(9), No(3)), "A+7#9(no3)"],
-  ]);
-
-  for (const [chord, expected] of cases) {
+Deno.test(identify.name, async (t) => {
+  for (const [input, expected] of tautologies) {
     await t.step(
-      `"${JSON.stringify(chord)}" should print as "${expected}"`,
-      () => assertEquals(expected, chord.print(DefaultChordFormatterInstance)),
+      `should identify ${JSON.stringify(input)} as ${expected}`,
+      () => {
+        const result = identify(input);
+        assertEquals(expected, result);
+      },
     );
+  }
+
+  for (const [expected, inputs] of alterationSynonyms) {
+    for (const input of inputs) {
+      await t.step(
+        `should identify synonym ${JSON.stringify(input)} as ${expected}`,
+        () => {
+          const result = identify(input);
+          assertEquals(expected, result);
+        },
+      );
+    }
+  }
+});
+
+Deno.test(canonicalize.name, async (t) => {
+  for (const [input, expected] of tautologies) {
+    await t.step(
+      `should canonicalize ${JSON.stringify(input)} to ${expected}`,
+      () => {
+        const q = QualityIdToQuality[expected];
+        const expectedChord = new Chord(input.tonic, q);
+        const result = canonicalize(input);
+        assertEquals(expectedChord, result);
+      },
+    );
+  }
+
+  for (const [expected, inputs] of alterationSynonyms) {
+    for (const input of inputs) {
+      await t.step(
+        `should canonicalize synonym ${JSON.stringify(input)} to ${expected}`,
+        () => {
+          const q = QualityIdToQuality[expected];
+          const expectedChord = new Chord(input.tonic, q);
+          const result = canonicalize(input);
+          assertEquals(expectedChord, result);
+        },
+      );
+    }
   }
 });

@@ -43,6 +43,8 @@ import { Aug, Dim, Maj, Min } from "../theory/chord/quality/triad.ts";
 import {
   Dim7,
   Dom7,
+  Maj6,
+  Maj69,
   Maj7,
   Min7,
   Min7Fl5,
@@ -170,6 +172,12 @@ class ChordActions implements ChordActionDict<void> {
     const extentNode = <ExtentNode | undefined> maybeExtentNode.child(0);
     const extent = extentNode?.eval!();
     return extent ? { ...Min7Fl5, extent } : Min7Fl5;
+  };
+  x69 = (_0: NNode, _1: TNode, _2: NNode) => {
+    return pick(Maj69, "fifth", "sixth", "seventh", "ninth", "type");
+  };
+  x6 = (_0: NNode) => {
+    return pick(Maj6, "fifth", "sixth", "type");
   };
 
   alteration = (arg0: NNode) => arg0.eval();

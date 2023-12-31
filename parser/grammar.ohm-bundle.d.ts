@@ -49,6 +49,8 @@ export interface ChordActionDict<T> extends BaseActionDict<T> {
   aug?: (this: NonterminalNode, arg0: NonterminalNode | TerminalNode) => T;
   dim?: (this: NonterminalNode, arg0: NonterminalNode | TerminalNode) => T;
   hdim?: (this: NonterminalNode, arg0: NonterminalNode) => T;
+  x6?: (this: NonterminalNode, arg0: NonterminalNode) => T;
+  x69?: (this: NonterminalNode, arg0: NonterminalNode, arg1: TerminalNode, arg2: NonterminalNode) => T;
   augTriad?: (this: NonterminalNode, arg0: NonterminalNode) => T;
   majX?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode) => T;
   minX?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode) => T;

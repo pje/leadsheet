@@ -98,7 +98,7 @@ Chord {
     | &(dim | hdim)
 
   extendedQuality =
-    | majX | minX | domQuality | dimX | hdimX
+    | majX | minX | domQuality | dimX | hdimX | x6 | x69
 
   domQuality =
     | domX
@@ -142,6 +142,12 @@ Chord {
 
   hdim =
     | caseInsensitive<"ø">
+
+  x6 =
+    six ~("/" nine)
+
+  x69 =
+    six "/" nine
 
   augTriad =
     | aug

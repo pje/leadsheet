@@ -420,7 +420,6 @@ html {
       justify-content: space-evenly;
 
       .chord {
-        /* --fullsize: 9.25cqw; */
         --fullsize: clamp(24px, 9.25cqw, 11rem);
         --shrink-factor: 0;
 
@@ -429,7 +428,6 @@ html {
         white-space: nowrap;
         /* this prevents long chord names from breaking into multiple lines */
         font-size: clamp(24px, var(--fullsize), 11rem);
-        justify-content: center;
         align-items: flex-end;
 
         .unicode-flat, .unicode-sharp {
@@ -468,6 +466,14 @@ html {
 
         .slash {
           letter-spacing: -0.1rem;
+          margin-inline-start: -0.075rem;
+        }
+
+        /* any alteration in parentheses but is *not* part of a fractional (i.e. it's alone) */
+        & > *:has(+ .paren-close):not(.fractional, .paren-open) {
+          font-size: 85%;
+          position: relative;
+          bottom: 4cqh;
         }
 
         /* &.small {
@@ -516,7 +522,7 @@ html {
 
         .paren-open, .paren-close {
           position: relative;
-          top: -20cqh;
+          top: -17cqh;
           font-size: 85%;
           /* percent here refers to *parent's font size* */
         }

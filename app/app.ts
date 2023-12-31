@@ -11,6 +11,8 @@ import {
 import {
   type Barline,
   type Chordish,
+  NoChordTypeName,
+  OptionalChordTypeName,
   RepeatedChordSymbol,
   RepeatPreviousChordTypeName,
   type Song,
@@ -26,6 +28,8 @@ import { Key, SigAccidental, SigAccidentalToSymbol } from "../theory/key.ts";
 import { HTMLFormatter } from "../formatter/chord/html_formatter.ts";
 import { TextFormatter } from "../formatter/chord/text_formatter.ts";
 import { CCNoChord, colorChordish, ColorClass } from "./utils.ts";
+import { ChordTypeName, identify } from "../theory/chord.ts";
+import { nonexhaustiveSwitchGuard } from "../lib/switch.ts";
 
 let state: State = EmptyState;
 
@@ -376,11 +380,21 @@ function _getTransposedAmountEl() {
 }
 
 function _formatChordName(c: Readonly<Chordish>): string {
-  const formatter = state.settings.featureFlags.unicodeChordSymbols.enabled
-    ? new HTMLFormatter()
-    : new TextFormatter();
-
-  return c.print(formatter);
+  const { type } = c;
+  switch (type) {
+    case RepeatPreviousChordTypeName:
+    case NoChordTypeName:
+    case OptionalChordTypeName:
+      return c.print();
+    case ChordTypeName: {
+      const formatter = state.settings.featureFlags.unicodeChordSymbols.enabled
+        ? new HTMLFormatter(c)
+        : new TextFormatter(c);
+      return formatter.format();
+    }
+    default:
+      nonexhaustiveSwitchGuard(type);
+  }
 }
 
 function _getBarlineClass(

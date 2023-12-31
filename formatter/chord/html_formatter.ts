@@ -11,6 +11,9 @@ import {
   AlterOmit,
   AlterRaise,
   AlterSuspend,
+  canonicalize,
+  Chord,
+  sort,
 } from "../../theory/chord.ts";
 import { Power_id } from "../../theory/chord/quality/dyad.ts";
 import {
@@ -18,10 +21,12 @@ import {
   Dim7_id,
   DimM7_id,
   Dom7_id,
+  Maj69_id,
   Maj6_id,
   Maj6Sh5_id,
   Maj7_id,
   Maj7Sh5_id,
+  Min69_id,
   Min6_id,
   Min7_id,
   Min7Fl5_id,
@@ -38,79 +43,87 @@ import { TextFormatter } from "./text_formatter.ts";
 
 const M = "M" as const;
 const m = "m" as const;
+const tfi = new TextFormatter(new Chord("A"));
 
 export const HTMLFormatter = class extends TextFormatter {
+  #chord: Chord;
+
+  constructor(c: Chord) {
+    super(c);
+    this.#chord = canonicalize(c);
+  }
+
   override symbols = {
-    ...(new TextFormatter()).symbols,
+    ...(tfi.symbols),
     "#": uni("#"),
     "b": uni("b"),
     quality: {
-      ...(new TextFormatter()).symbols.quality,
-      [Aug_id]: "⁺" as const,
-      [Dim_id]: "°" as const,
+      ...tfi.symbols.quality,
+      [Aug_id]: sup("+"),
+      [Dim_id]: sup("o"),
       [Maj_id]: "" as const,
       [Min_id]: m,
       [Maj7_id]: (x: AlterableDegree) => `${M}${sup(x)}`,
       [Dom7_id]: (x: AlterableDegree) => `${sup(x)}`,
       [Min7_id]: (x: AlterableDegree) => `${m}${sup(x)}`,
-      [Aug7_id]: (x: AlterableDegree) => `⁺${sup(x)}`,
-      [Dim7_id]: (x: AlterableDegree) => `°${sup(x)}`,
-      [DimM7_id]: (x: AlterableDegree) => `°${sup(M)}${sup(x)}`,
-      [Maj7Sh5_id]: (x: AlterableDegree) => `⁺${sup(M)}${sup(x)}`,
+      [Aug7_id]: (x: AlterableDegree) => `${sup("+")}${sup(x)}`,
+      [Dim7_id]: (x: AlterableDegree) => `${sup("o")}${sup(x)}`,
+      [DimM7_id]: (x: AlterableDegree) => `${sup("o")}${sup(M)}${sup(x)}`,
+      [Maj7Sh5_id]: (x: AlterableDegree) => `${sup("+")}${sup(M)}${sup(x)}`,
       [Min7Fl5_id]: (x: AlterableDegree) => `${m}${sup(x)}${uni("b")}${sup(5)}`,
       [MinMaj7_id]: (x: AlterableDegree) => `${m}${sup(M)}${sup(x)}`,
       [Maj6_id]: sup(6),
       [Min6_id]: `${m}${sup(6)}`,
-      [Maj6Sh5_id]: `⁺${sup(6)}`,
+      [Maj69_id]: `${sup(6)}${sup(slash)}${sup(9)}`,
+      [Min69_id]: `m${sup(6)}${sup(slash)}${sup(9)}`,
+      [Maj6Sh5_id]: `${sup("+")}${sup(6)}`,
       [Power_id]: sup(5),
     },
     alteration: {
-      ...(new TextFormatter()).symbols.alteration,
-      [AlterRaise]: (x: Alteration["target"]) => `${uni("#")}${x}`,
-      [AlterLower]: (x: Alteration["target"]) => `${uni("b")}${x}`,
+      ...tfi.symbols.alteration,
+      [AlterRaise]: (x: Alteration["target"]) => `${uni("#")}${sup(x)}`,
+      [AlterLower]: (x: Alteration["target"]) => `${uni("b")}${sup(x)}`,
       [AlterMajor]: (x: Alteration["target"]) => `${sup(M)}${sup(x)}`,
       [AlterMinor]: (x: Alteration["target"]) => `${sup(m)}${sup(x)}`,
-      [AlterAdd]: (x: Alteration["target"]) => `${low("add")}${x}`,
-      [AlterOmit]: (x: Alteration["target"]) => `${low("no")}${x}`,
+      [AlterAdd]: (x: Alteration["target"]) => inParens(`add${x}`),
+      [AlterOmit]: (x: Alteration["target"]) => inParens(`no${x}`),
       [AlterCompound]: (x: Alteration["target"]) => `${slash}${x}`,
-      [AlterSuspend]: (x: Alteration["target"]) => `${low("sus")}${x}`,
-      [AlterEverything]: (x: Alteration["target"]) => `${sup(x)}${low("alt")}`,
+      [AlterSuspend]: (x: Alteration["target"]) => `sus${x}`,
+      [AlterEverything]: (x: Alteration["target"]) => `${sup(x)}alt`,
+
+      // format alterations differently when they're part of a fractional display
+      // (having a top and a bottom part)
+      fractional: {
+        [AlterRaise]: (x: Alteration["target"]) => `${uni("#")}${x}`,
+        [AlterLower]: (x: Alteration["target"]) => `${uni("b")}${x}`,
+        [AlterAdd]: (x: Alteration["target"]) => `add${x}`,
+        [AlterOmit]: (x: Alteration["target"]) => `no${x}`,
+        [AlterSuspend]: (x: Alteration["target"]) => `sus${x}`,
+      },
     },
   };
 
-  override alterations(as: Array<Alteration>) {
-    if (as.length < 2) return super.alterations(as);
+  override alterations() {
+    const as = this.#chord.alterations;
+    // if (as.length < 2) return super.alterations(as);
+    let [fractionable, rest] = partition(as, isFractionable);
+    // if (fractionable.length < 2) return super.alterations(as);
+    fractionable = sort(fractionable);
 
-    const [parenable, rest] = partition(
-      as,
-      (a: Alteration) => {
-        return a.kind === AlterLower ||
-          a.kind === AlterRaise ||
-          a.kind === AlterAdd ||
-          a.kind === AlterOmit ||
-          a.kind === AlterSuspend;
-      },
-    );
-
-    if (parenable.length < 2) return super.alterations(as);
-
-    parenable.sort((a, b) =>
-      <AlterableDegree> b.target - <AlterableDegree> a.target
-    );
-
-    return groupsOf(parenable, 2).flatMap((group) => {
-      const fractionalContent = compact(group).map((a) => {
-        const fn = this.symbols.alteration[a.kind];
+    const parenthesized = groupsOf(fractionable, 2).flatMap((group) => {
+      let content = compact(group).map((a) => {
+        const fn = this.symbols.alteration.fractional[a.kind];
         return `<span>${fn(a.target)}</span>`;
-      });
+      }).join("");
 
-      return [
-        super.alterations(rest),
-        `<span class="paren-open">(</span>`,
-        `<span class="fractional">${fractionalContent.join("")}</span>`,
-        `<span class="paren-close">)</span>`,
-      ].join("");
+      const klass = (compact(group).length > 1) ? "fractional" : "";
+      content = `<span class="${klass}">${content}</span>`;
+
+      return inParens(content);
     }).join("");
+
+    const altersRest = super.alterations(rest);
+    return `${altersRest}${parenthesized}`;
   }
 };
 
@@ -126,9 +139,26 @@ function sup(s: number | string): string {
   return `<sup class="extent">${s}</sup>`;
 }
 
-// make the text slightly smaller
-function low(s: string): string {
-  return `<span class="deemphasize">${s}</span>`;
+// surround `str` with parens
+function inParens(str: string): string {
+  return `${parL}${str}${parR}`;
 }
 
+type Fractionable =
+  | Alteration & { kind: typeof AlterLower }
+  | Alteration & { kind: typeof AlterRaise }
+  | Alteration & { kind: typeof AlterAdd }
+  | Alteration & { kind: typeof AlterOmit }
+  | Alteration & { kind: typeof AlterSuspend };
+
+const isFractionable = (a: Alteration): a is Fractionable => {
+  return a.kind === AlterLower ||
+    a.kind === AlterRaise ||
+    a.kind === AlterAdd ||
+    a.kind === AlterOmit ||
+    a.kind === AlterSuspend;
+};
+
+const parL = `<span class="paren-open">(</span>`;
+const parR = `<span class="paren-close">)</span>`;
 const slash = `<span class="slash">/</span>` as const;

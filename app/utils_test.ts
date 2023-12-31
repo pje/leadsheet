@@ -1,5 +1,5 @@
 import { assertEquals } from "../test_utils.ts";
-import { Chord, identify, Quality } from "../theory/chord.ts";
+import { Chord, Quality } from "../theory/chord.ts";
 import { Power } from "../theory/chord/quality/dyad.ts";
 import { Aug, Dim, Maj, Min } from "../theory/chord/quality/triad.ts";
 import {
@@ -42,7 +42,7 @@ Deno.test(colorChord.name, async (t) => {
   for (const [input, expected] of cases) {
     const chord = new Chord("A", input);
     await t.step(
-      `should color ${identify(input)} as ${expected}`,
+      `should color ${JSON.stringify(input)} as ${expected}`,
       () => {
         const result = colorChord(chord);
         assertEquals(expected, result);

@@ -14,8 +14,6 @@ import {
 import { Song } from "./song.ts";
 import { Key } from "../theory/key.ts";
 import {
-  Add6,
-  Add9,
   Everything,
   Lower,
   No,
@@ -25,7 +23,13 @@ import {
   Sus4,
 } from "../theory/chord/alteration.ts";
 import { Power } from "../theory/chord/quality/dyad.ts";
-import { Aug7, DimM7 } from "../theory/chord/quality/tetrad/nontertian.ts";
+import {
+  Aug7,
+  DimM7,
+  Maj6,
+  Maj69,
+  Min69,
+} from "../theory/chord/quality/tetrad/nontertian.ts";
 import {
   Dim7,
   Dom11,
@@ -230,9 +234,9 @@ Deno.test(`chord symbols`, async (t) => {
     [`CM`, new Chord("C", Maj)],
     [`Cmaj`, new Chord("C", Maj)],
     [`Cmajor`, new Chord("C", Maj)],
-    [`C6`, new Chord("C", Maj, Add6)],
-    [`C6/9`, new Chord("C", Maj, Add6, Add9)],
-    [`Cm6/9`, new Chord("C", Min, Add6, Add9)],
+    [`C6`, new Chord("C", Maj6)],
+    [`C6/9`, new Chord("C", Maj69)],
+    [`Cm6/9`, new Chord("C", Min69)],
     [`CM7`, new Chord("C", Maj7)],
     [`Cᴹ⁷`, new Chord("C", Maj7)],
     [`CM11`, new Chord("C", Maj11)],

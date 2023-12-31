@@ -4,7 +4,7 @@ import {
   rehydrate as rehydrateChord,
 } from "../../theory/chord.ts";
 import { type ChordFormatter } from "../../formatter/chord_formatter.ts";
-import { DefaultChordFormatterInstance } from "../../formatter/chord/text_formatter.ts";
+import { TextFormatter } from "../../formatter/chord/text_formatter.ts";
 import { FlatOrSharpSymbol } from "../../theory/notation.ts";
 import { nonexhaustiveSwitchGuard } from "../../lib/switch.ts";
 
@@ -35,8 +35,8 @@ export class OptionalChord {
     return new OptionalChord(this.chord.transpose(halfSteps, flatsOrSharps));
   }
 
-  print(formatter: ChordFormatter = DefaultChordFormatterInstance): string {
-    return `(${this.chord.print(formatter)})`;
+  print(formatter: ChordFormatter = new TextFormatter(this.chord)): string {
+    return `(${formatter.format()})`;
   }
 }
 
