@@ -39,7 +39,9 @@ export async function bootstrap() {
 
   await renderSettings(state.settings, state.midiEventListener);
 
-  loadSong(state.song || _loadDefaultSong()!);
+  state.song
+    ? loadSong(state.song, state.filename)
+    : loadSong(_loadDefaultSong()!);
 
   document.querySelectorAll("#settings input")!.forEach((el) => {
     el.addEventListener("change", (e: Event) => {
@@ -81,9 +83,17 @@ export async function bootstrap() {
     .addEventListener("click", handleTransposeSong.bind(null, -1));
 
   document
+    .getElementById("songfile-input")!
+    .addEventListener(
+      "click",
+      (_) => document.getElementById("songfile")!.click(),
+    );
+
+  document
     .getElementById("songfile")!
     .addEventListener("change", (e: Event) => {
       const f = (e.currentTarget as HTMLInputElement).files![0]!;
+      const filename = f.name;
       const reader = new FileReader();
 
       reader.onload = function (evt) {
@@ -100,7 +110,7 @@ export async function bootstrap() {
         if (result.error) {
           console.error(result.error);
         } else {
-          loadSong(result.value);
+          loadSong(result.value, filename);
           setTransposedAmount(0);
         }
       };
@@ -312,8 +322,10 @@ function paintRainbowBanner(
 }
 
 // TODO: Action
-function loadSong(song: Song): Song {
+function loadSong(song: Song, filename?: string): Song {
   mutateState(state, "song", song);
+  if (filename) setFilename(filename);
+
   setTransposedAmount(state.transposedSteps);
   if (song.title) {
     setDocumentTitle(`${song.title} | Leadsheet`);
@@ -334,6 +346,13 @@ function handleTransposeSong(halfSteps: number): void {
   mutateState(state, "song", transposedSong);
   renderSong(transposedSong);
   addTransposedAmount(halfSteps);
+}
+
+// TODO: Action
+function setFilename(filename: string) {
+  const e = document.getElementById("filename");
+  mutateState(state, "filename", filename);
+  e!.innerText = filename;
 }
 
 // TODO: Action

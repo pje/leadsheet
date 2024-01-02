@@ -13,9 +13,24 @@
   --bright-prp: oklch(71% 0.10 002deg);
   --bright-aqu: oklch(76% 0.11 138deg);
   --bright-org: oklch(70% 0.20 069deg);
-  --bright-red-for-dark: oklch(70% 0.25 032deg);
-  --bright-grn-for-dark: oklch(70% 0.20 128deg);
-  --bright-blu-for-dark: oklch(70% 0.20 224deg);
+
+  @media (prefers-color-scheme: light) {
+    --background-color: oklch(99% 0 0deg);
+    --color: oklch(18% 0 0deg);
+    --code-background: oklch(96% 0 0deg);
+    --code-color: oklch(18% 0 0deg);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    --background-color: oklch(20% 0 0deg);
+    --color: oklch(99% 0 0deg);
+    --code-background: oklch(33% 0 0deg);
+    --code-color: oklch(99% 0 0deg);
+
+    --bright-red: oklch(70% 0.25 032deg);
+    --bright-grn: oklch(70% 0.20 128deg);
+    --bright-blu: oklch(70% 0.20 224deg);
+  }
 
   --staff-line-height: 14px;
   --staff-height: calc(var(--staff-line-height) * 4);
@@ -45,16 +60,8 @@ html {
     margin-block-end: 5vh;
     width: auto;
     padding-inline: 4vw;
-
-    @media (prefers-color-scheme: light) {
-      background-color: rgb(255 255 243);
-      color: #111;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      background-color: #151515;
-      color: #fffdf3;
-    }
+    background-color: var(--background-color);
+    color: var(--color);
 
     #rainbow-banner {
       height: 2px;
@@ -72,24 +79,12 @@ html {
         }
         &.dom {
           background-color: var(--bright-red);
-
-          @media (prefers-color-scheme: dark) {
-            background-color: var(--bright-red-for-dark);
-          }
         }
         &.maj {
           background-color: var(--bright-grn);
-
-          @media (prefers-color-scheme: dark) {
-            background-color: var(--bright-grn-for-dark);
-          }
         }
         &.min {
           background-color: var(--bright-blu);
-
-          @media (prefers-color-scheme: dark) {
-            background-color: var(--bright-blu-for-dark);
-          }
         }
         &.no-chord {
           background-color: inherit;
@@ -153,6 +148,44 @@ html {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+
+  .button-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    height: fit-content;
+
+    button#songfile-input {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-block: 3px;
+      padding-inline-start: 4px;
+      padding-inline-end: 7px;
+      gap: 6px;
+
+      img {
+        height: 16px;
+      }
+    }
+
+    #filename {
+      background-color: var(--code-background);
+      border-radius: 0.25rem;
+      color: var(--code-color);
+      font-size: 0.75rem;
+      font-style: italic;
+      padding-inline: 4px;
+
+      &::before {
+        content: "✍️ ";
+      }
+    }
+
+    input#songfile {
+      display: none;
+    }
+  }
 }
 
 #settings {
@@ -548,24 +581,12 @@ html {
         }
         &.dom {
           color: var(--bright-red);
-
-          @media (prefers-color-scheme: dark) {
-            color: var(--bright-red-for-dark);
-          }
         }
         &.maj {
           color: var(--bright-grn);
-
-          @media (prefers-color-scheme: dark) {
-            color: var(--bright-grn-for-dark);
-          }
         }
         &.min {
           color: var(--bright-blu);
-
-          @media (prefers-color-scheme: dark) {
-            color: var(--bright-blu-for-dark);
-          }
         }
         &.no-chord {
           color: inherit;
