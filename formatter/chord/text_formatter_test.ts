@@ -77,6 +77,7 @@ Deno.test(TextFormatter.prototype.format.name, async (t) => {
     [new Chord("A", Min69), "Am6/9"],
     [new Chord("A", Maj, Sus2), "Asus2"],
     [new Chord("A", Maj, Sus4), "Asus4"],
+    [new Chord("A", Maj, Raise(9)), "A#9"],
     [new Chord("A", Aug7, Raise(9), No(3)), "A+7#9(no3)"],
   ]);
 
