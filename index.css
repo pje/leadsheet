@@ -183,7 +183,7 @@ html {
       padding-inline: 4px;
       padding-block: 2px;
 
-      &::before {
+      &:not(:empty)::before {
         content: "✍️ ";
       }
     }
