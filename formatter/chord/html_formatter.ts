@@ -100,21 +100,35 @@ export const HTMLFormatter = class extends TextFormatter {
         [AlterOmit]: (x: Alteration["target"]) => `no${x}`,
         [AlterSuspend]: (x: Alteration["target"]) => `sus${x}`,
       },
+
+      // should always display between parens, no matter how many
+      alwaysParen: [
+        AlterAdd,
+        AlterOmit,
+      ] as Alteration["kind"][],
+
+      // should display between parens only if there are two or more total
+      // alterations
+      parenIfTwoOrMore: [
+        AlterRaise,
+        AlterLower,
+        AlterSuspend,
+      ] as Alteration["kind"][],
     },
   };
 
   override alterations() {
     const as = this.#chord.alterations;
-    // if (as.length < 2) return super.alterations(as);
     let [fractionable, rest] = partition(as, isFractionable);
-    // if (fractionable.length < 2) return super.alterations(as);
+    if (!this.shouldParen(fractionable)) return super.alterations(as);
+
     fractionable = sort(fractionable);
 
     const parenthesized = groupsOf(fractionable, 2).flatMap((group) => {
       let content = compact(group).map((a) => {
         const fn = this.symbols.alteration.fractional[a.kind];
         return `<span>${fn(a.target)}</span>`;
-      }).join("");
+      }).join(parenJoiner);
 
       const klass = (compact(group).length > 1) ? "fractional" : "";
       content = `<span class="${klass}">${content}</span>`;
@@ -124,6 +138,19 @@ export const HTMLFormatter = class extends TextFormatter {
 
     const altersRest = super.alterations(rest);
     return `${altersRest}${parenthesized}`;
+  }
+
+  private shouldParen(as: Alteration[]): boolean {
+    const always = as.filter((a) =>
+      this.symbols.alteration.alwaysParen.indexOf(a.kind) >= 0
+    );
+    if (always.length > 0) return true;
+
+    if (as.length < 2) return false;
+    const ifTwoOrMore = as.filter((a) =>
+      this.symbols.alteration.parenIfTwoOrMore.indexOf(a.kind) >= 0
+    );
+    return (ifTwoOrMore.length > 0);
   }
 };
 
@@ -143,6 +170,10 @@ function sup(s: number | string): string {
 function inParens(str: string): string {
   return `${parL}${str}${parR}`;
 }
+
+// so the DOM contains matched parens for every alteration we render
+// (mostly for testing and to make sure the dom contains valid chord symbols)
+const parenJoiner = `<span style="display: none;">)(</span>`;
 
 type Fractionable =
   | Alteration & { kind: typeof AlterLower }
