@@ -149,6 +149,11 @@ html {
   flex-direction: row;
   justify-content: space-between;
 
+  /* browser default file inputs are so weird we gotta hide em and roll our own */
+  input#songfile {
+    display: none;
+  }
+
   .button-container {
     display: flex;
     gap: 10px;
@@ -173,17 +178,14 @@ html {
       background-color: var(--code-background);
       border-radius: 0.25rem;
       color: var(--code-color);
-      font-size: 0.75rem;
+      font-size: 0.65rem;
       font-style: italic;
       padding-inline: 4px;
+      padding-block: 2px;
 
       &::before {
         content: "✍️ ";
       }
-    }
-
-    input#songfile {
-      display: none;
     }
   }
 }
