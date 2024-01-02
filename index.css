@@ -87,7 +87,7 @@ html {
           background-color: var(--bright-blu);
         }
         &.no-chord {
-          background-color: inherit;
+          background-color: var(--color);
         }
         &.pow {
           background-color: var(--light-gray);
@@ -591,7 +591,7 @@ html {
           color: var(--bright-blu);
         }
         &.no-chord {
-          color: inherit;
+          color: var(--color);
         }
         &.pow {
           color: var(--light-gray);
