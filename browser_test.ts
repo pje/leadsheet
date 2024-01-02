@@ -1,16 +1,16 @@
 /// <reference lib="deno.ns" />
 
-import * as log from "https://deno.land/std@0.209.0/log/mod.ts";
-import { assertEquals } from "https://deno.land/std@0.209.0/assert/assert_equals.ts";
+import * as log from "https://deno.land/std@0.210.0/log/mod.ts";
+import { assertEquals } from "https://deno.land/std@0.210.0/assert/assert_equals.ts";
 import { time } from "https://deno.land/x/time.ts@v2.0.1/mod.ts";
 import puppeteer, {
   Browser,
   ElementHandle,
   Page,
 } from "https://deno.land/x/puppeteer@16.2.0/mod.ts";
-import * as path from "https://deno.land/std@0.209.0/path/mod.ts";
+import * as path from "https://deno.land/std@0.210.0/path/mod.ts";
 import { colorChords, FeatureFlagKeysType } from "./app/settings.ts";
-import { assertArrayIncludes } from "https://deno.land/std@0.209.0/assert/assert_array_includes.ts";
+import { assertArrayIncludes } from "https://deno.land/std@0.210.0/assert/assert_array_includes.ts";
 import { normalizeAccidentals } from "./lib/string.ts";
 import { NaturalNumber } from "./lib/types.ts";
 
