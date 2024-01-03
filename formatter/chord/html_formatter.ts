@@ -41,8 +41,6 @@ import {
 import { FlatSymbol, SharpSymbol } from "../../theory/notation.ts";
 import { TextFormatter } from "./text_formatter.ts";
 
-const M = "M" as const;
-const m = "m" as const;
 const tfi = new TextFormatter(new Chord("A"));
 
 export const HTMLFormatter = class extends TextFormatter {
@@ -59,30 +57,31 @@ export const HTMLFormatter = class extends TextFormatter {
     "b": uni("b"),
     quality: {
       ...tfi.symbols.quality,
-      [Aug_id]: sup("+"),
-      [Dim_id]: sup("o"),
+      [Aug_id]: "⁺",
+      [Dim_id]: dim(),
       [Maj_id]: "" as const,
       [Min_id]: m,
       [Maj7_id]: (x: AlterableDegree) => `${M}${sup(x)}`,
       [Dom7_id]: (x: AlterableDegree) => `${sup(x)}`,
       [Min7_id]: (x: AlterableDegree) => `${m}${sup(x)}`,
-      [Aug7_id]: (x: AlterableDegree) => `${sup("+")}${sup(x)}`,
-      [Dim7_id]: (x: AlterableDegree) => `${sup("o")}${sup(x)}`,
-      [DimM7_id]: (x: AlterableDegree) => `${sup("o")}${sup(M)}${sup(x)}`,
-      [Maj7Sh5_id]: (x: AlterableDegree) => `${sup("+")}${sup(M)}${sup(x)}`,
-      [Min7Fl5_id]: (x: AlterableDegree) => `${m}${sup(x)}${uni("b")}${sup(5)}`,
+      [Aug7_id]: (x: AlterableDegree) => `⁺${sup(x)}`,
+      [Dim7_id]: (x: AlterableDegree) => `${dim()}${sup(x)}`,
+      [DimM7_id]: (x: AlterableDegree) => `${dim()}${sup(M)}${sup(x)}`,
+      [Maj7Sh5_id]: (x: AlterableDegree) => `⁺${sup(M)}${sup(x)}`,
+      [Min7Fl5_id]: (x: AlterableDegree) =>
+        `${m}${sup(x)}${sup(uni("b"))}${sup(5)}`,
       [MinMaj7_id]: (x: AlterableDegree) => `${m}${sup(M)}${sup(x)}`,
       [Maj6_id]: sup(6),
       [Min6_id]: `${m}${sup(6)}`,
       [Maj69_id]: `${sup(6)}${sup(slash)}${sup(9)}`,
       [Min69_id]: `m${sup(6)}${sup(slash)}${sup(9)}`,
-      [Maj6Sh5_id]: `${sup("+")}${sup(6)}`,
+      [Maj6Sh5_id]: `⁺${sup(6)}`,
       [Power_id]: sup(5),
     },
     alteration: {
       ...tfi.symbols.alteration,
-      [AlterRaise]: (x: Alteration["target"]) => `${uni("#")}${sup(x)}`,
-      [AlterLower]: (x: Alteration["target"]) => `${uni("b")}${sup(x)}`,
+      [AlterRaise]: (x: Alteration["target"]) => `${sup(uni("#"))}${sup(x)}`,
+      [AlterLower]: (x: Alteration["target"]) => `${sup(uni("b"))}${sup(x)}`,
       [AlterMajor]: (x: Alteration["target"]) => `${sup(M)}${sup(x)}`,
       [AlterMinor]: (x: Alteration["target"]) => `${sup(m)}${sup(x)}`,
       [AlterAdd]: (x: Alteration["target"]) => inParens(`add${x}`),
@@ -166,6 +165,11 @@ function sup(s: number | string): string {
   return `<sup class="extent">${s}</sup>`;
 }
 
+// wrap it in a <sup> (superscript) tag
+function dim(): string {
+  return `<span class="dim-symbol">${sup("⚬")}</span>`;
+}
+
 // surround `str` with parens
 function inParens(str: string): string {
   return `${parL}${str}${parR}`;
@@ -190,6 +194,8 @@ const isFractionable = (a: Alteration): a is Fractionable => {
     a.kind === AlterSuspend;
 };
 
+const M = `<span class="small-caps">M</span>` as const;
+const m = "m" as const;
 const parL = `<span class="paren-open">(</span>`;
 const parR = `<span class="paren-close">)</span>`;
 const slash = `<span class="slash">/</span>` as const;

@@ -6,5 +6,10 @@ export function titleCase(s: string): string {
 }
 
 export function normalizeAccidentals(str: string): string {
-  return str.replace("♯", "#").replace("♭", "b");
+  return str
+    .replace("♯", "#")
+    .replace("♭", "b")
+    .replace("⁺", "+")
+    .replace("°", "o")
+    .replace("⚬", "o");
 }

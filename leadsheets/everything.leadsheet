@@ -15,7 +15,7 @@ Tetrads:
 | AoM7 |
 | AM7#5 |
 | Am7b5 |
-| Aø |
+| Aø | // note that this chord should render as a repeat
 | AmM7 |
 
 Sixths:
@@ -33,7 +33,7 @@ Dyads:
 | A5 |
 
 Alterations:
-| A13#9b11#7 |
+| A13#9b11#7 | // should render as A13(b11/#9)(#7)
 | AmM9 |
 | Am7(no5) |
 | Am7(omit3)(add2) |

@@ -467,32 +467,37 @@ html {
 
         .unicode-flat, .unicode-sharp {
           position: relative;
+          left: unset;
+          margin-right: unset;
           font-family: "Noto Music";
           font-size: 100%;
           /* percent here refers to *parent's font size* */
+        }
 
-          left: -0.4cqw;
-          /* percent here refers to *the width of the containing block* */
-          bottom: 7.8cqw;
-          margin-right: -3px;
+        .small-caps {
+          font-variant: all-small-caps;
+          font-size: 100%;
+          /* percent here refers to *parent's font size* */
         }
 
         .unicode-flat {
-          left: unset;
-          bottom: 4cqh;
-          margin-right: unset;
+          bottom: -5cqh;
         }
 
         .unicode-sharp {
-          left: unset;
-          bottom: 12cqh;
-          margin-right: unset;
+          /* left: -3cqh; */
+        }
+
+        .dim-symbol {
+          position: relative;
+          top: 23cqh;
         }
 
         .extent {
           font-size: 85%;
           position: relative;
           top: -17.5cqh;
+          letter-spacing: -0.05rem;
         }
 
         .deemphasize {
@@ -502,13 +507,6 @@ html {
         .slash {
           letter-spacing: -0.1rem;
           margin-inline-start: -0.075rem;
-        }
-
-        /* any alteration in parentheses but is *not* part of a fractional (i.e. it's alone) */
-        & > *:has(+ .paren-close):not(.fractional, .paren-open) {
-          font-size: 85%;
-          position: relative;
-          bottom: 4cqh;
         }
 
         /* &.small {
@@ -573,6 +571,25 @@ html {
           position: relative;
           top: -26cqh;
           margin-inline: 0.5cqw;
+
+          .unicode-flat {
+            bottom: 4cqh;
+          }
+
+          .unicode-sharp {
+            bottom: 12cqh;
+          }
+        }
+
+        /* any alteration in parentheses but is *not* part of a fractional (i.e. it's alone) */
+        & > *:has(+ .paren-close):not(.fractional, .paren-open) {
+          font-size: 85%;
+          position: relative;
+          bottom: 12cqh;
+
+          .unicode-sharp {
+            bottom: 10cqh;
+          }
         }
 
         &.aug {
