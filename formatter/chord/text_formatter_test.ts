@@ -4,6 +4,7 @@ import {
   Add6,
   Add9,
   No,
+  Over,
   Raise,
   Sus2,
   Sus4,
@@ -77,6 +78,9 @@ export const CommonCases = new Map<Chord, string>([
   [new Chord("A", Maj, Sus2), "Asus2"],
   [new Chord("A", Maj, Sus4), "Asus4"],
   [new Chord("A", Maj, Raise(9)), "A#9"],
+  [new Chord("A", Maj, Over("G")), "A/G"],
+  [new Chord("A", Maj, Over("Gb")), "A/Gb"],
+  [new Chord("A", Maj, Over("F#")), "A/F#"],
 ]);
 
 Deno.test(TextFormatter.prototype.format.name, async (t) => {

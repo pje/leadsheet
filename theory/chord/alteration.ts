@@ -1,4 +1,3 @@
-import { nonexhaustiveSwitchGuard } from "../../lib/switch.ts";
 import { Letter, transposeLetter } from "../letter.ts";
 import { FlatOrSharpSymbol } from "../notation.ts";
 import { AlterableDegree } from "./extent.ts";
@@ -27,32 +26,6 @@ export class Alteration {
 
   dup(): Alteration {
     return new Alteration(this.kind, this.target);
-  }
-
-  print(): string {
-    const { kind, target } = this;
-    switch (kind) {
-      case AlterRaise:
-        return `#${target}`;
-      case AlterLower:
-        return `b${target}`;
-      case AlterMajor:
-        return `M${target}`;
-      case AlterMinor:
-        return `m${target}`;
-      case AlterAdd:
-        return `add${target}`;
-      case AlterOmit:
-        return `no${target}`;
-      case AlterCompound:
-        return `/${target}`;
-      case AlterSuspend:
-        return `sus${target}`;
-      case AlterEverything:
-        return `alt${target}`;
-      default:
-        nonexhaustiveSwitchGuard(kind);
-    }
   }
 }
 

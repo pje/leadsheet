@@ -12,6 +12,7 @@ import {
   AlterSuspend,
   canonicalize,
   type Chord,
+  Extent,
   identify,
 } from "../../theory/chord.ts";
 import { Power_id } from "../../theory/chord/quality/dyad.ts";
@@ -38,6 +39,7 @@ import {
   MinMaj7_id,
 } from "../../theory/chord/quality/tetrad.ts";
 import { type ChordFormatter } from "../chord_formatter.ts";
+import { Letter } from "../../theory/letter.ts";
 
 export class TextFormatter implements ChordFormatter {
   #chord: Chord;
@@ -71,15 +73,15 @@ export class TextFormatter implements ChordFormatter {
       [Power_id]: "5",
     },
     alteration: {
-      [AlterRaise]: (x: Alteration["target"]) => `#${x}`,
-      [AlterLower]: (x: Alteration["target"]) => `b${x}`,
-      [AlterMajor]: (x: Alteration["target"]) => `M${x}`,
-      [AlterMinor]: (x: Alteration["target"]) => `m${x}`,
-      [AlterAdd]: (x: Alteration["target"]) => `(add${x})`,
-      [AlterOmit]: (x: Alteration["target"]) => `(no${x})`,
-      [AlterCompound]: (x: Alteration["target"]) => `/${x}`,
-      [AlterSuspend]: (x: Alteration["target"]) => `sus${x}`,
-      [AlterEverything]: (x: Alteration["target"]) => `alt${x}`,
+      [AlterRaise]: (x: AlterableDegree) => `#${x}`,
+      [AlterLower]: (x: AlterableDegree) => `b${x}`,
+      [AlterMajor]: (x: AlterableDegree) => `M${x}`,
+      [AlterMinor]: (x: AlterableDegree) => `m${x}`,
+      [AlterAdd]: (x: AlterableDegree) => `(add${x})`,
+      [AlterOmit]: (x: AlterableDegree) => `(no${x})`,
+      [AlterCompound]: (x: Letter) => `/${x}`,
+      [AlterSuspend]: (x: AlterableDegree) => `sus${x}`,
+      [AlterEverything]: (x: Extent) => `alt${x}`,
     },
   };
 
@@ -102,7 +104,7 @@ export class TextFormatter implements ChordFormatter {
 
   alterations(as: Array<Alteration>) {
     return as.map((a) => {
-      const fn = this.symbols.alteration[a.kind];
+      const fn = this.symbols.alteration[a.kind] as (x: unknown) => string;
       return fn(a.target);
     }).join("");
   }

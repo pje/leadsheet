@@ -13,6 +13,7 @@ import {
   AlterSuspend,
   canonicalize,
   Chord,
+  Extent,
   sort,
 } from "../../theory/chord.ts";
 import { Power_id } from "../../theory/chord/quality/dyad.ts";
@@ -38,6 +39,7 @@ import {
   Maj_id,
   Min_id,
 } from "../../theory/chord/quality/triad.ts";
+import { Letter } from "../../theory/letter.ts";
 import { FlatSymbol, SharpSymbol } from "../../theory/notation.ts";
 import { TextFormatter } from "./text_formatter.ts";
 
@@ -80,24 +82,24 @@ export const HTMLFormatter = class extends TextFormatter {
     },
     alteration: {
       ...tfi.symbols.alteration,
-      [AlterRaise]: (x: Alteration["target"]) => `${sup(uni("#"))}${sup(x)}`,
-      [AlterLower]: (x: Alteration["target"]) => `${sup(uni("b"))}${sup(x)}`,
-      [AlterMajor]: (x: Alteration["target"]) => `${sup(M)}${sup(x)}`,
-      [AlterMinor]: (x: Alteration["target"]) => `${sup(m)}${sup(x)}`,
-      [AlterAdd]: (x: Alteration["target"]) => inParens(`add${x}`),
-      [AlterOmit]: (x: Alteration["target"]) => inParens(`no${x}`),
-      [AlterCompound]: (x: Alteration["target"]) => `${slash}${x}`,
-      [AlterSuspend]: (x: Alteration["target"]) => `sus${x}`,
-      [AlterEverything]: (x: Alteration["target"]) => `${sup(x)}alt`,
+      [AlterRaise]: (x: AlterableDegree) => `${sup(uni("#"))}${sup(x)}`,
+      [AlterLower]: (x: AlterableDegree) => `${sup(uni("b"))}${sup(x)}`,
+      [AlterMajor]: (x: AlterableDegree) => `${sup(M)}${sup(x)}`,
+      [AlterMinor]: (x: AlterableDegree) => `${sup(m)}${sup(x)}`,
+      [AlterAdd]: (x: AlterableDegree) => inParens(`add${x}`),
+      [AlterOmit]: (x: AlterableDegree) => inParens(`no${x}`),
+      [AlterCompound]: (x: Letter) => `${slash}${this.formatLetter(x)}`,
+      [AlterSuspend]: (x: AlterableDegree) => `sus${x}`,
+      [AlterEverything]: (x: Extent) => `${sup(x)}alt`,
 
       // format alterations differently when they're part of a fractional display
       // (having a top and a bottom part)
       fractional: {
-        [AlterRaise]: (x: Alteration["target"]) => `${uni("#")}${x}`,
-        [AlterLower]: (x: Alteration["target"]) => `${uni("b")}${x}`,
-        [AlterAdd]: (x: Alteration["target"]) => `add${x}`,
-        [AlterOmit]: (x: Alteration["target"]) => `no${x}`,
-        [AlterSuspend]: (x: Alteration["target"]) => `sus${x}`,
+        [AlterRaise]: (x: AlterableDegree) => `${uni("#")}${x}`,
+        [AlterLower]: (x: AlterableDegree) => `${uni("b")}${x}`,
+        [AlterAdd]: (x: AlterableDegree) => `add${x}`,
+        [AlterOmit]: (x: AlterableDegree) => `no${x}`,
+        [AlterSuspend]: (x: AlterableDegree) => `sus${x}`,
       },
 
       // should always display between parens, no matter how many
@@ -151,6 +153,11 @@ export const HTMLFormatter = class extends TextFormatter {
     );
     return (ifTwoOrMore.length > 0);
   }
+
+  private formatLetter(l: Letter): string {
+    const [letter, accidental] = l.split("");
+    return `${letter}${accidental ? uni(accidental as "#" | "b") : ""}`;
+  }
 };
 
 // unicode-ify the sharp or flat (returns a custom <span> element)
@@ -180,11 +187,11 @@ function inParens(str: string): string {
 const parenJoiner = `<span style="display: none;">)(</span>`;
 
 type Fractionable =
-  | Alteration & { kind: typeof AlterLower }
-  | Alteration & { kind: typeof AlterRaise }
-  | Alteration & { kind: typeof AlterAdd }
-  | Alteration & { kind: typeof AlterOmit }
-  | Alteration & { kind: typeof AlterSuspend };
+  | Alteration & { kind: typeof AlterLower; target: AlterableDegree }
+  | Alteration & { kind: typeof AlterRaise; target: AlterableDegree }
+  | Alteration & { kind: typeof AlterAdd; target: AlterableDegree }
+  | Alteration & { kind: typeof AlterOmit; target: AlterableDegree }
+  | Alteration & { kind: typeof AlterSuspend; target: AlterableDegree };
 
 const isFractionable = (a: Alteration): a is Fractionable => {
   return a.kind === AlterLower ||

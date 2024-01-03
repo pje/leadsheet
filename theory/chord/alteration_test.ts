@@ -25,7 +25,7 @@ Deno.test(isAdd9.name, async (t) => {
   for (const [alteration, expected] of cases) {
     const result = isAdd9(alteration);
     await t.step(
-      `${alteration.print()} should be ${expected}`,
+      `${JSON.stringify(alteration)} should be ${expected}`,
       () => assertEquals(expected, result),
     );
   }
@@ -45,11 +45,14 @@ Deno.test(Alteration.prototype.transpose.name, async (t) => {
     ],
   );
   for (const [[alteration, halfSteps], expected] of cases) {
-    const printed = alteration.print();
+    const printed = JSON.stringify(alteration);
 
-    await t.step(`${printed} ${halfSteps} shouldBe ${expected.print()}`, () => {
-      assertEquals(expected, alteration.transpose(halfSteps, SharpSymbol));
-    });
+    await t.step(
+      `${printed} ${halfSteps} shouldBe ${JSON.stringify(expected)}`,
+      () => {
+        assertEquals(expected, alteration.transpose(halfSteps, SharpSymbol));
+      },
+    );
   }
 });
 
