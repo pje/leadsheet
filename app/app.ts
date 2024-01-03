@@ -400,15 +400,23 @@ function _getTransposedAmountEl() {
 
 function _formatChordName(c: Readonly<Chordish>): string {
   const { type } = c;
+  const formatterClass = state.settings.featureFlags.unicodeChordSymbols.enabled
+    ? HTMLFormatter
+    : TextFormatter;
+
   switch (type) {
-    case RepeatPreviousChordTypeName:
-    case NoChordTypeName:
-    case OptionalChordTypeName:
+    case RepeatPreviousChordTypeName: {
       return c.print();
+    }
+    case NoChordTypeName: {
+      return c.print();
+    }
+    case OptionalChordTypeName: {
+      const formatter = new formatterClass(c.chord);
+      return c.print(formatter);
+    }
     case ChordTypeName: {
-      const formatter = state.settings.featureFlags.unicodeChordSymbols.enabled
-        ? new HTMLFormatter(c)
-        : new TextFormatter(c);
+      const formatter = new formatterClass(c);
       return formatter.format();
     }
     default:
