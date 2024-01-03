@@ -32,10 +32,11 @@
     --bright-blu: oklch(70% 0.20 224deg);
   }
 
+  --two-column-breakpoint: 575px;
   --staff-line-height: 14px;
   --staff-height: calc(var(--staff-line-height) * 4);
 
-  @media (max-width: 575px) {
+  @media (max-width: 650px) {
     --num-cols: 2;
 
     .bar {
@@ -102,14 +103,6 @@ html {
       margin: unset;
     }
 
-    .title {
-      font-size: min(3.2rem, 8vw);
-    }
-
-    .artist {
-      font-size: 1.5rem;
-    }
-
     .date:empty, .artist:empty {
       display: none;
     }
@@ -174,6 +167,10 @@ html {
       }
     }
 
+    #choose-file {
+      min-width: fit-content;
+    }
+
     #filename {
       background-color: var(--code-background);
       border-radius: 0.25rem;
@@ -206,16 +203,24 @@ html {
   align-items: center;
   margin-block: 20px;
 
-  .date, .artist, .album {
-    font-weight: 400;
+  .title {
+    font-size: min(2.5rem, 7vw)
   }
 
   .album {
     font-style: italic;
   }
 
-  .date:empty, .artist:empty, .album:empty {
-    display: none;
+  .artist {
+    font-size: 1.5rem;
+  }
+
+  .date, .artist, .album {
+    font-weight: 400;
+
+    &:empty {
+      display: none;
+    }
   }
 
   .artist:not(:empty) {
@@ -224,10 +229,6 @@ html {
         content: " —";
       }
     }
-  }
-
-  .title {
-    font-size: min(3.2rem, 8vw);
   }
 
   .byline {
@@ -248,6 +249,15 @@ html {
       &::after {
         content: ")";
       }
+    }
+  }
+
+  @media (max-width: 850px) {
+    flex-direction: row;
+    justify-content: center;
+
+    .byline {
+      display: none;
     }
   }
 }
