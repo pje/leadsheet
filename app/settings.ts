@@ -94,9 +94,6 @@ export async function render(
 
   const html = inputs.join("\n");
 
-  settingsElement.insertAdjacentHTML(
-    "beforeend",
-    "<summary>Settings</summary>",
-  );
+  settingsElement.insertAdjacentHTML("beforeend", "<summary></summary>");
   settingsElement.insertAdjacentHTML("beforeend", html);
 }

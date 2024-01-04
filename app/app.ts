@@ -1,4 +1,5 @@
 import { ParseSong } from "../parser/parser.ts";
+import { ModernHiddenElement } from "../lib/dom.d.ts";
 import {
   FeatureFlagKeys,
   type FeatureFlagKeysType,
@@ -42,6 +43,17 @@ export async function bootstrap() {
   state.song
     ? loadSong(state.song, state.filename)
     : loadSong(_loadDefaultSong()!);
+
+  const details = document.getElementById("settings")! as HTMLDetailsElement;
+  details.addEventListener(
+    "toggle",
+    (_) => {
+      const fileUploadBtn = <ModernHiddenElement> document.getElementById(
+        "songfile-input-container",
+      )!;
+      fileUploadBtn.hidden = details.open ? false : "until-found";
+    },
+  );
 
   document.querySelectorAll("#settings input")!.forEach((el) => {
     el.addEventListener("change", (e: Event) => {
@@ -112,6 +124,7 @@ export async function bootstrap() {
         } else {
           loadSong(result.value, filename);
           setTransposedAmount(0);
+          details.open = false;
         }
       };
 
@@ -251,11 +264,11 @@ function renderClefAndSignatures(
   const firstBarStaffElement = rootElement.querySelector(
     ".bar:first-child .staff",
   )!;
+  firstBarStaffElement.classList.add("flex-row", "flex-justify-start");
   firstBarStaffElement.insertAdjacentHTML(
     "afterbegin",
     frontmatter,
   );
-  firstBarStaffElement.classList.add("flex-row", "flex-justify-start");
 }
 
 function renderMetadata(

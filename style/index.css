@@ -1,7 +1,7 @@
 @charset "UTF-8";
 
-@import url("./node_modules/tufte-css/tufte.css");
-@import url("./node_modules/@fontsource/noto-music/music.css");
+@import url("../node_modules/tufte-css/tufte.css");
+@import url("../node_modules/@fontsource/noto-music/music.css");
 
 :root {
   /* https://oklch.com/ */
@@ -16,20 +16,19 @@
 
   @media (prefers-color-scheme: light) {
     --background-color: oklch(99% 0 0deg);
-    --color: oklch(18% 0 0deg);
     --code-background: oklch(96% 0 0deg);
     --code-color: oklch(18% 0 0deg);
+    --color: oklch(18% 0 0deg);
   }
 
   @media (prefers-color-scheme: dark) {
     --background-color: oklch(20% 0 0deg);
-    --color: oklch(99% 0 0deg);
+    --bright-blu: oklch(70% 0.20 224deg);
+    --bright-grn: oklch(70% 0.20 128deg);
+    --bright-red: oklch(70% 0.25 032deg);
     --code-background: oklch(33% 0 0deg);
     --code-color: oklch(99% 0 0deg);
-
-    --bright-red: oklch(70% 0.25 032deg);
-    --bright-grn: oklch(70% 0.20 128deg);
-    --bright-blu: oklch(70% 0.20 224deg);
+    --color: oklch(99% 0 0deg);
   }
 
   --two-column-breakpoint: 575px;
@@ -147,10 +146,41 @@ html {
     display: none;
   }
 
-  .button-container {
+  &:has(details[open]) {
+    /* @media (prefers-color-scheme: light) {
+      background-image: linear-gradient(128deg,
+          hsl(240deg 100% 20%) 12%,
+          hsl(289deg 100% 21%) 38%,
+          hsl(315deg 100% 27%) 49%,
+          hsl(329deg 100% 36%) 56%,
+          hsl(337deg 100% 43%) 63%,
+          hsl(357deg 91% 59%) 70%,
+          hsl(17deg 100% 59%) 76%,
+          hsl(34deg 100% 53%) 83%,
+          hsl(45deg 100% 50%) 91%,
+          hsla(55deg 100% 50%) 100%);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      background-image: linear-gradient(295deg,
+          hsl(240deg 100% 20%) 12%,
+          hsl(289deg 100% 21%) 38%,
+          hsl(315deg 100% 27%) 49%,
+          hsl(329deg 100% 36%) 56%,
+          hsl(337deg 100% 43%) 63%,
+          hsl(357deg 91% 59%) 70%,
+          hsl(17deg 100% 59%) 76%,
+          hsl(34deg 100% 53%) 83%,
+          hsl(45deg 100% 50%) 91%,
+          hsl(55deg 100% 50%) 100%);
+    } */
+  }
+
+  #songfile-input-container {
     display: flex;
     gap: 10px;
     align-items: center;
+    min-width: fit-content;
     height: fit-content;
 
     button#songfile-input {
@@ -162,7 +192,7 @@ html {
       padding-inline-end: 7px;
       gap: 6px;
 
-      img {
+      .icon {
         height: 16px;
       }
     }
@@ -189,6 +219,24 @@ html {
 
 #settings {
   cursor: default;
+
+  summary {
+    height: 16px;
+    cursor: pointer;
+
+    &::marker {
+      content: url('./gear.svg');
+    }
+
+    @media (prefers-color-scheme: dark) {
+      filter: invert(100%);
+      /* just to invert the icon */
+    }
+  }
+
+  & > :not(:is(summary)) {
+    padding-inline-end: 10px;
+  }
 }
 
 #settings[open] {
@@ -224,6 +272,20 @@ html {
   }
 
   .artist:not(:empty) {
+    &::before {
+      content: url('./pen.svg');
+      position: absolute;
+      width: 6%;
+      left: -8%;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      &::before {
+        filter: invert(100%);
+        /* just to invert the icon */
+      }
+    }
+
     &:has(+ .album:not(:empty)) {
       &::after {
         content: " —";
@@ -234,6 +296,9 @@ html {
   .byline {
     display: flex;
     flex-direction: row;
+    position: relative;
+    /* only needed so the .artist ::before selector can have a % dimension */
+
     font-size: 1.4rem;
 
     & .album:not(:empty) {
@@ -655,6 +720,10 @@ footer {
     font-family: "Noto Music";
     font-size: 3rem;
   }
+}
+
+.hidden {
+  visibility: hidden;
 }
 
 @keyframes pulse {
