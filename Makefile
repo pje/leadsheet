@@ -5,7 +5,7 @@ browser_test_files=./browser_test.ts
 unit_test_files=$(filter-out $(browser_test_files),$(test_files))
 deno_allows=--allow-env --allow-net --allow-read --allow-run --allow-write
 
-build: deps typecheck
+build: deps
 	deno run $(deno_allows) build_config/build.ts build
 
 watch: deps

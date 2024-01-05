@@ -14,7 +14,7 @@ import { assertArrayIncludes } from "https://deno.land/std@0.210.0/assert/assert
 import { normalizeAccidentals } from "./lib/string.ts";
 import { NaturalNumber } from "./lib/types.ts";
 
-const indexAbsolutePath = path.resolve("./index.html");
+const indexAbsolutePath = path.resolve("./build/index.html");
 const songFilePath = path.resolve("./leadsheets/chelsea_bridge.leadsheet");
 const screenshotsPath = Deno.realPathSync(".");
 

@@ -8,9 +8,14 @@ const denoFmtIgnore = "// deno-fmt-ignore-file\n";
 
 const options: BuildOptions = {
   bundle: true,
-  entryPoints: ["index.ts", "style/index.css"],
+  entryPoints: [
+    "index.html",
+    "index.ts",
+    "style/index.css",
+  ],
   loader: {
     ".eot": "file",
+    ".html": "copy",
     ".svg": "file",
     ".ttf": "file",
     ".woff": "file",
