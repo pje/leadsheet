@@ -19,71 +19,44 @@ jobs:
       - uses: denoland/setup-deno@v1.1.3
         with:
           deno-version: v1.x
-      - name: build
-        run: make build
-      - uses: actions/cache/save@v3
+      - id: restore-cache
+        uses: actions/cache/restore@v3
         with:
           path: |
             ~/.deno
             ~/.cache/deno
-            build
             node_modules
           key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}-deno-${{ hashFiles('deno.lock') }}
-      - name: fmt-check
+      - id: build
+        run: make build
+      - id: save-cache
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            ~/.deno
+            ~/.cache/deno
+            node_modules
+          key: ${{ steps.restore-cache.outputs.cache-primary-key }}
+      - id: fmt-check
         run: make fmt-check
       - name: lint
         run: make lint
-
-
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: denoland/setup-deno@v1.1.3
-        with:
-          deno-version: v1.x
-      - uses: actions/cache/restore@v3
-        with:
-          path: |
-            ~/.deno
-            ~/.cache/deno
-            build
-            node_modules
-          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}-deno-${{ hashFiles('deno.lock') }}
       - name: test
         run: make test
-
-  upload-pages-artifact:
-    needs: ["build", "test"]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: denoland/setup-deno@v1.1.3
-        with:
-          deno-version: v1.x
-      - uses: actions/cache/restore@v3
-        with:
-          path: |
-            build
-          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}-deno-${{ hashFiles('deno.lock') }}
+      - name: configure-pages
+        uses: actions/configure-pages@v4
       - name: upload-pages-artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: 'build'
 
   deploy:
-    needs: ["build", "test", "upload-pages-artifact"]
+    runs-on: ubuntu-latest
+    needs: build
     concurrency:
       group: "pages"
       cancel-in-progress: false
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
     steps:
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
