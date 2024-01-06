@@ -64,9 +64,24 @@ html {
     color: var(--color);
 
     #rainbow-banner {
-      height: 2px;
       display: flex;
       margin-block: 8px;
+
+      @media (max-width: 550px) {
+        height: 1px;
+      }
+
+      @media (min-width: 550px) and (max-width: 650px) {
+        height: 2px;
+      }
+
+      @media (min-width: 650px) and (max-width: 850px) {
+        height: 4px;
+      }
+
+      @media (min-width: 850px) {
+        height: 8px;
+      }
 
       & > * {
         height: 100%;
