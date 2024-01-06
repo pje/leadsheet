@@ -511,7 +511,10 @@ html {
         animation-duration: 1500ms;
         animation-fill-mode: both;
         animation-iteration-count: infinite;
-        animation-timing-function: linear;
+        animation-timing-function: steps(60, end);
+        /* quantize the animation to 60 steps (rather than "perfectly continuous"). looks the same to me, performance is 10x better */
+        will-change: transform;
+        /* hint to use GPU */
       }
     }
 
