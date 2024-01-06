@@ -1,4 +1,5 @@
 import { type TimeEventListener } from "../lib/midi/time_event_listener.ts";
+import { omit } from "../lib/object.ts";
 import { rehydrate as rehydrateSong, Song } from "../parser/song.ts";
 import { defaultFeatureFlags, type Settings } from "./settings.ts";
 
@@ -21,7 +22,8 @@ export const EmptyState: Readonly<State> = {
 };
 
 export function saveStateToLocalStorage(s: State) {
-  const marshalled = JSON.stringify(s);
+  const filtered = omit(s, "midiEventListener");
+  const marshalled = JSON.stringify(filtered);
   localStorage.setItem(LocalStorageStateKey, marshalled);
 }
 

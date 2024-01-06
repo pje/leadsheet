@@ -37,6 +37,9 @@ let state: State = EmptyState;
 export async function bootstrap() {
   state = getStateFromLocalStorage();
   state.midiEventListener ||= new TimeEventListener(onBarAdvanced);
+  if (state.settings.featureFlags.followMidiClockMessages.enabled) {
+    state.midiEventListener!.install();
+  }
 
   await renderSettings(state.settings, state.midiEventListener);
 
