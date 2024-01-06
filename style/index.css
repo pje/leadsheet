@@ -372,24 +372,12 @@ html {
       border-block-end: none;
       border-top: solid;
       border-top-width: 1px;
-
-      @media (prefers-color-scheme: light) {
-        border-color: #111;
-        background: repeating-linear-gradient(to top,
-            #151515,
-            #151515 1px,
-            transparent 0,
-            transparent 25%);
-      }
-
-      @media (prefers-color-scheme: dark) {
-        border-color: #fffdf3;
-        background: repeating-linear-gradient(to top,
-            #fffdf3,
-            #fffdf3 1px,
-            transparent 0,
-            transparent 25%);
-      }
+      border-color: var(--color);
+      background: repeating-linear-gradient(to top,
+          var(--color),
+          var(--color) 1px,
+          transparent 0,
+          transparent 25%);
 
       .frontmatter {
         display: flex;
@@ -506,15 +494,25 @@ html {
     }
 
     &.active {
-      .staff {
+      .staff::before {
+        content: '';
+        display: block;
+        position: absolute;
+        z-index: -1;
+        /* behind the parent */
+        width: 100%;
+        height: 100%;
+        border-radius: 1%;
+        background: #007cff80;
+        top: 0;
+        left: 0;
         animation-name: pulse;
         animation-duration: 1500ms;
         animation-fill-mode: both;
         animation-iteration-count: infinite;
-        animation-timing-function: steps(60, end);
-        /* quantize the animation to 60 steps (rather than "perfectly continuous"). looks the same to me, performance is 10x better */
-        will-change: transform;
-        /* hint to use GPU */
+        animation-timing-function: linear;
+        /* animation-timing-function: steps(60, end); */
+        /* quantize the animation to a discrete number of steps (rather than "perfectly continuous"). looks basically the same, performance is better */
       }
     }
 
@@ -745,10 +743,8 @@ footer {
 }
 
 @keyframes pulse {
-  0% {
-    box-shadow: #007cff80 0 0 0 0;
-  }
-  75% {
-    box-shadow: #ff69b400 0 0 0 16px;
+  to {
+    transform: scaleX(1.1) scaleY(1.4);
+    opacity: 0;
   }
 }
