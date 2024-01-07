@@ -43,7 +43,7 @@ Deno.test("index.html", async (t) => {
       assertEquals("Billy Strayhorn", await getArtist(page));
       assertEquals(0, await getTransposedAmount(page));
       assertEquals("Bbm", await getKey(page));
-      assertEquals("BbmM7", (await getChords(page))[1]);
+      assertEquals("BbmM7", (await getChords(page))[0]);
     });
 
     await t.step(`file upload`, async () => {
@@ -53,7 +53,7 @@ Deno.test("index.html", async (t) => {
       assertEquals("Billy Strayhorn", await getArtist(page));
       assertEquals(0, await getTransposedAmount(page));
       assertEquals("Bbm", await getKey(page));
-      assertEquals("BbmM7", (await getChords(page))[1]);
+      assertEquals("BbmM7", (await getChords(page))[0]);
 
       await screenshotOnSuccess(page);
     });
@@ -63,13 +63,13 @@ Deno.test("index.html", async (t) => {
 
       assertEquals(-1, await getTransposedAmount(page));
       assertEquals("Am", await getKey(page));
-      assertEquals("AmM7", (await getChords(page))[1]);
+      assertEquals("AmM7", (await getChords(page))[0]);
 
       await clickTransposeUp(page, 1);
 
       assertEquals(0, await getTransposedAmount(page));
       assertEquals("Bbm", await getKey(page));
-      assertEquals("BbmM7", (await getChords(page))[1]);
+      assertEquals("BbmM7", (await getChords(page))[0]);
     });
 
     await t.step(`settings: toggle features`, async () => {
@@ -90,13 +90,13 @@ Deno.test("index.html", async (t) => {
         await clickTransposeDown(page, 1);
         assertEquals(-1, await getTransposedAmount(page));
         assertEquals("Am", await getKey(page));
-        assertEquals("AmM7", (await getChords(page))[1]);
+        assertEquals("AmM7", (await getChords(page))[0]);
 
         await page.reload();
 
         assertEquals(-1, await getTransposedAmount(page));
         assertEquals("Am", await getKey(page));
-        assertEquals("AmM7", (await getChords(page))[1]);
+        assertEquals("AmM7", (await getChords(page))[0]);
       },
     );
   } catch (e) {

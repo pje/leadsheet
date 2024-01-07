@@ -478,8 +478,6 @@ year: 1941
 sig: 4/4
 key: Bbm
 
-| N.C. |
-
 A:
 |: BbmM7 | AbmM7 | BbmM7 AbmM7 | Bb7 |
 | Ebm9 | Ab13 | Db6 | % (C7) (B7) :|
