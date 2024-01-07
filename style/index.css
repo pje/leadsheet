@@ -510,10 +510,11 @@ header {
 
         .time-signature {
           position: relative;
-          top: -12cqh;
+          top: 0;
           margin-inline-start: 18cqh;
-          font-size: 71cqh;
-          line-height: 51cqh;
+          font-family: "Times New Roman";
+          font-size: 70cqh;
+          line-height: 50cqh;
           font-weight: bold;
         }
       }
