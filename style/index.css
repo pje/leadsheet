@@ -35,19 +35,40 @@
   --staff-line-height: 14px;
   --staff-height: calc(var(--staff-line-height) * 4);
 
-  @media (max-width: 650px) {
+  /* from tailwind.css: */
+  /*
+  --sm: 640px;
+  // => @media (min-width: 640px) { ... }
+
+  --md: 768px;
+  // => @media (min-width: 768px) { ... }
+
+  --lg: 1024px;
+  // => @media (min-width: 1024px) { ... }
+
+  --xl: 1280px;
+  // => @media (min-width: 1280px) { ... }
+
+  --2xl: 1536px;
+  // => @media (min-width: 1536px) { ... }
+  */
+
+  @media (width <1024px) {
     --num-cols: 2;
 
     .bar {
       &:nth-child(2n-1) {
         .staff {
           border-inline-start-style: solid;
+          border-inline-width: 1.5px;
         }
       }
     }
   }
 
-  --num-cols: 4;
+  @media (1024px <=width) {
+    --num-cols: 4;
+  }
 }
 
 html {
@@ -67,19 +88,23 @@ html {
       display: flex;
       margin-block: 8px;
 
-      @media (max-width: 550px) {
+      @media (width <=640px) {
         height: 1px;
       }
 
-      @media (min-width: 550px) and (max-width: 650px) {
+      @media (width >=640px) and (width < 768px) {
         height: 2px;
       }
 
-      @media (min-width: 650px) and (max-width: 850px) {
+      @media (width >=768px) and (width < 1024px) {
         height: 4px;
       }
 
-      @media (min-width: 850px) {
+      @media (width >=1024px) and (width < 1280px) {
+        height: 6px;
+      }
+
+      @media (width >=1280px) {
         height: 8px;
       }
 
@@ -140,9 +165,24 @@ html {
     }
 
     button.transpose {
+      /* stylelint-disable-next-line property-no-vendor-prefix */
+      /* -webkit-appearance: none; */
       width: 24px;
       font-size: 12px;
     }
+  }
+}
+
+header {
+  display: flex;
+  align-items: center;
+
+  @media (width <1024px) {
+    flex-direction: row-reverse;
+  }
+
+  @media (1024px<=width) {
+    flex-direction: column;
   }
 }
 
@@ -151,15 +191,15 @@ html {
   text-align: center;
 }
 
+/* browser default file inputs are so weird we gotta hide em and roll our own */
+#songfile {
+  display: none;
+}
+
 #toolbar {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-
-  /* browser default file inputs are so weird we gotta hide em and roll our own */
-  input#songfile {
-    display: none;
-  }
 
   &:has(details[open]) {
     /* @media (prefers-color-scheme: light) {
@@ -236,11 +276,20 @@ html {
   cursor: default;
 
   summary {
-    height: 16px;
+    display: flex;
+    height: 32px;
+    width: 32px;
     cursor: pointer;
+    background-image: url('./gear.svg');
+    background-repeat: no-repeat;
+    background-size: contain;
 
+    /* ::markers aren't stylable enough sadly */
     &::marker {
-      content: url('./gear.svg');
+      display: none;
+    }
+    &::-webkit-details-marker {
+      display: none;
     }
 
     @media (prefers-color-scheme: dark) {
@@ -266,75 +315,91 @@ html {
   align-items: center;
   margin-block: 20px;
 
-  .title {
-    font-size: min(2.5rem, 7vw)
-  }
-
-  .album {
-    font-style: italic;
-  }
-
-  .artist {
-    font-size: 1.5rem;
-  }
-
-  .date, .artist, .album {
-    font-weight: 400;
-
-    &:empty {
-      display: none;
-    }
-  }
-
-  .artist:not(:empty) {
-    &::before {
-      content: url('./pen.svg');
-      position: absolute;
-      width: 6%;
-      left: -8%;
+  .title-and-byline {
+    .title {
+      font-size: min(2.5rem, 7vw)
     }
 
-    @media (prefers-color-scheme: dark) {
-      &::before {
-        filter: invert(100%);
-        /* just to invert the icon */
+    .byline {
+      display: flex;
+      flex-direction: row;
+      position: relative;
+      /* only needed so the .artist ::before selector can have a % dimension */
+
+      @media (width < 1024px) {
+        font-size: 1.1rem;
+      }
+
+      @media (1024px < width) {
+        font-size: 1.5rem;
+      }
+
+      .album {
+        font-style: italic;
+      }
+
+      .date, .artist, .album {
+        font-weight: 400;
+
+        &:empty {
+          display: none;
+        }
+      }
+
+      & .album:not(:empty) {
+        margin-inline-start: 5px;
+
+        @media (width <=768px) {
+          display: none;
+        }
+      }
+
+      & .date:not(:empty) {
+        margin-inline-start: 5px;
+
+        &::before {
+          content: "(";
+        }
+        &::after {
+          content: ")";
+        }
+      }
+
+      .artist:not(:empty) {
+        @media (1024px < width) {
+          &::before {
+            content: url('./pen.svg');
+            position: absolute;
+            width: 6%;
+            left: -8%;
+          }
+        }
+
+        @media (prefers-color-scheme: dark) {
+          &::before {
+            filter: invert(100%);
+            /* just to invert the icon */
+          }
+        }
+
+        @media (768px < width) {
+          &:has(+ .album:not(:empty)) {
+            &::after {
+              content: " —";
+            }
+          }
+        }
       }
     }
-
-    &:has(+ .album:not(:empty)) {
-      &::after {
-        content: " —";
-      }
-    }
   }
 
-  .byline {
-    display: flex;
+  @media (width <=1024px) {
     flex-direction: row;
-    position: relative;
-    /* only needed so the .artist ::before selector can have a % dimension */
-
-    font-size: 1.4rem;
-
-    & .album:not(:empty) {
-      margin-inline-start: 5px;
-    }
-
-    & .date:not(:empty) {
-      margin-inline-start: 5px;
-
-      &::before {
-        content: "(";
-      }
-      &::after {
-        content: ")";
-      }
-    }
-  }
-
-  @media (max-width: 850px) {
-    flex-direction: row;
-    justify-content: center;
+    justify-content: space-between;
+    width: fill-available;
+    /* stylelint-disable-next-line value-no-vendor-prefix */
+    width: -webkit-fill-available;
+    width: -moz-fill-available;
 
     .byline {
       display: none;
@@ -352,9 +417,12 @@ html {
     /* container-type: size; */
     /* container-name: bar; */
 
-    &:nth-child(4n-3) {
-      .staff {
-        border-inline-start-style: solid;
+    @media (1024px<width) {
+      &:nth-child(4n-3) {
+        .staff {
+          border-inline-start-style: solid;
+          border-inline-width: 1.5px;
+        }
       }
     }
 
@@ -546,14 +614,14 @@ html {
       justify-content: space-evenly;
 
       .chord {
-        --fullsize: clamp(24px, 9.25cqw, 11rem);
+        --fullsize: clamp(32px, 9.25cqw, 11rem);
         --shrink-factor: 0;
 
         display: inline-flex;
         flex-direction: row;
         white-space: nowrap;
         /* this prevents long chord names from breaking into multiple lines */
-        font-size: clamp(24px, var(--fullsize), 11rem);
+        font-size: clamp(32px, var(--fullsize), 11rem);
         align-items: flex-end;
 
         .unicode-flat, .unicode-sharp {
@@ -627,7 +695,7 @@ html {
         }
 
         &.large {
-          --shrink-factor: 0.125;
+          --shrink-factor: 0.2;
 
           /* &.sibling-count-1 {
             font-size: calc(var(--fullsize) - calc(var(--fullsize) * calc(var(--shrink-factor) * 0)));

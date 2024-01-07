@@ -7,7 +7,7 @@
     "custom-property-empty-line-before": null,
     "declaration-block-no-redundant-longhand-properties": null,
     "font-family-no-missing-generic-family-keyword": null,
-    "media-feature-range-notation": "prefix",
+    "media-feature-range-notation": "context",
     "rule-empty-line-before": null
   }
 }

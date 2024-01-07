@@ -8,37 +8,41 @@
   </head>
 
   <body id="root">
-    <div id="toolbar">
-      <div id="songfile-input-container" hidden="until-found">
-        <button id="songfile-input">
-          <span id="choose-file">Choose File</span>
-          <input
-            type="file"
-            accept=".leadsheet,.txt,text/plain"
-            id="songfile"
-            name="songfile"
-          />
-        </button>
-        <code id="filename"></code>
-      </div>
-      <details id="settings" alt="Settings">
-        <summary></summary>
-      </details>
-    </div>
-    <header id="metadata">
-      <h1 class="title"></h1>
-      <div class="byline">
-        <div class="artist"></div>
-        <div class="album"></div>
-        <div class="date"></div>
-      </div>
-      <div class="key-selector">
-        <h2 class="key"></h2>
-        <div class="transpose-buttons">
-          <button id="transpose-up" class="transpose">↑</button>
-          <button id="transpose-down" class="transpose">↓</button>
+    <header>
+      <div id="toolbar">
+        <div id="songfile-input-container" hidden="until-found">
+          <button id="songfile-input">
+            <span id="choose-file">Choose File</span>
+            <input
+              type="file"
+              accept=".leadsheet,.txt,text/plain"
+              id="songfile"
+              name="songfile"
+            />
+          </button>
+          <code id="filename"></code>
         </div>
-        <output id="transposed-steps" class="hidden">0</output>
+        <details id="settings" alt="Settings">
+          <summary></summary>
+        </details>
+      </div>
+      <div id="metadata">
+        <div class="title-and-byline">
+          <h1 class="title"></h1>
+          <div class="byline">
+            <div class="artist"></div>
+            <div class="album"></div>
+            <div class="date"></div>
+          </div>
+        </div>
+        <div class="key-selector">
+          <h2 class="key"></h2>
+          <div class="transpose-buttons">
+            <button id="transpose-up" class="transpose">↑</button>
+            <button id="transpose-down" class="transpose">↓</button>
+          </div>
+          <output id="transposed-steps" class="hidden">0</output>
+        </div>
       </div>
     </header>
     <main id="song"></main>
