@@ -112,19 +112,19 @@ async function teardown(browser: Browser) {
 }
 
 async function getTitle(page: Page) {
-  const titleSelector = await page.waitForSelector("#metadata .title");
+  const titleSelector = await page.waitForSelector("#title");
   const title: string = await titleSelector!.evaluate((e) => e!.textContent);
   return title;
 }
 
 async function getArtist(page: Page) {
-  const artistSelector = await page.waitForSelector("#metadata .artist");
+  const artistSelector = await page.waitForSelector("#artist");
   const artist: string = await artistSelector!.evaluate((e) => e!.textContent);
   return artist;
 }
 
 async function getKey(page: Page) {
-  const keySelector = await page.waitForSelector("#metadata .key");
+  const keySelector = await page.waitForSelector("#key");
   const key: string = await keySelector!.evaluate((e) => e!.textContent);
   return key;
 }

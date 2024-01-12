@@ -16,7 +16,7 @@ const options: BuildOptions = {
   loader: {
     ".eot": "file",
     ".html": "copy",
-    ".svg": "file",
+    ".svg": "dataurl",
     ".ttf": "file",
     ".woff": "file",
     ".woff2": "file",

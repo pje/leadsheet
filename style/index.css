@@ -16,7 +16,7 @@
 
   @media (prefers-color-scheme: light) {
     --background-color: oklch(99% 0 0deg);
-    --code-background: oklch(96% 0 0deg);
+    --code-background: oklch(95% 0 0deg);
     --code-color: oklch(18% 0 0deg);
     --color: oklch(18% 0 0deg);
   }
@@ -31,8 +31,7 @@
     --color: oklch(99% 0 0deg);
   }
 
-  --two-column-breakpoint: 575px;
-  --staff-line-height: 14px;
+  --staff-line-height: 20px;
   --staff-height: calc(var(--staff-line-height) * 4);
 
   /* from tailwind.css: */
@@ -53,7 +52,7 @@
   // => @media (min-width: 1536px) { ... }
   */
 
-  @media (width <1024px) {
+  @media (width <=1024px) {
     --num-cols: 2;
 
     .bar {
@@ -66,7 +65,7 @@
     }
   }
 
-  @media (1024px <=width) {
+  @media (1024px < width) {
     --num-cols: 4;
   }
 }
@@ -84,104 +83,182 @@ html {
     background-color: var(--background-color);
     color: var(--color);
 
-    #rainbow-banner {
-      display: flex;
-      margin-block: 8px;
-
-      @media (width <=640px) {
-        height: 1px;
-      }
-
-      @media (width >=640px) and (width < 768px) {
-        height: 2px;
-      }
-
-      @media (width >=768px) and (width < 1024px) {
-        height: 4px;
-      }
-
-      @media (width >=1024px) and (width < 1280px) {
-        height: 6px;
-      }
-
-      @media (width >=1280px) {
-        height: 8px;
-      }
-
-      & > * {
-        height: 100%;
-
-        &.aug {
-          background-color: var(--bright-ylw);
-        }
-        &.dim {
-          background-color: var(--bright-prp);
-        }
-        &.dom {
-          background-color: var(--bright-red);
-        }
-        &.maj {
-          background-color: var(--bright-grn);
-        }
-        &.min {
-          background-color: var(--bright-blu);
-        }
-        &.no-chord {
-          background-color: var(--color);
-        }
-        &.pow {
-          background-color: var(--light-gray);
-        }
-        &.sus {
-          background-color: var(--bright-org);
-        }
-      }
-    }
-
     h1, h2, h3, h4, h5 {
       margin: unset;
     }
+  }
+}
 
-    .date:empty, .artist:empty {
+#rainbow-banner {
+  display: flex;
+  margin-block: 8px;
+
+  @media (width <=640px) {
+    height: 1px;
+  }
+
+  @media (640px < width) and (width <=768px) {
+    height: 2px;
+  }
+
+  @media (768px < width) and (width <=1024px) {
+    height: 4px;
+  }
+
+  @media (1024px < width) and (width <=1280px) {
+    height: 6px;
+  }
+
+  @media (1280px < width) {
+    height: 8px;
+  }
+
+  & > * {
+    height: 100%;
+
+    &.aug {
+      background-color: var(--bright-ylw);
+    }
+    &.dim {
+      background-color: var(--bright-prp);
+    }
+    &.dom {
+      background-color: var(--bright-red);
+    }
+    &.maj {
+      background-color: var(--bright-grn);
+    }
+    &.min {
+      background-color: var(--bright-blu);
+    }
+    &.no-chord {
+      background-color: var(--color);
+    }
+    &.pow {
+      background-color: var(--light-gray);
+    }
+    &.sus {
+      background-color: var(--bright-org);
+    }
+  }
+}
+
+#key-selector {
+  display: flex;
+  font-size: calc(var(--staff-height) * 0.75);
+  align-items: center;
+
+  @media (width <=1024px) {
+    justify-content: flex-end;
+  }
+
+  @media (1024px < width) {
+    justify-content: center;
+  }
+}
+
+#transpose-buttons {
+  display: flex;
+
+  @media (width <=1024px) {
+    flex-direction: row-reverse;
+  }
+
+  @media (1024px < width) {
+    flex-direction: column;
+    margin-inline-start: 4px;
+  }
+}
+
+#transpose-up, #transpose-down {
+  background-color: var(--code-background);
+  border: solid;
+  border-radius: 3px;
+  border-width: 1px;
+  border-color: oklch(50% 0 0deg);
+  color: var(--color);
+  cursor: pointer;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  flex-direction: column;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  padding: unset;
+  /* fix for safari */
+
+  @media (width <=1024px) {
+    height: 64px;
+    width: 64px;
+    font-size: 43px;
+  }
+
+  @media (1024px < width) {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+
+  &:hover {
+    @media (prefers-color-scheme: light) {
+      filter: brightness(95%);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      filter: brightness(105%);
+    }
+  }
+
+  .small {
+    font-family: "Noto Music";
+
+    @media (1024px < width) {
       display: none;
     }
+  }
 
-    .key-selector {
-      display: flex;
-      min-width: 100px;
-      align-items: center;
-      justify-content: flex-end;
+  .large {
+    font-family: system-ui;
+    position: relative;
+    top: 15%;
 
-      .transpose-buttons {
-        display: flex;
-        flex-direction: column;
-        margin-inline-start: 4px;
-      }
-
-      .key {
-        text-align: right;
-        min-width: 80px;
-      }
+    @media (width <=1024px) {
+      display: none;
     }
+  }
+}
 
-    button.transpose {
-      /* stylelint-disable-next-line property-no-vendor-prefix */
-      /* -webkit-appearance: none; */
-      width: 24px;
-      font-size: 12px;
-    }
+#transpose-up .small {
+  position: relative;
+  top: -33%;
+}
+
+#transpose-down .small {
+  position: relative;
+  top: -25%;
+}
+
+#key {
+  font-style: italic;
+  text-align: right;
+  min-width: 80px;
+
+  @media (width <=1024px) {
+    display: none;
   }
 }
 
 header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
+  container-name: header;
+  container-type: inline-size;
 
-  @media (width <1024px) {
+  @media (width <=1024px) {
     flex-direction: row-reverse;
   }
 
-  @media (1024px<=width) {
+  @media (1024px < width) {
     flex-direction: column;
   }
 }
@@ -189,6 +266,10 @@ header {
 #transposed-steps {
   min-width: 25px;
   text-align: center;
+
+  @media (width <=1024px) {
+    display: none;
+  }
 }
 
 /* browser default file inputs are so weird we gotta hide em and roll our own */
@@ -200,6 +281,10 @@ header {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+
+  @media (1024px < width) {
+    align-self: flex-end;
+  }
 
   &:has(details[open]) {
     /* @media (prefers-color-scheme: light) {
@@ -234,49 +319,49 @@ header {
       flex-direction: column;
     }
   }
+}
 
-  #songfile-input-container {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    min-width: fit-content;
-    height: fit-content;
+#songfile-input-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-width: fit-content;
+  height: fit-content;
 
-    &:is([hidden]) {
-      display: none;
-    }
+  &:is([hidden]) {
+    display: none;
+  }
+}
 
-    button#songfile-input {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-block: 3px;
-      padding-inline-start: 4px;
-      padding-inline-end: 7px;
-      gap: 6px;
+#songfile-input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 3px;
+  padding-inline-start: 4px;
+  padding-inline-end: 7px;
+  gap: 6px;
 
-      .icon {
-        height: 16px;
-      }
-    }
+  .icon {
+    height: 16px;
+  }
+}
 
-    #choose-file {
-      min-width: fit-content;
-    }
+#choose-file {
+  min-width: fit-content;
+}
 
-    #filename {
-      background-color: var(--code-background);
-      border-radius: 0.25rem;
-      color: var(--code-color);
-      font-size: 0.65rem;
-      font-style: italic;
-      padding-inline: 4px;
-      padding-block: 2px;
+#filename {
+  background-color: var(--code-background);
+  border-radius: 0.25rem;
+  color: var(--code-color);
+  font-size: 0.65rem;
+  font-style: italic;
+  padding-inline: 4px;
+  padding-block: 2px;
 
-      &:not(:empty)::before {
-        content: "✍️ ";
-      }
-    }
+  &:not(:empty)::before {
+    content: "✍️ ";
   }
 }
 
@@ -285,12 +370,19 @@ header {
 
   summary {
     display: flex;
-    height: 32px;
-    width: 32px;
+    justify-content: center;
+    background-color: var(--code-background);
     cursor: pointer;
-    background-image: url('./gear.svg');
+    /* background-image: url('./ellipsis-circle.svg');
     background-repeat: no-repeat;
     background-size: contain;
+    @media (prefers-color-scheme: dark) {
+      filter: invert(100%);
+    } */
+    border: solid;
+    border-radius: 3px;
+    border-width: 1px;
+    border-color: oklch(50% 0 0deg);
 
     /* ::markers aren't stylable enough sadly */
     &::marker {
@@ -300,9 +392,38 @@ header {
       display: none;
     }
 
-    @media (prefers-color-scheme: dark) {
-      filter: invert(100%);
-      /* just to invert the icon */
+    @media (width <=1024px) {
+      height: 64px;
+      width: 64px;
+    }
+
+    @media (1024px < width) {
+      height: 32px;
+      width: 32px;
+    }
+
+    &:hover {
+      @media (prefers-color-scheme: light) {
+        filter: brightness(95%);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        filter: brightness(105%);
+      }
+    }
+
+    .ellipsis {
+      position: relative;
+
+      @media (width <=1024px) {
+        top: -46%;
+        font-size: 450%;
+      }
+
+      @media (1024px < width) {
+        top: -10px;
+        font-size: 31px;
+      }
     }
   }
 
@@ -312,105 +433,125 @@ header {
 }
 
 #settings[open] {
-  display: flex;
   text-align: end;
+
+  summary {
+    transform: rotate(90deg);
+  }
 }
 
 #metadata {
   display: flex;
-  gap: 10px;
+  justify-content: space-between;
+
+  @media (width <=1024px) {
+    gap: 5cqw;
+  }
+
+  @media (1024px < width) {
+    flex-direction: column;
+  }
+}
+
+#title-and-byline {
+  display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: 10px;
   margin-block: 20px;
 
-  .title-and-byline {
-    .title {
-      font-size: min(2.5rem, 7vw)
-    }
-
-    .byline {
-      display: flex;
-      flex-direction: row;
-      position: relative;
-      /* only needed so the .artist ::before selector can have a % dimension */
-
-      @media (width < 1024px) {
-        font-size: 1.1rem;
-      }
-
-      @media (1024px < width) {
-        font-size: 1.5rem;
-      }
-
-      .album {
-        font-style: italic;
-      }
-
-      .date, .artist, .album {
-        font-weight: 400;
-
-        &:empty {
-          display: none;
-        }
-      }
-
-      & .album:not(:empty) {
-        margin-inline-start: 5px;
-
-        @media (width <=768px) {
-          display: none;
-        }
-      }
-
-      & .date:not(:empty) {
-        margin-inline-start: 5px;
-
-        &::before {
-          content: "(";
-        }
-        &::after {
-          content: ")";
-        }
-      }
-
-      .artist:not(:empty) {
-        @media (1024px < width) {
-          &::before {
-            content: url('./pen.svg');
-            position: absolute;
-            width: 6%;
-            left: -8%;
-          }
-        }
-
-        @media (prefers-color-scheme: dark) {
-          &::before {
-            filter: invert(100%);
-            /* just to invert the icon */
-          }
-        }
-
-        @media (768px < width) {
-          &:has(+ .album:not(:empty)) {
-            &::after {
-              content: " —";
-            }
-          }
-        }
-      }
+  @media (width <=640px) {
+    #byline {
+      display: none;
     }
   }
 
   @media (width <=1024px) {
-    flex-direction: row;
+    align-items: flex-start;
     justify-content: space-between;
     width: fill-available;
     /* stylelint-disable-next-line value-no-vendor-prefix */
     width: -webkit-fill-available;
     width: -moz-fill-available;
+  }
 
-    .byline {
-      display: none;
+  @media (1024px < width) {
+    align-items: center;
+    text-align: center;
+  }
+}
+
+#title {
+  font-size: min(calc(var(--staff-height) * 0.75), 7vw);
+}
+
+#byline {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  /* only needed so the #artist ::before selector can have a % dimension */
+
+  @media (width < 1024px) {
+    font-size: 1.1rem;
+  }
+
+  @media (1024px < width) {
+    font-size: 1.5rem;
+  }
+}
+
+#album {
+  font-style: italic;
+}
+
+#date, #artist, #album {
+  font-weight: 400;
+
+  &:empty {
+    display: none;
+  }
+}
+
+#album:not(:empty) {
+  margin-inline-start: 5px;
+
+  @media (width <=768px) {
+    display: none;
+  }
+}
+
+#date:not(:empty) {
+  margin-inline-start: 5px;
+
+  &::before {
+    content: "(";
+  }
+  &::after {
+    content: ")";
+  }
+}
+
+#artist:not(:empty) {
+  @media (1024px < width) {
+    &::before {
+      content: url('./pen.svg');
+      position: absolute;
+      width: 6%;
+      left: -8%;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    &::before {
+      filter: invert(100%);
+      /* just to invert the icon */
+    }
+  }
+
+  @media (768px < width) {
+    &:has(+ #album:not(:empty)) {
+      &::after {
+        content: " —";
+      }
     }
   }
 }
@@ -419,13 +560,13 @@ header {
   display: grid;
   grid-template-columns: repeat(var(--num-cols), 1fr);
   align-items: end;
-  row-gap: calc(var(--staff-height) * 0.5);
+  row-gap: calc(var(--staff-height) * 0.4);
 
   .bar {
     /* container-type: size; */
     /* container-name: bar; */
 
-    @media (1024px<width) {
+    @media (1024px < width) {
       &:nth-child(4n-3) {
         .staff {
           border-inline-start-style: solid;
@@ -455,18 +596,18 @@ header {
           transparent 0,
           transparent 25%);
 
-      .frontmatter {
+      #frontmatter {
         display: flex;
         margin-inline-end: 10cqh;
         font-family: "Noto Music";
 
-        .clef {
+        #treble-clef {
           position: relative;
           top: -31cqh;
           font-size: 96cqh;
         }
 
-        .key-signature {
+        #key-signature {
           display: flex;
           letter-spacing: -4cqh;
 
@@ -508,7 +649,7 @@ header {
           }
         }
 
-        .time-signature {
+        #time-signature {
           position: relative;
           top: 0;
           margin-inline-start: 18cqh;
@@ -533,8 +674,8 @@ header {
         font-size: 100cqh;
         &::after {
           position: relative;
-          top: -40cqh;
-          right: -6cqh;
+          top: -39.8cqh;
+          right: -4.9cqh;
           content: "𝄁";
         }
       }
@@ -543,8 +684,8 @@ header {
         font-size: 100cqh;
         &::after {
           position: relative;
-          top: -40cqh;
-          right: -6cqh;
+          top: -39.8cqh;
+          right: -4.9cqh;
           content: "𝄂";
         }
       }
@@ -553,8 +694,8 @@ header {
         font-size: 100cqh;
         &::after {
           position: relative;
-          top: -40cqh;
-          right: -6cqh;
+          top: -39.8cqh;
+          right: -4.9cqh;
           content: "𝄇";
         }
       }
@@ -563,7 +704,7 @@ header {
         font-size: 100cqh;
         &::after {
           position: relative;
-          top: -40cqh;
+          top: -39.8cqh;
           left: -6cqh;
           content: "𝄆";
         }
@@ -599,10 +740,11 @@ header {
       display: inline-block;
       width: fit-content;
       padding-inline: 0.5rem;
-      font-size: 1.5rem;
+      font-size: calc(var(--staff-height) * 0.4);
       font-style: italic;
       border-style: solid;
       border-width: 1px;
+      border-radius: 2px;
 
       @media (prefers-color-scheme: light) {
         border-color: #111;
@@ -616,14 +758,14 @@ header {
     .chords {
       container-name: chords;
       container-type: size;
-      height: calc(var(--staff-height) * 0.5);
+      height: calc(var(--staff-height) * 0.75);
       display: flex;
       flex-direction: row;
       align-items: flex-end;
       justify-content: space-evenly;
 
       .chord {
-        --fullsize: clamp(32px, 9.25cqw, 11rem);
+        --fullsize: var(--staff-height) * 0.65;
         --shrink-factor: 0;
 
         display: inline-flex;
@@ -704,7 +846,7 @@ header {
         }
 
         &.large {
-          --shrink-factor: 0.2;
+          --shrink-factor: 0.275;
 
           /* &.sibling-count-1 {
             font-size: calc(var(--fullsize) - calc(var(--fullsize) * calc(var(--shrink-factor) * 0)));
@@ -788,16 +930,16 @@ header {
     }
 
     /* bump up the chords in the first bar out of the way of the key signature */
-    .chords:nth-child(1):has(~ .staff .key-signature .e.flat) {
+    .chords:nth-child(1):has(~ .staff #key-signature .e.flat) {
       margin-bottom: 12px;
     }
-    .chords:nth-child(1):has(~ .staff .key-signature .d.flat) {
+    .chords:nth-child(1):has(~ .staff #key-signature .d.flat) {
       margin-bottom: 10px;
     }
-    .chords:nth-child(1):has(~ .staff .key-signature .f.sharp) {
+    .chords:nth-child(1):has(~ .staff #key-signature .f.sharp) {
       margin-bottom: 15px;
     }
-    .chords:nth-child(1):has(~ .staff .key-signature .g.sharp) {
+    .chords:nth-child(1):has(~ .staff #key-signature .g.sharp) {
       margin-bottom: 22px;
     }
   }
@@ -808,11 +950,6 @@ footer {
   align-items: center;
   justify-content: center;
   padding-top: 5rem;
-
-  #fine {
-    font-family: "Noto Music";
-    font-size: 3rem;
-  }
 }
 
 .hidden {

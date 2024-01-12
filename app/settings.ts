@@ -62,7 +62,7 @@ export async function render(
   midiEventListener?: TimeEventListener,
   rootElement: HTMLElement = document.getElementById("root")!,
 ) {
-  const settingsElement = rootElement.querySelector("#settings")!;
+  const settingsElement = rootElement.querySelector("#settings-features")!;
   settingsElement.innerHTML = "";
 
   const inputs = Object.entries(settings.featureFlags).map(
@@ -94,6 +94,5 @@ export async function render(
 
   const html = inputs.join("\n");
 
-  settingsElement.insertAdjacentHTML("beforeend", "<summary></summary>");
   settingsElement.insertAdjacentHTML("beforeend", html);
 }

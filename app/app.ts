@@ -247,17 +247,17 @@ function renderClefAndSignatures(
       return `<span class="${classes.join(" ")}">${symbol}</span>`;
     };
     const accidentalElements = accidentals.map(accidentalToElement);
-    keySignatureEl = `<div class="key-signature">
+    keySignatureEl = `<div id="key-signature">
   ${accidentalElements.join("\n")}
 </div>`;
   }
 
   const clef = "𝄞";
 
-  const frontmatter = `<div class="frontmatter">
-  <div class="clef treble">${clef}</div>
+  const frontmatter = `<div id="frontmatter">
+  <div id="treble-clef">${clef}</div>
   ${keySignatureEl}
-  <div class="time-signature">
+  <div id="time-signature">
     <div class="numerator">${numerator}</div>
     <div class="slash" hidden>/</div>
     <div class="denominator">${denominator}</div>
@@ -278,21 +278,19 @@ function renderMetadata(
   song: Readonly<Song>,
   rootElement: HTMLElement = document.getElementById("root")!,
 ) {
-  const metadataElement = rootElement.querySelector("#metadata")!;
-
   const formattedSongKey = song.key && song.key
     ? _formatKeyName(song.key)
     : "?";
 
-  metadataElement.querySelector(".title")!.textContent = song.title || "";
-  metadataElement.querySelector(".key")!.textContent = "";
-  metadataElement.querySelector(".key")!.insertAdjacentHTML(
+  rootElement.querySelector("#title")!.textContent = song.title || "";
+  rootElement.querySelector("#key")!.textContent = "";
+  rootElement.querySelector("#key")!.insertAdjacentHTML(
     "afterbegin",
     formattedSongKey,
   );
-  metadataElement.querySelector(".artist")!.textContent = song.artist || "";
-  metadataElement.querySelector(".album")!.textContent = song.album || "";
-  metadataElement.querySelector(".date")!.textContent = song.year || "";
+  rootElement.querySelector("#artist")!.textContent = song.artist || "";
+  rootElement.querySelector("#album")!.textContent = song.album || "";
+  rootElement.querySelector("#date")!.textContent = song.year || "";
 
   if (state.settings.featureFlags.rainbowRoad.enabled) {
     paintRainbowBanner(song);
