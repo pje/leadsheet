@@ -12,10 +12,12 @@ const options: BuildOptions = {
     "index.html",
     "index.ts",
     "style/index.css",
+    "app.png",
   ],
   loader: {
     ".eot": "file",
     ".html": "copy",
+    ".png": "copy",
     ".svg": "dataurl",
     ".ttf": "file",
     ".woff": "file",
