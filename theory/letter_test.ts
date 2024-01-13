@@ -1,4 +1,4 @@
-import { assertArrayIncludes } from "https://deno.land/std@0.210.0/assert/assert_array_includes.ts";
+import { assertArrayIncludes } from "https://deno.land/std@0.212.0/assert/assert_array_includes.ts";
 import {
   type Letter,
   LettersForPitchClass,

@@ -4,7 +4,7 @@ import {
   assertSpyCalls,
   spy,
   stub,
-} from "https://deno.land/std@0.210.0/testing/mock.ts";
+} from "https://deno.land/std@0.212.0/testing/mock.ts";
 
 type OnMIDIMessage = (
   this: MIDIInput,

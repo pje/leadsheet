@@ -1,5 +1,5 @@
 import { type FlatOrSharpSymbol, SharpSymbol } from "./notation.ts";
-import { assertNotEquals } from "https://deno.land/std@0.210.0/assert/assert_not_equals.ts";
+import { assertNotEquals } from "https://deno.land/std@0.212.0/assert/assert_not_equals.ts";
 import { assertEquals } from "../test_utils.ts";
 import {
   canonicalize,

@@ -1,18 +1,19 @@
 /// <reference lib="deno.ns" />
 
-import * as log from "https://deno.land/std@0.210.0/log/mod.ts";
-import { assertEquals } from "https://deno.land/std@0.210.0/assert/assert_equals.ts";
+import * as log from "https://deno.land/std@0.212.0/log/mod.ts";
+import { assertEquals } from "https://deno.land/std@0.212.0/assert/assert_equals.ts";
 import { time } from "https://deno.land/x/time.ts@v2.0.1/mod.ts";
 import puppeteer, {
   Browser,
   ElementHandle,
   Page,
 } from "https://deno.land/x/puppeteer@16.2.0/mod.ts";
-import * as path from "https://deno.land/std@0.210.0/path/mod.ts";
+import * as path from "https://deno.land/std@0.212.0/path/mod.ts";
 import { colorChords, FeatureFlagKeysType } from "./app/settings.ts";
-import { assertArrayIncludes } from "https://deno.land/std@0.210.0/assert/assert_array_includes.ts";
+import { assertArrayIncludes } from "https://deno.land/std@0.212.0/assert/assert_array_includes.ts";
 import { normalizeAccidentals } from "./lib/string.ts";
 import { NaturalNumber } from "./lib/types.ts";
+import { compact } from "./lib/array.ts";
 
 const indexAbsolutePath = path.resolve("./build/index.html");
 const songFilePath = path.resolve("./leadsheets/chelsea_bridge.leadsheet");
@@ -113,35 +114,42 @@ async function teardown(browser: Browser) {
 
 async function getTitle(page: Page) {
   const titleSelector = await page.waitForSelector("#title");
-  const title: string = await titleSelector!.evaluate((e) => e!.textContent);
+  const title = await titleSelector!.evaluate((e) => e!.textContent);
+  if (!title) throw "textContent was nullish";
   return title;
 }
 
 async function getArtist(page: Page) {
   const artistSelector = await page.waitForSelector("#artist");
-  const artist: string = await artistSelector!.evaluate((e) => e!.textContent);
+  const artist = await artistSelector!.evaluate((e) => e!.textContent);
+  if (!artist) throw "textContent was nullish";
   return artist;
 }
 
 async function getKey(page: Page) {
   const keySelector = await page.waitForSelector("#key");
-  const key: string = await keySelector!.evaluate((e) => e!.textContent);
+  const key = await keySelector!.evaluate((e) => e!.textContent);
+  if (!key) throw "textContent was nullish";
   return key;
 }
 
 async function getTransposedAmount(page: Page) {
   const outputSelector = await page.waitForSelector("#transposed-steps");
-  const amount: string = await outputSelector!.evaluate((e) => e!.textContent);
-  return parseInt(amount);
+  const amount = await outputSelector!.evaluate((e) => e!.textContent);
+  if (!amount) throw "textContent was nullish";
+  const parsed = parseInt(amount);
+  if (isNaN(parsed)) throw "textContent was NaN";
+  return parsed;
 }
 
 async function getChords(page: Page) {
-  const chords: Array<string> = await (await page.waitForSelector("#song"))!
-    .$$eval(
-      ".chord",
-      (es) => es.map((e) => e.textContent).filter(String),
-    );
-  return chords.map(normalizeAccidentals);
+  const chords: Array<string | null> =
+    await (await page.waitForSelector("#song"))!
+      .$$eval(
+        ".chord",
+        (es) => es.map((e) => e.textContent).filter(String),
+      );
+  return compact(chords).map(normalizeAccidentals);
 }
 
 async function clickTransposeUp(page: Page, times: NaturalNumber) {
@@ -165,7 +173,9 @@ async function _transposeRelativeByClick(page: Page, steps: number) {
 }
 
 async function loadFile(page: Page, filepath: string) {
-  const input = (await page.waitForSelector("#songfile"))!;
+  const input = <ElementHandle<
+    HTMLInputElement
+  >> (await page.waitForSelector("#songfile"))!;
   return await input.uploadFile(filepath);
 }
 

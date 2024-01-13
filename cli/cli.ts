@@ -1,5 +1,5 @@
 import { ParseSong } from "../parser/parser.ts";
-import * as path from "https://deno.land/std@0.210.0/path/mod.ts";
+import * as path from "https://deno.land/std@0.212.0/path/mod.ts";
 
 const __filename = path.fromFileUrl(import.meta.url);
 const __bin = __filename.endsWith(".ts")
