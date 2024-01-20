@@ -133,6 +133,7 @@ class ChordActions implements ChordActionDict<void> {
   ): [Quality, Alteration[]] => {
     const [triad, as]: [Triad, Array<Alteration>] = triadQN.eval!();
     const eqn: ExtendedQualityNode | undefined = maybeExtendedQN.child(0);
+    // deno-lint-ignore no-extra-non-null-assertion
     const extendedQ: SeventhPlusQuality | undefined = eqn?.eval!();
     const result = extendedQ
       ? {
@@ -161,6 +162,7 @@ class ChordActions implements ChordActionDict<void> {
   };
   explicitDomX = (_0: NNode, maybeExtentNode: INode): SeventhPlusQuality => {
     const extentNode = <ExtentNode | undefined> maybeExtentNode.child(0);
+    // deno-lint-ignore no-extra-non-null-assertion
     const extent = extentNode?.eval!();
     return { ...pick(Dom7, "seventh", "type"), extent: extent || 7 };
   };
@@ -170,6 +172,7 @@ class ChordActions implements ChordActionDict<void> {
   };
   hdimX = (_0: TNode, maybeExtentNode: INode) => {
     const extentNode = <ExtentNode | undefined> maybeExtentNode.child(0);
+    // deno-lint-ignore no-extra-non-null-assertion
     const extent = extentNode?.eval!();
     return extent ? { ...Min7Fl5, extent } : Min7Fl5;
   };
