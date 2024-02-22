@@ -5,15 +5,15 @@
   "dependencies": {
     "@fontsource/noto-music": "^5.0.18",
     "ohm-js": "^17.1.0",
-    "ts-pattern": "^5.0.1",
+    "ts-pattern": "^5.0.6",
     "tufte-css": "^1.8.0"
   },
   "devDependencies": {
     "@ohm-js/cli": "^2.0.0",
     "esbuild": "^0.20.0",
-    "puppeteer": "^21.6.1",
-    "skott": "^0.31.4",
+    "puppeteer": "^22.0.0",
+    "skott": "^0.32.1",
     "stylelint-config-standard": "^36.0.0",
-    "stylelint": "^16.1.0"
+    "stylelint": "^16.2.1"
   }
 }
