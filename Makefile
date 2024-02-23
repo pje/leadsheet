@@ -35,7 +35,7 @@ clean:
 
 deps:
 	npm install --save-exact --save-dev --prefix=.
-	PUPPETEER_PRODUCT=chrome deno run -A --unstable https://deno.land/x/puppeteer@16.2.0/install.ts
+	PUPPETEER_PRODUCT=chrome deno run -A https://deno.land/x/puppeteer@16.2.0/install.ts
 
 install_vscode_extension: uninstall_vscode_extension
 	cp -rv ./vscode_extension ~/.vscode/extensions/pje.leadsheet-0.0.1
