@@ -117,6 +117,7 @@ export class TimeEventListener {
   };
 
   private onMIDIMessage = (event: MIDIMessageEvent) => {
+    if (!event?.data) return;
     const m = event.data.reduce((memo, value) => memo + value.toString(2), "");
     const rawStatusByte = m.slice(0, 8);
     const messageType = MidiMessages.get(rawStatusByte);
