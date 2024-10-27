@@ -11,7 +11,7 @@
   "devDependencies": {
     "@ohm-js/cli": "^2.0.0",
     "esbuild": "^0.24.0",
-    "puppeteer": "^22.12.0",
+    "puppeteer": "^23.6.0",
     "skott": "^0.35.0",
     "stylelint-config-standard": "^36.0.1",
     "stylelint": "^16.6.1"
