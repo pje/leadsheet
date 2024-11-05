@@ -3,11 +3,7 @@
 import * as log from "@std/log";
 import * as path from "@std/path";
 import { assertArrayIncludes, assertEquals } from "@std/assert";
-import puppeteer, {
-  Browser,
-  ElementHandle,
-  Page,
-} from "https://deno.land/x/puppeteer@16.2.0/mod.ts";
+import puppeteer, { Browser, ElementHandle, Page } from "@x/puppeteer";
 import { colorChords, FeatureFlagKeysType } from "./app/settings.ts";
 import { normalizeAccidentals } from "./lib/string.ts";
 import { NaturalNumber } from "./lib/types.ts";
