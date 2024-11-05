@@ -3,9 +3,9 @@
   "description": "parses leadsheets. renders leadsheets in the browser. transposes them too ✍️🎶🎷",
   "version": "0.0.1",
   "dependencies": {
-    "@fontsource/noto-music": "^5.0.20",
+    "@fontsource/noto-music": "^5.1.0",
     "ohm-js": "^17.1.0",
-    "ts-pattern": "^5.2.0",
+    "ts-pattern": "^5.5.0",
     "tufte-css": "^1.8.0"
   },
   "devDependencies": {
@@ -14,6 +14,6 @@
     "puppeteer": "^23.7.0",
     "skott": "^0.35.3",
     "stylelint-config-standard": "^36.0.1",
-    "stylelint": "^16.6.1"
+    "stylelint": "^16.10.0"
   }
 }
