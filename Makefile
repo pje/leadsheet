@@ -28,14 +28,14 @@ unit_test: $(unit_test_files)
 	deno test --parallel --allow-read $^
 
 browser_test: $(browser_test_files)
-	deno test $(deno_allows) $^
+	deno test --trace-leaks $(deno_allows) $^
 
 clean:
 	rm -rf build/* node_modules test-*.png
 
 deps:
 	npm install --save-exact --save-dev --prefix=.
-	PUPPETEER_PRODUCT=chrome deno run -A https://deno.land/x/puppeteer@16.2.0/install.ts
+	PUPPETEER_PRODUCT=chrome deno run -A https://raw.githubusercontent.com/pje/deno-puppeteer/refs/heads/main/install.ts
 
 install_vscode_extension: uninstall_vscode_extension
 	cp -rv ./vscode_extension ~/.vscode/extensions/pje.leadsheet-0.0.1

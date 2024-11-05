@@ -1,16 +1,14 @@
 /// <reference lib="deno.ns" />
 
-import * as log from "https://deno.land/std@0.212.0/log/mod.ts";
-import { assertEquals } from "https://deno.land/std@0.212.0/assert/assert_equals.ts";
-import { time } from "https://deno.land/x/time.ts@v2.0.1/mod.ts";
+import * as log from "@std/log";
+import * as path from "@std/path";
+import { assertArrayIncludes, assertEquals } from "@std/assert";
 import puppeteer, {
   Browser,
   ElementHandle,
   Page,
 } from "https://deno.land/x/puppeteer@16.2.0/mod.ts";
-import * as path from "https://deno.land/std@0.212.0/path/mod.ts";
 import { colorChords, FeatureFlagKeysType } from "./app/settings.ts";
-import { assertArrayIncludes } from "https://deno.land/std@0.212.0/assert/assert_array_includes.ts";
 import { normalizeAccidentals } from "./lib/string.ts";
 import { NaturalNumber } from "./lib/types.ts";
 import { compact } from "./lib/array.ts";
@@ -216,7 +214,7 @@ async function screenshotOnSuccess(page: Page) {
 async function screenshotOnFailure(page: Page) {
   const filename = path.join(
     screenshotsPath,
-    `test-failure-${time().now().getSeconds()}.png`,
+    `test-failure-${new Date().toISOString()}.png`,
   );
   log.info(`🚨 test failure screenshot saved to: ${filename}`);
 
