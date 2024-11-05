@@ -7,7 +7,6 @@ import {
   BaseActionDict,
   Grammar,
   IterationNode,
-  Namespace,
   Node,
   NonterminalNode,
   Semantics,
