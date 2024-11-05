@@ -1,5 +1,5 @@
 import { ParseSong } from "../parser/parser.ts";
-import * as path from "https://deno.land/std@0.212.0/path/mod.ts";
+import * as path from "@std/path";
 
 const __filename = path.fromFileUrl(import.meta.url);
 const __bin = __filename.endsWith(".ts")
@@ -19,6 +19,11 @@ Options:
 
       --format=json
         Print parsed song as JSON
+
+Examples:
+
+      cat leadsheets/chelsea_bridge.leadsheet | deno run cli/cli.ts parse --format=json
+
 `;
 
 export default async function main() {
