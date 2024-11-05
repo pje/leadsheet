@@ -12,7 +12,7 @@ watch: deps
 	deno run $(deno_allows) build_config/build.ts watch
 
 lint: typecheck
-	deno lint *.ts "**/*.ts" --ignore=node_modules,parser/grammar.ohm-bundle.d.ts
+	deno lint --ignore=build,parser/grammar.ohm-bundle.d.ts
 	npx stylelint "**/*.css"
 	deno task detect-cyclic-imports
 
@@ -20,7 +20,7 @@ typecheck:
 	deno check index.ts
 
 fmt-check:
-	deno fmt --check *.ts "**/*.ts" --ignore=node_modules
+	deno fmt --check *.ts "**/*.ts" --ignore="build,parser/grammar.ohm-bundle.d.ts"
 
 test: unit_test browser_test
 
