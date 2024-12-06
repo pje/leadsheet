@@ -34,6 +34,6 @@
   "nodeModulesDir": "auto",
   "tasks": {
     "detect-cyclic-imports": "npx skott index.ts --showCircularDependencies --fileExtensions=.ts --displayMode=raw --circularMaxDepth=32",
-    "upgrade-dependencies": "deno run --allow-read=./ --allow-net --allow-write=./ https://deno.land/x/deno_outdated@0.2.5/cli.ts"
+    "upgrade-dependencies": "deno outdated --update --latest"
   }
 }
