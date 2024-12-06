@@ -22,7 +22,7 @@ jobs:
         with:
           deno-version: v2.x
       - id: restore-cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           path: |
             ~/.deno
@@ -32,7 +32,7 @@ jobs:
       - id: build
         run: make build
       - id: save-cache
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v4
         with:
           path: |
             ~/.deno
