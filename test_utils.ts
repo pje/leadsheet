@@ -8,9 +8,8 @@ export function assertEquals<T>(
   expected: T,
   actual: T,
   msg?: string,
-  options: { formatter?: (value: unknown) => string } = {},
 ) {
-  return theirAssertEquals(actual, expected, msg, options);
+  return theirAssertEquals(actual, expected, msg);
 }
 
 export function bar(...chords: string[]): Bar {

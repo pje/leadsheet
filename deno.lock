@@ -1,16 +1,16 @@
 {
   "version": "4",
   "specifiers": {
-    "jsr:@std/assert@0.224": "0.224.0",
-    "jsr:@std/async@0.224": "0.224.2",
-    "jsr:@std/fmt@0.224": "0.224.0",
-    "jsr:@std/fmt@^1.0.2": "1.0.3",
-    "jsr:@std/fs@^1.0.4": "1.0.5",
-    "jsr:@std/internal@0.224": "0.224.0",
+    "jsr:@std/assert@^1.0.9": "1.0.9",
+    "jsr:@std/async@^1.0.9": "1.0.9",
+    "jsr:@std/data-structures@^1.0.4": "1.0.4",
+    "jsr:@std/fmt@^1.0.3": "1.0.3",
+    "jsr:@std/fs@^1.0.6": "1.0.6",
+    "jsr:@std/internal@^1.0.5": "1.0.5",
     "jsr:@std/io@0.225": "0.225.0",
-    "jsr:@std/log@~0.224.9": "0.224.9",
-    "jsr:@std/path@0.224": "0.224.0",
-    "jsr:@std/testing@0.224": "0.224.0",
+    "jsr:@std/log@~0.224.11": "0.224.11",
+    "jsr:@std/path@^1.0.8": "1.0.8",
+    "jsr:@std/testing@^1.0.6": "1.0.6",
     "npm:@fontsource/noto-music@^5.1.0": "5.1.0",
     "npm:@ohm-js/cli@2": "2.0.0_ohm-js@17.1.0",
     "npm:@types/node@*": "22.5.4",
@@ -25,52 +25,52 @@
     "npm:tufte-css@^1.8.0": "1.8.0"
   },
   "jsr": {
-    "@std/assert@0.224.0": {
-      "integrity": "8643233ec7aec38a940a8264a6e3eed9bfa44e7a71cc6b3c8874213ff401967f",
+    "@std/assert@1.0.9": {
+      "integrity": "a9f0c611a869cc791b26f523eec54c7e187aab7932c2c8e8bea0622d13680dcd",
       "dependencies": [
-        "jsr:@std/fmt@0.224",
         "jsr:@std/internal"
       ]
     },
-    "@std/async@0.224.2": {
-      "integrity": "4d277d6e165df43d5e061ba0ef3edfddb8e8d558f5b920e3e6b1d2614b44d074"
+    "@std/async@1.0.9": {
+      "integrity": "c6472fd0623b3f3daae023cdf7ca5535e1b721dfbf376562c0c12b3fb4867f91"
     },
-    "@std/fmt@0.224.0": {
-      "integrity": "e20e9a2312a8b5393272c26191c0a68eda8d2c4b08b046bad1673148f1d69851"
+    "@std/data-structures@1.0.4": {
+      "integrity": "fa0e20c11eb9ba673417450915c750a0001405a784e2a4e0c3725031681684a0"
     },
     "@std/fmt@1.0.3": {
       "integrity": "97765c16aa32245ff4e2204ecf7d8562496a3cb8592340a80e7e554e0bb9149f"
     },
-    "@std/fs@1.0.5": {
-      "integrity": "41806ad6823d0b5f275f9849a2640d87e4ef67c51ee1b8fb02426f55e02fd44e"
-    },
-    "@std/internal@0.224.0": {
-      "integrity": "afc50644f9cdf4495eeb80523a8f6d27226b4b36c45c7c195dfccad4b8509291",
+    "@std/fs@1.0.6": {
+      "integrity": "42b56e1e41b75583a21d5a37f6a6a27de9f510bcd36c0c85791d685ca0b85fa2",
       "dependencies": [
-        "jsr:@std/fmt@0.224"
+        "jsr:@std/path"
       ]
+    },
+    "@std/internal@1.0.5": {
+      "integrity": "54a546004f769c1ac9e025abd15a76b6671ddc9687e2313b67376125650dc7ba"
     },
     "@std/io@0.225.0": {
       "integrity": "c1db7c5e5a231629b32d64b9a53139445b2ca640d828c26bf23e1c55f8c079b3"
     },
-    "@std/log@0.224.9": {
-      "integrity": "419d04e4d93e6b1a0205ac3f94809621cfec3d328d09fec9ec59cafa3b3fcaee",
+    "@std/log@0.224.11": {
+      "integrity": "df5e5a6d6ab8bcea016a17982cd2435f65234d6618bf631925587c0b2eae2a4e",
       "dependencies": [
-        "jsr:@std/fmt@^1.0.2",
+        "jsr:@std/fmt",
         "jsr:@std/fs",
         "jsr:@std/io"
       ]
     },
-    "@std/path@0.224.0": {
-      "integrity": "55bca6361e5a6d158b9380e82d4981d82d338ec587de02951e2b7c3a24910ee6",
-      "dependencies": [
-        "jsr:@std/assert"
-      ]
+    "@std/path@1.0.8": {
+      "integrity": "548fa456bb6a04d3c1a1e7477986b6cffbce95102d0bb447c67c4ee70e0364be"
     },
-    "@std/testing@0.224.0": {
-      "integrity": "371b8a929aa7132240d5dd766a439be8f780ef5c176ab194e0bcab72370c761e",
+    "@std/testing@1.0.6": {
+      "integrity": "9192ded2d34065f4c959fdc1921fe836770abb9194410c2cc8a0fff4eff5c893",
       "dependencies": [
-        "jsr:@std/assert"
+        "jsr:@std/assert",
+        "jsr:@std/data-structures",
+        "jsr:@std/fs",
+        "jsr:@std/internal",
+        "jsr:@std/path"
       ]
     }
   },
@@ -2397,11 +2397,11 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@std/assert@0.224",
-      "jsr:@std/async@0.224",
-      "jsr:@std/log@~0.224.9",
-      "jsr:@std/path@0.224",
-      "jsr:@std/testing@0.224"
+      "jsr:@std/assert@^1.0.9",
+      "jsr:@std/async@^1.0.9",
+      "jsr:@std/log@~0.224.11",
+      "jsr:@std/path@^1.0.8",
+      "jsr:@std/testing@^1.0.6"
     ],
     "packageJson": {
       "dependencies": [
