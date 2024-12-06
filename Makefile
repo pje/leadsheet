@@ -20,7 +20,7 @@ typecheck:
 	deno check index.ts
 
 fmt-check:
-	deno fmt --check *.ts "**/*.ts" --ignore="build,parser/grammar.ohm-bundle.d.ts"
+	deno fmt --check *.html *.ts "**/*.ts" --ignore="build,parser/grammar.ohm-bundle.d.ts"
 
 test: unit_test browser_test
 
