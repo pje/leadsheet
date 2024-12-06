@@ -1,7 +1,6 @@
-import { assertEquals as theirAssertEquals } from "https://deno.land/std@0.212.0/assert/mod.ts";
+import { assertEquals as theirAssertEquals, fail } from "@std/assert";
 import { ParseSong } from "./parser/parser.ts";
 import { type Bar } from "./parser/song.ts";
-import { fail } from "https://deno.land/std@0.212.0/assert/mod.ts";
 import { Result } from "./lib/result.ts";
 
 // because expected should always be the first arg. come on deno

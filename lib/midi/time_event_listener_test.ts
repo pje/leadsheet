@@ -1,10 +1,6 @@
 import { assertEquals } from "../../test_utils.ts";
 import { type Clock, TimeEventListener } from "./time_event_listener.ts";
-import {
-  assertSpyCalls,
-  spy,
-  stub,
-} from "https://deno.land/std@0.212.0/testing/mock.ts";
+import { assertSpyCalls, spy, stub } from "@std/testing/mock";
 
 type OnMIDIMessage = (
   this: MIDIInput,

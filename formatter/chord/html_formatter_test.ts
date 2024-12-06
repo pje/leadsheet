@@ -1,9 +1,9 @@
 import { assertEquals } from "../../test_utils.ts";
 import { normalizeAccidentals } from "../../lib/string.ts";
-import { DOMParser } from "https://deno.land/x/deno_dom@v0.1.43/deno-dom-wasm.ts";
 import { HTMLFormatter } from "./html_formatter.ts";
 import { CommonCases } from "./text_formatter_test.ts";
-import { assert } from "https://deno.land/std@0.212.0/assert/assert.ts";
+import { assert } from "@std/assert";
+import { DOMParser } from "@x/deno_dom";
 
 Deno.test(HTMLFormatter.prototype.format.name, async (t) => {
   const cases = CommonCases;

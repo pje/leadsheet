@@ -1,7 +1,4 @@
-import {
-  assert,
-  assertFalse,
-} from "https://deno.land/std@0.212.0/assert/mod.ts";
+import { assert, assertFalse } from "@std/assert";
 import { ParseChord, ParseSong } from "./parser.ts";
 import { type Letter } from "../theory/letter.ts";
 import { Chord } from "../theory/chord.ts";
