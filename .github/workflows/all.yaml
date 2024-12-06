@@ -28,7 +28,7 @@ jobs:
             ~/.deno
             ~/.cache/deno
             node_modules
-          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}-deno-${{ hashFiles('deno.lock') }}
+          key: cache-${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}-deno-${{ hashFiles('deno.lock') }}
       - id: build
         run: make build
       - id: save-cache
