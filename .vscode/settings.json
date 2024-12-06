@@ -3,14 +3,17 @@
     // "editor.defaultFormatter": "esbenp.prettier-vscode", // broken currently :(
     "editor.defaultFormatter": "vscode.css-language-features",
     "editor.formatOnSave": true,
-    "files.insertFinalNewline": true,
+    "files.insertFinalNewline": true
+  },
+  "[html]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
   },
   "[typescript]": {
     "editor.defaultFormatter": "denoland.vscode-deno",
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": true
   },
   "[javascript]": {
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": false
   },
   "css.format.braceStyle": "collapse",
   "css.format.newlineBetweenRules": false,
@@ -19,7 +22,6 @@
   "css.validate": false, // use stylelint instead
   "deno.enable": true,
   "deno.lint": true,
-  "deno.unstable": false,
   "stylelint.enable": true,
   "typescript.tsdk": "node_modules/typescript/lib"
 }
